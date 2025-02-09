@@ -36,18 +36,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     let locationData = {};
 
     // ✅ Fetch IP and Location from backend
-    async function fetchUserIPAndLocation() {
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/get-ipinfo`);
-            const data = await response.json();
-            userIp = data.ip || "Unknown";
-            locationData = data || {};
-            console.log("✅ User IP:", userIp);
-            console.log("✅ Location Data:", locationData);
-        } catch (error) {
-            console.error("❌ Error fetching IP & Location:", error);
-        }
+   async function fetchUserIPAndLocation() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/get-ipinfo`);
+        const data = await response.json();
+        userIp = data.ip || "Unknown";
+        locationData = data || {};
+
+        console.log("✅ User IPv4 Address:", userIp);
+        console.log("✅ Location Data:", locationData);
+
+    } catch (error) {
+        console.error("❌ Error fetching IP & Location:", error);
     }
+}
 
     await fetchUserIPAndLocation();
 
