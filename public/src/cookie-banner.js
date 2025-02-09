@@ -121,7 +121,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     async function saveLocationData(consentId) {
         try {
-            const response = await fetch("https://ipinfo.io/json?token=YOUR_IPINFO_TOKEN");
+            const response = await fetch(`${API_BASE_URL}/api/get-ipinfo`);
             const data = await response.json();
             const locationData = {
                 consentId,
