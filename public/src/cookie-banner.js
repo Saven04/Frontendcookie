@@ -121,40 +121,32 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     async function saveLocationData(consentId) {
         try {
-            const response = await fetch(`${API_BASE_URL}/api/get-ipinfo`);
+            // ✅ Get the real user IP address from a public API
+            const ipResponse = await fetch("https://api64.ipify.org?format=json");
+            const ipData = await ipResponse.json();
+            const userIp = ipData.ip;
 
-            // ✅ Ensure response is valid JSON before parsing
-            const text = await response.text();
-            if (!text.startsWith("{")) {
-                throw new Error("Invalid JSON response received.");
-            }
-
-            const data = JSON.parse(text);
+            // ✅ Fetch geolocation data using the user's real IP
+            const geoResponse = await fetch(`https://ipapi.co/${userIp}/json/`);
+            const geoData = await geoResponse.json();
 
             const locationData = {
                 consentId,
-                ipAddress: data.ip,
-                isp: data.org,
-                city: data.city,
-                country: data.country,
-                latitude: null,
-                longitude: null,
+                ipAddress: userIp, // ✅ Real user IP
+                isp: geoData.org || "Unknown ISP",
+                city: geoData.city || "Unknown City",
+                country: geoData.country_name || "Unknown Country",
+                latitude: geoData.latitude || null,
+                longitude: geoData.longitude || null,
             };
 
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        locationData.latitude = position.coords.latitude;
-                        locationData.longitude = position.coords.longitude;
-                        sendLocationDataToDB(locationData);
-                    },
-                    () => sendLocationDataToDB(locationData)
-                );
-            } else {
-                sendLocationDataToDB(locationData);
-            }
+            console.log("✅ User Location Data:", locationData);
+
+            // ✅ Save location data to the backend
+            sendLocationDataToDB(locationData);
+
         } catch (error) {
-            console.error("❌ Error fetching location data:", error.message);
+            console.error("❌ Error fetching real IP/location:", error.message);
         }
     }
 
