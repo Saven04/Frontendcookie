@@ -60,7 +60,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         setCookie("cookiePreferences", JSON.stringify(preferences), 365);
 
         sendPreferencesToDB(consentId, preferences);
-        saveLocationData(consentId);
         hideBanner();
     }
 
@@ -89,7 +88,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         setCookie("cookiePreferences", JSON.stringify(preferences), 365);
 
         sendPreferencesToDB(consentId, preferences);
-        saveLocationData(consentId);
         hideBanner();
         cookiePreferencesModal.classList.remove("show");
     });
@@ -116,44 +114,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.log("✅ Preferences saved:", data);
         } catch (error) {
             console.error("❌ Error saving preferences:", error);
-        }
-    }
-
-    async function saveLocationData(consentId) {
-        try {
-
-            const geoResponse = await fetch(`https://ipapi.co/${userIp}/json/`);
-            const geoData = await geoResponse.json();
-
-            const locationData = {
-                consentId,
-                ipAddress: userIp,
-                isp: geoData.org || "Unknown ISP",
-                city: geoData.city || "Unknown City",
-                country: geoData.country_name || "Unknown Country",
-                latitude: geoData.latitude || null,
-                longitude: geoData.longitude || null,
-            };
-
-            console.log("✅ User Location Data:", locationData);
-
-            sendLocationDataToDB(locationData);
-
-        } catch (error) {
-            console.error("❌ Error fetching real IP/location:", error.message);
-        }
-    }
-
-    async function sendLocationDataToDB(locationData) {
-        try {
-            await fetch(`${API_BASE_URL}/api/location`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(locationData),
-            });
-            console.log("✅ Location data saved successfully.");
-        } catch (error) {
-            console.error("❌ Error saving location data:", error);
         }
     }
 
