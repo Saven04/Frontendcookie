@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Professional Login Page</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/styles.css">
-    <link rel="stylesheet" href="styles/cookie-banner.css">
-    <link rel="stylesheet" href="styles/customize.css">
+    <link rel="stylesheet" href="public/styles/styles.css">
+    <link rel="stylesheet" href="public/styles/cookie-banner.css">
+    <link rel="stylesheet" href="public/styles/customize.css">
 </head>
 
 <body>
@@ -138,19 +138,22 @@
             <div class="social-login">
                 <p>Or login with</p>
                 <button class="social-button google-button">
-                    <img src="image/google-logo.png" alt="Google Logo"> Google
+                    <img src="public/image/google-logo.png" alt="Google Logo"> Google
                 </button>
                 <button class="social-button facebook-button">
-                    <img src="image/facebook-logo.png" alt="Facebook Logo"> Facebook
+                    <img src="public/image/facebook-logo.png" alt="Facebook Logo"> Facebook
                 </button>
             </div>
         </div>
     </div>
+</body>
+
+
 
     <!-- Include JavaScript -->
-    <script src="src/main.js"></script>
+    <script src="public/src/main.js"></script>
     <!-- Add the uuid library import as a module -->
-    <script type="module" src="src/cookie-banner.js"></script>
+    <script type="module" src="public/src/cookie-banner.js"></script>
 
     <script>
         // JavaScript to handle cookie label clicks and show cookie information modal
@@ -178,6 +181,6 @@
             document.getElementById('cookiePolicyModal').classList.remove('show'); // Hide the modal
         });
     </script>
-</body>
+
 
 </html>
