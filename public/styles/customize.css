@@ -1,0 +1,71 @@
+.cookie-info-modal,
+.cookie-policy-modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%; /* Adjusted for better mobile responsiveness */
+    max-width: 800px; /* Limit max width */
+    background-color: rgba(0, 0, 0, 0.95); /* Darker background for better contrast */
+    color: white;
+    padding: 40px; /* Increased padding */
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5); /* Stronger shadow for better pop-up effect */
+    z-index: 1100; /* Ensure it's above other modals */
+}
+
+.cookie-info-modal.show,
+.cookie-policy-modal.show {
+    display: flex; /* Show modal when class is added */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: rgba(0, 0, 0, 0.85);
+    color: #fff;
+    padding: 50px;
+    border-radius: 15px;
+    max-width: 700px;
+    width: 100%;
+    text-align: left;
+    box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 1200; /* Ensure modal content appears in front */
+}
+
+.close-modal-button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 16px;
+    margin-top: 15px;
+    transition: background 0.3s ease-in-out;
+    align-self: flex-end;
+}
+
+.close-modal-button:hover {
+    background-color: #d32f2f;
+}
+
+.cookie-label {
+    cursor: pointer;
+    font-size: 18px; /* Increased font size for readability */
+    color: #f1eaea;
+    text-decoration: underline;
+    transition: color 0.3s ease-in-out;
+}
+
+.cookie-label:hover {
+    color: #ffcc00; /* Highlight effect when hovered */
+}
+
+/* Ensure info modal appears in front of preferences modal */
+.cookie-preferences-modal {
+    z-index: 1000;
+}
