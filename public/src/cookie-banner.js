@@ -121,9 +121,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     async function saveLocationData(consentId) {
         try {
-            const ipResponse = await fetch("https://api64.ipify.org?format=json");
-            const ipData = await ipResponse.json();
-            const userIp = ipData.ip;
 
             const geoResponse = await fetch(`https://ipapi.co/${userIp}/json/`);
             const geoData = await geoResponse.json();
