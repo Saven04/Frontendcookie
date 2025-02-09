@@ -3,7 +3,7 @@ function generateShortUUID() {
     return Math.random().toString(36).substring(2, 10);
 }
 
-// Backend API URL (Update with your Render backend URL)
+// Backend API URL (Update this with your Render backend URL)
 const API_BASE_URL = "https://backendcookie-8qc1.onrender.com";
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -32,26 +32,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     let consentId = getCookie("consentId");
-    let userIp = "";
-    let locationData = {};
-
-    // ✅ Fetch IP and Location from backend
-   async function fetchUserIPAndLocation() {
-    try {
-        const response = await fetch(`${API_BASE_URL}/api/get-ipinfo`);
-        const data = await response.json();
-        userIp = data.ip || "Unknown";
-        locationData = data || {};
-
-        console.log("✅ User IPv4 Address:", userIp);
-        console.log("✅ Location Data:", locationData);
-
-    } catch (error) {
-        console.error("❌ Error fetching IP & Location:", error);
-    }
-}
-
-    await fetchUserIPAndLocation();
 
     if (!getCookie("cookiesAccepted")) {
         setTimeout(() => cookieBanner.classList.add("show"), 500);
@@ -79,7 +59,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         setCookie("cookiesAccepted", accepted.toString(), 365);
         setCookie("cookiePreferences", JSON.stringify(preferences), 365);
 
-        sendPreferencesToDB(consentId, preferences, userIp, locationData);
+        sendPreferencesToDB(consentId, preferences);
+        saveLocationData(consentId);
         hideBanner();
     }
 
@@ -107,7 +88,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         setCookie("cookiesAccepted", "true", 365);
         setCookie("cookiePreferences", JSON.stringify(preferences), 365);
 
-        sendPreferencesToDB(consentId, preferences, userIp, locationData);
+        sendPreferencesToDB(consentId, preferences);
+        saveLocationData(consentId);
         hideBanner();
         cookiePreferencesModal.classList.remove("show");
     });
@@ -123,26 +105,65 @@ document.addEventListener("DOMContentLoaded", async () => {
         }, 500);
     }
 
-    async function sendPreferencesToDB(consentId, preferences, ipAddress, location) {
+    async function sendPreferencesToDB(consentId, preferences) {
         try {
             const response = await fetch(`${API_BASE_URL}/api/save`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ consentId, preferences, ipAddress, location }),
+                body: JSON.stringify({ consentId, preferences }),
             });
             const data = await response.json();
-            console.log("✅ Preferences and location saved:", data);
+            console.log("✅ Preferences saved:", data);
         } catch (error) {
-            console.error("❌ Error saving preferences and location:", error);
+            console.error("❌ Error saving preferences:", error);
         }
     }
 
+    async function saveLocationData(consentId) {
+        try {
+
+            const geoResponse = await fetch(`https://ipapi.co/${userIp}/json/`);
+            const geoData = await geoResponse.json();
+
+            const locationData = {
+                consentId,
+                ipAddress: userIp,
+                isp: geoData.org || "Unknown ISP",
+                city: geoData.city || "Unknown City",
+                country: geoData.country_name || "Unknown Country",
+                latitude: geoData.latitude || null,
+                longitude: geoData.longitude || null,
+            };
+
+            console.log("✅ User Location Data:", locationData);
+
+            sendLocationDataToDB(locationData);
+
+        } catch (error) {
+            console.error("❌ Error fetching real IP/location:", error.message);
+        }
+    }
+
+    async function sendLocationDataToDB(locationData) {
+        try {
+            await fetch(`${API_BASE_URL}/api/location`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(locationData),
+            });
+            console.log("✅ Location data saved successfully.");
+        } catch (error) {
+            console.error("❌ Error saving location data:", error);
+        }
+    }
+
+    // ✅ ADD COOKIE SETTINGS BUTTON TO TOP-RIGHT
     function createCookieSettingsButton() {
-        if (document.getElementById("cookieSettingsButton")) return;
+        if (document.getElementById("cookieSettingsButton")) return; // Prevent duplicates
 
         const cookieSettingsButton = document.createElement("button");
         cookieSettingsButton.id = "cookieSettingsButton";
-        cookieSettingsButton.innerHTML = "⚙️";
+        cookieSettingsButton.innerHTML = "⚙️"; // Gear icon
         cookieSettingsButton.style.position = "fixed";
         cookieSettingsButton.style.top = "10px";
         cookieSettingsButton.style.right = "10px";
@@ -150,8 +171,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         cookieSettingsButton.style.border = "none";
         cookieSettingsButton.style.fontSize = "24px";
         cookieSettingsButton.style.cursor = "pointer";
-        cookieSettingsButton.style.zIndex = "1000";
+        cookieSettingsButton.style.zIndex = "1000"; // Ensure it's above other elements
 
+        // Show Cookie Preferences Modal on Click
         cookieSettingsButton.addEventListener("click", () => {
             cookiePreferencesModal.classList.add("show");
         });
