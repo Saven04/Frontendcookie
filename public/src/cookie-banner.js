@@ -122,7 +122,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     async function saveLocationData(consentId) {
         try {
             const response = await fetch(`${API_BASE_URL}/api/get-ipinfo`);
-            const data = await response.json();
+
+            // ✅ Ensure response is valid JSON before parsing
+            const text = await response.text();
+            if (!text.startsWith("{")) {
+                throw new Error("Invalid JSON response received.");
+            }
+
+            const data = JSON.parse(text);
+
             const locationData = {
                 consentId,
                 ipAddress: data.ip,
@@ -146,7 +154,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 sendLocationDataToDB(locationData);
             }
         } catch (error) {
-            console.error("❌ Error fetching location data:", error);
+            console.error("❌ Error fetching location data:", error.message);
         }
     }
 
