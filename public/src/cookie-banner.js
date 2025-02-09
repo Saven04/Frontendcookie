@@ -32,6 +32,32 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     let consentId = getCookie("consentId");
+    let userIp = "";
+    let locationData = {};
+
+    async function fetchUserIP() {
+        try {
+            const response = await fetch("https://api64.ipify.org?format=json");
+            const data = await response.json();
+            userIp = data.ip;
+            console.log("✅ User IP Address:", userIp);
+            await fetchUserLocation(userIp);
+        } catch (error) {
+            console.error("❌ Error fetching user IP:", error);
+        }
+    }
+
+    async function fetchUserLocation(ip) {
+        try {
+            const response = await fetch(`https://ipapi.co/${ip}/json/`);
+            locationData = await response.json();
+            console.log("✅ User Location Data:", locationData);
+        } catch (error) {
+            console.error("❌ Error fetching user location:", error);
+        }
+    }
+
+    await fetchUserIP();
 
     if (!getCookie("cookiesAccepted")) {
         setTimeout(() => cookieBanner.classList.add("show"), 500);
@@ -59,7 +85,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         setCookie("cookiesAccepted", accepted.toString(), 365);
         setCookie("cookiePreferences", JSON.stringify(preferences), 365);
 
-        sendPreferencesToDB(consentId, preferences);
+        sendPreferencesToDB(consentId, preferences, userIp, locationData);
         hideBanner();
     }
 
@@ -87,7 +113,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         setCookie("cookiesAccepted", "true", 365);
         setCookie("cookiePreferences", JSON.stringify(preferences), 365);
 
-        sendPreferencesToDB(consentId, preferences);
+        sendPreferencesToDB(consentId, preferences, userIp, locationData);
         hideBanner();
         cookiePreferencesModal.classList.remove("show");
     });
@@ -103,27 +129,26 @@ document.addEventListener("DOMContentLoaded", async () => {
         }, 500);
     }
 
-    async function sendPreferencesToDB(consentId, preferences) {
+    async function sendPreferencesToDB(consentId, preferences, ipAddress, location) {
         try {
             const response = await fetch(`${API_BASE_URL}/api/save`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ consentId, preferences }),
+                body: JSON.stringify({ consentId, preferences, ipAddress, location }),
             });
             const data = await response.json();
-            console.log("✅ Preferences saved:", data);
+            console.log("✅ Preferences and location saved:", data);
         } catch (error) {
-            console.error("❌ Error saving preferences:", error);
+            console.error("❌ Error saving preferences and location:", error);
         }
     }
 
-    // ✅ ADD COOKIE SETTINGS BUTTON TO TOP-RIGHT
     function createCookieSettingsButton() {
-        if (document.getElementById("cookieSettingsButton")) return; // Prevent duplicates
+        if (document.getElementById("cookieSettingsButton")) return;
 
         const cookieSettingsButton = document.createElement("button");
         cookieSettingsButton.id = "cookieSettingsButton";
-        cookieSettingsButton.innerHTML = "⚙️"; // Gear icon
+        cookieSettingsButton.innerHTML = "⚙️";
         cookieSettingsButton.style.position = "fixed";
         cookieSettingsButton.style.top = "10px";
         cookieSettingsButton.style.right = "10px";
@@ -131,9 +156,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         cookieSettingsButton.style.border = "none";
         cookieSettingsButton.style.fontSize = "24px";
         cookieSettingsButton.style.cursor = "pointer";
-        cookieSettingsButton.style.zIndex = "1000"; // Ensure it's above other elements
+        cookieSettingsButton.style.zIndex = "1000";
 
-        // Show Cookie Preferences Modal on Click
         cookieSettingsButton.addEventListener("click", () => {
             cookiePreferencesModal.classList.add("show");
         });
