@@ -3,7 +3,7 @@ function generateShortUUID() {
     return Math.random().toString(36).substring(2, 10);
 }
 
-// Backend API URL (Update this with your Render backend URL)
+// Backend API URL (Update with your Render backend URL)
 const API_BASE_URL = "https://backendcookie-8qc1.onrender.com";
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -35,29 +35,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     let userIp = "";
     let locationData = {};
 
-    async function fetchUserIP() {
+    // ✅ Fetch IP and Location from backend
+    async function fetchUserIPAndLocation() {
         try {
-            const response = await fetch("https://api64.ipify.org?format=json");
+            const response = await fetch(`${API_BASE_URL}/api/get-ipinfo`);
             const data = await response.json();
-            userIp = data.ip;
-            console.log("✅ User IP Address:", userIp);
-            await fetchUserLocation(userIp);
+            userIp = data.ip || "Unknown";
+            locationData = data || {};
+            console.log("✅ User IP:", userIp);
+            console.log("✅ Location Data:", locationData);
         } catch (error) {
-            console.error("❌ Error fetching user IP:", error);
+            console.error("❌ Error fetching IP & Location:", error);
         }
     }
 
-    async function fetchUserLocation(ip) {
-        try {
-            const response = await fetch(`https://ipapi.co/${ip}/json/`);
-            locationData = await response.json();
-            console.log("✅ User Location Data:", locationData);
-        } catch (error) {
-            console.error("❌ Error fetching user location:", error);
-        }
-    }
-
-    await fetchUserIP();
+    await fetchUserIPAndLocation();
 
     if (!getCookie("cookiesAccepted")) {
         setTimeout(() => cookieBanner.classList.add("show"), 500);
