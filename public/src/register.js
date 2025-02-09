@@ -9,28 +9,29 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
     const confirmPassword = document.getElementById("confirmPassword").value.trim();
+    const messageBox = document.getElementById("messageBox"); // Assuming you have a message div
 
     // Validate inputs
     if (!username || !email || !password || !confirmPassword) {
-        alert("All fields are required!");
+        showMessage("All fields are required!", "error");
         resetButton();
         return;
     }
 
     if (password.length < 6) {
-        alert("Password must be at least 6 characters long.");
+        showMessage("Password must be at least 6 characters long.", "error");
         resetButton();
         return;
     }
 
     if (password !== confirmPassword) {
-        alert("Passwords do not match!");
+        showMessage("Passwords do not match!", "error");
         resetButton();
         return;
     }
 
     try {
-        const response = await fetch("http://localhost:3000/api/auth/register", {
+        const response = await fetch("https://backendcookie-8qc1.onrender.com/api/auth/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, email, password }),
@@ -39,15 +40,17 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         const data = await response.json();
 
         if (response.ok) {
-            alert("Registration successful! Redirecting to login...");
-            document.getElementById("registerForm").reset(); // Reset form
-            window.location.href = "index.html"; // Redirect to login page
+            showMessage("✅ Registration successful! Redirecting to login...", "success");
+            setTimeout(() => {
+                document.getElementById("registerForm").reset(); // Reset form
+                window.location.href = "index.html"; // Redirect to login page
+            }, 1500);
         } else {
-            alert(`Error: ${data.message}`);
+            showMessage(`❌ ${data.message || "Registration failed."}`, "error");
         }
     } catch (error) {
-        console.error("Error:", error);
-        alert("Registration failed. Please check your internet connection and try again.");
+        console.error("❌ Error:", error);
+        showMessage("Registration failed. Please check your internet connection and try again.", "error");
     } finally {
         resetButton();
     }
@@ -58,4 +61,17 @@ function resetButton() {
     const registerButton = document.querySelector(".login-button");
     registerButton.disabled = false;
     registerButton.textContent = "Register";
+}
+
+// Function to show messages dynamically
+function showMessage(message, type) {
+    const messageBox = document.getElementById("messageBox");
+    if (messageBox) {
+        messageBox.textContent = message;
+        messageBox.className = `message ${type}`; // Assuming CSS styles for success & error messages
+        messageBox.style.display = "block";
+        setTimeout(() => { messageBox.style.display = "none"; }, 3000);
+    } else {
+        alert(message);
+    }
 }
