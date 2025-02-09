@@ -4,7 +4,7 @@ function generateShortUUID() {
 }
 
 // Backend API URL (Update this with your Render backend URL)
-const API_BASE_URL = "https://backendcookie-8qc1.onrender.com"; 
+const API_BASE_URL = "https://backendcookie-8qc1.onrender.com";
 
 document.addEventListener("DOMContentLoaded", async () => {
     const cookieBanner = document.getElementById("cookieConsent");
@@ -121,18 +121,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     async function saveLocationData(consentId) {
         try {
-            // ✅ Get the real user IP address from a public API
             const ipResponse = await fetch("https://api64.ipify.org?format=json");
             const ipData = await ipResponse.json();
             const userIp = ipData.ip;
 
-            // ✅ Fetch geolocation data using the user's real IP
             const geoResponse = await fetch(`https://ipapi.co/${userIp}/json/`);
             const geoData = await geoResponse.json();
 
             const locationData = {
                 consentId,
-                ipAddress: userIp, // ✅ Real user IP
+                ipAddress: userIp,
                 isp: geoData.org || "Unknown ISP",
                 city: geoData.city || "Unknown City",
                 country: geoData.country_name || "Unknown Country",
@@ -142,7 +140,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             console.log("✅ User Location Data:", locationData);
 
-            // ✅ Save location data to the backend
             sendLocationDataToDB(locationData);
 
         } catch (error) {
@@ -162,4 +159,30 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.error("❌ Error saving location data:", error);
         }
     }
+
+    // ✅ ADD COOKIE SETTINGS BUTTON TO TOP-RIGHT
+    function createCookieSettingsButton() {
+        if (document.getElementById("cookieSettingsButton")) return; // Prevent duplicates
+
+        const cookieSettingsButton = document.createElement("button");
+        cookieSettingsButton.id = "cookieSettingsButton";
+        cookieSettingsButton.innerHTML = "⚙️"; // Gear icon
+        cookieSettingsButton.style.position = "fixed";
+        cookieSettingsButton.style.top = "10px";
+        cookieSettingsButton.style.right = "10px";
+        cookieSettingsButton.style.backgroundColor = "transparent";
+        cookieSettingsButton.style.border = "none";
+        cookieSettingsButton.style.fontSize = "24px";
+        cookieSettingsButton.style.cursor = "pointer";
+        cookieSettingsButton.style.zIndex = "1000"; // Ensure it's above other elements
+
+        // Show Cookie Preferences Modal on Click
+        cookieSettingsButton.addEventListener("click", () => {
+            cookiePreferencesModal.classList.add("show");
+        });
+
+        document.body.appendChild(cookieSettingsButton);
+    }
+
+    createCookieSettingsButton();
 });
