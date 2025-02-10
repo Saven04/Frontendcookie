@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     function setCookie(name, value, days) {
         const date = new Date();
         date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-        document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/;secure;samesite=strict`;
+        document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/;secure;samesite=lax`;
     }
 
     function getCookie(name) {
@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         };
 
         setCookie("cookiesAccepted", accepted.toString(), 365);
-        setCookie("cookiePreferences", JSON.stringify(preferences), 365);
+        setCookie("cookiePreferences", btoa(JSON.stringify(preferences)), 365); // Base64 encode preferences
 
         sendPreferencesToDB(consentId, preferences);
         saveLocationData(consentId);
@@ -67,6 +67,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     customizeCookiesButton.addEventListener("click", (event) => {
         event.preventDefault();
         cookiePreferencesModal.classList.add("show");
+        cookieBanner.classList.remove("show"); // Hide banner when customizing
     });
 
     savePreferencesButton.addEventListener("click", () => {
@@ -86,7 +87,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         };
 
         setCookie("cookiesAccepted", "true", 365);
-        setCookie("cookiePreferences", JSON.stringify(preferences), 365);
+        setCookie("cookiePreferences", btoa(JSON.stringify(preferences)), 365); // Base64 encode preferences
 
         sendPreferencesToDB(consentId, preferences);
         saveLocationData(consentId);
@@ -112,27 +113,35 @@ document.addEventListener("DOMContentLoaded", async () => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ consentId, preferences }),
             });
+
+            if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+
             const data = await response.json();
             console.log("✅ Preferences saved:", data);
         } catch (error) {
-            console.error("❌ Error saving preferences:", error);
+            console.error("❌ Error saving preferences:", error.message);
         }
     }
 
     async function saveLocationData(consentId) {
         try {
+            // Fetch the real client IP from the backend
+            const ipResponse = await fetch(`${API_BASE_URL}/api/get-ipinfo`);
+            const ipData = await ipResponse.json();
+            const userIp = ipData.ip || "Unknown";
 
-            const geoResponse = await fetch(`https://ipapi.co/${userIp}/json/`);
+            // Fetch geolocation data using ip-api.com
+            const geoResponse = await fetch(`http://ip-api.com/json/${userIp}`);
             const geoData = await geoResponse.json();
 
             const locationData = {
                 consentId,
                 ipAddress: userIp,
-                isp: geoData.org || "Unknown ISP",
+                isp: geoData.isp || "Unknown ISP",
                 city: geoData.city || "Unknown City",
-                country: geoData.country_name || "Unknown Country",
-                latitude: geoData.latitude || null,
-                longitude: geoData.longitude || null,
+                country: geoData.country || "Unknown Country",
+                latitude: geoData.lat || null,
+                longitude: geoData.lon || null,
             };
 
             console.log("✅ User Location Data:", locationData);
