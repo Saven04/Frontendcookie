@@ -94,19 +94,29 @@ document.addEventListener("DOMContentLoaded", async () => {
         }, 500);
     }
 
-    async function sendPreferencesToDB(consentId, preferences) {
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/save`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ consentId, preferences }),
-            });
-            if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
-            console.log("✅ Preferences saved:", await response.json());
-        } catch (error) {
-            console.error("❌ Error saving preferences:", error.message);
-        }
+   async function sendPreferencesToDB(consentId, preferences) {
+    try {
+        // Fetch the real client IP from the backend
+        const ipResponse = await fetch(`${API_BASE_URL}/api/get-ipinfo`);
+        const ipData = await ipResponse.json();
+        const userIp = ipData.ip || "Unknown";
+
+        // Send preferences along with IP address
+        const response = await fetch(`${API_BASE_URL}/api/save`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ consentId, preferences, ipAddress: userIp }),
+        });
+
+        if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+
+        const data = await response.json();
+        console.log("✅ Preferences saved:", data);
+    } catch (error) {
+        console.error("❌ Error saving preferences:", error.message);
     }
+}
+
 
     async function saveLocationData(consentId) {
         try {
