@@ -5,6 +5,7 @@ function generateShortUUID() {
 
 // Backend API URL
 const API_BASE_URL = "https://backendcookie-8qc1.onrender.com";
+const IPDATA_API_KEY = "d2e46351214782d552f706203cb424955384bc556f56ff01dd166651"; 
 
 document.addEventListener("DOMContentLoaded", async () => {
     const cookieBanner = document.getElementById("cookieConsent");
@@ -84,16 +85,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         setCookie("cookiePreferences", btoa(JSON.stringify(preferences)), 365);
 
         // Get the user's IP address before sending preferences
-        const userIp = await getClientIPAddress();
-        if (!userIp) {
+        const userIpData = await getClientIPData();
+        if (!userIpData) {
             console.error("❌ Failed to fetch user IP. Preferences not saved.");
             return;
         }
 
         // Send preferences and location data to the backend
-        sendPreferencesToDB(consentId, preferences, userIp);
-        saveLocationData(consentId, userIp);
-
+        sendPreferencesToDB(consentId, preferences, userIpData.ip);
+        saveLocationData(consentId, userIpData);
         hideBanner();
     }
 
@@ -104,17 +104,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         }, 500);
     }
 
-    async function getClientIPAddress() {
+    async function getClientIPData() {
         try {
-            const ipResponse = await fetch(`${API_BASE_URL}/api/get-ipinfo`);
-            const ipData = await ipResponse.json();
+            const response = await fetch(`https://api.ipdata.co?api-key=${IPDATA_API_KEY}`);
+            const ipData = await response.json();
 
             if (!ipData || !ipData.ip) {
                 throw new Error("Invalid IP response");
             }
 
             console.log("✅ Detected IP Address:", ipData.ip);
-            return ipData.ip;
+            return ipData;
         } catch (error) {
             console.error("❌ Error fetching IP address:", error.message);
             return null;
@@ -138,19 +138,18 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    async function saveLocationData(consentId, userIp) {
+    async function saveLocationData(consentId, ipData) {
         try {
-            const geoResponse = await fetch(`http://ip-api.com/json/${userIp}`);
-            const geoData = await geoResponse.json();
-
             const locationData = {
                 consentId,
-                ipAddress: userIp,
-                isp: geoData.isp || "Unknown ISP",
-                city: geoData.city || "Unknown City",
-                country: geoData.country || "Unknown Country",
-                latitude: geoData.lat || null,
-                longitude: geoData.lon || null,
+                ipAddress: ipData.ip,
+                isp: ipData.asn.name || "Unknown ISP",
+                city: ipData.city || "Unknown City",
+                country: ipData.country_name || "Unknown Country",
+                latitude: ipData.latitude || null,
+                longitude: ipData.longitude || null,
+                postalCode: ipData.postal || "Unknown",
+                timezone: ipData.time_zone.name || "Unknown Timezone",
             };
 
             console.log("✅ User Location Data:", locationData);
