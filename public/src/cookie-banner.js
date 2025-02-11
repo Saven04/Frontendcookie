@@ -15,10 +15,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     const cancelPreferencesButton = document.getElementById("cancelPreferences");
     const cookiePreferencesModal = document.getElementById("cookiePreferencesModal");
 
-    const performanceCheckbox = document.getElementById("performance");
-    const functionalCheckbox = document.getElementById("functional");
-    const advertisingCheckbox = document.getElementById("advertising");
-    const socialMediaCheckbox = document.getElementById("socialMedia");
+    const checkboxes = {
+        performance: document.getElementById("performance"),
+        functional: document.getElementById("functional"),
+        advertising: document.getElementById("advertising"),
+        socialMedia: document.getElementById("socialMedia"),
+    };
 
     function setCookie(name, value, days) {
         const date = new Date();
@@ -31,7 +33,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         return cookies ? cookies.split("=")[1] : null;
     }
 
-    let consentId = getCookie("consentId");
+    let consentId = getCookie("consentId") || generateShortUUID();
+    setCookie("consentId", consentId, 365);
+    console.log("📌 Using Consent ID:", consentId);
 
     if (!getCookie("cookiesAccepted")) {
         setTimeout(() => cookieBanner.classList.add("show"), 500);
@@ -41,13 +45,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     rejectCookiesButton.addEventListener("click", () => handleCookieConsent(false));
 
     function handleCookieConsent(accepted) {
-        if (!consentId) {
-            consentId = generateShortUUID();
-            setCookie("consentId", consentId, 365);
-        }
-
-        console.log("📌 Using Consent ID:", consentId);
-
         const preferences = {
             strictlyNecessary: true,
             performance: accepted,
@@ -56,48 +53,39 @@ document.addEventListener("DOMContentLoaded", async () => {
             socialMedia: accepted,
         };
 
-        setCookie("cookiesAccepted", accepted.toString(), 365);
-        setCookie("cookiePreferences", btoa(JSON.stringify(preferences)), 365); // Base64 encode preferences
-
-        sendPreferencesToDB(consentId, preferences);
-        saveLocationData(consentId);
-        hideBanner();
+        savePreferences(preferences, "true");
     }
 
     customizeCookiesButton.addEventListener("click", (event) => {
         event.preventDefault();
         cookiePreferencesModal.classList.add("show");
-        cookieBanner.classList.remove("show"); // Hide banner when customizing
+        cookieBanner.classList.remove("show");
     });
 
     savePreferencesButton.addEventListener("click", () => {
-        if (!consentId) {
-            consentId = generateShortUUID();
-            setCookie("consentId", consentId, 365);
-        }
-
-        console.log("📌 Using Consent ID:", consentId);
-
         const preferences = {
             strictlyNecessary: true,
-            performance: performanceCheckbox.checked,
-            functional: functionalCheckbox.checked,
-            advertising: advertisingCheckbox.checked,
-            socialMedia: socialMediaCheckbox.checked,
+            performance: checkboxes.performance.checked,
+            functional: checkboxes.functional.checked,
+            advertising: checkboxes.advertising.checked,
+            socialMedia: checkboxes.socialMedia.checked,
         };
 
-        setCookie("cookiesAccepted", "true", 365);
-        setCookie("cookiePreferences", btoa(JSON.stringify(preferences)), 365); // Base64 encode preferences
-
-        sendPreferencesToDB(consentId, preferences);
-        saveLocationData(consentId);
-        hideBanner();
+        savePreferences(preferences, "true");
         cookiePreferencesModal.classList.remove("show");
     });
 
     cancelPreferencesButton.addEventListener("click", () => {
         cookiePreferencesModal.classList.remove("show");
     });
+
+    function savePreferences(preferences, accepted) {
+        setCookie("cookiesAccepted", accepted, 365);
+        setCookie("cookiePreferences", btoa(JSON.stringify(preferences)), 365);
+        sendPreferencesToDB(consentId, preferences);
+        saveLocationData(consentId);
+        hideBanner();
+    }
 
     function hideBanner() {
         cookieBanner.classList.add("hide");
@@ -113,11 +101,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ consentId, preferences }),
             });
-
             if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
-
-            const data = await response.json();
-            console.log("✅ Preferences saved:", data);
+            console.log("✅ Preferences saved:", await response.json());
         } catch (error) {
             console.error("❌ Error saving preferences:", error.message);
         }
@@ -125,12 +110,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     async function saveLocationData(consentId) {
         try {
-            // Fetch the real client IP from the backend
             const ipResponse = await fetch(`${API_BASE_URL}/api/get-ipinfo`);
-            const ipData = await ipResponse.json();
-            const userIp = ipData.ip || "Unknown";
-
-            // Fetch geolocation data using ip-api.com
+            const { ip: userIp = "Unknown" } = await ipResponse.json();
             const geoResponse = await fetch(`http://ip-api.com/json/${userIp}`);
             const geoData = await geoResponse.json();
 
@@ -145,9 +126,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             };
 
             console.log("✅ User Location Data:", locationData);
-
             sendLocationDataToDB(locationData);
-
         } catch (error) {
             console.error("❌ Error fetching real IP/location:", error.message);
         }
@@ -166,28 +145,27 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    // ✅ ADD COOKIE SETTINGS BUTTON TO TOP-RIGHT
     function createCookieSettingsButton() {
-        if (document.getElementById("cookieSettingsButton")) return; // Prevent duplicates
+        if (document.getElementById("cookieSettingsButton")) return;
 
-        const cookieSettingsButton = document.createElement("button");
-        cookieSettingsButton.id = "cookieSettingsButton";
-        cookieSettingsButton.innerHTML = "⚙️"; // Gear icon
-        cookieSettingsButton.style.position = "fixed";
-        cookieSettingsButton.style.top = "10px";
-        cookieSettingsButton.style.right = "10px";
-        cookieSettingsButton.style.backgroundColor = "transparent";
-        cookieSettingsButton.style.border = "none";
-        cookieSettingsButton.style.fontSize = "24px";
-        cookieSettingsButton.style.cursor = "pointer";
-        cookieSettingsButton.style.zIndex = "1000"; // Ensure it's above other elements
-
-        // Show Cookie Preferences Modal on Click
-        cookieSettingsButton.addEventListener("click", () => {
+        const button = document.createElement("button");
+        button.id = "cookieSettingsButton";
+        button.innerHTML = "⚙️";
+        Object.assign(button.style, {
+            position: "fixed",
+            top: "10px",
+            right: "10px",
+            backgroundColor: "transparent",
+            border: "none",
+            fontSize: "24px",
+            cursor: "pointer",
+            zIndex: "1000",
+        });
+        button.addEventListener("click", () => {
             cookiePreferencesModal.classList.add("show");
         });
 
-        document.body.appendChild(cookieSettingsButton);
+        document.body.appendChild(button);
     }
 
     createCookieSettingsButton();
