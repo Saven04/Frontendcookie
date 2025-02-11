@@ -3,7 +3,7 @@ function generateShortUUID() {
     return Math.random().toString(36).substring(2, 10);
 }
 
-// Backend API URL (Update this with your Render backend URL)
+// Backend API URL
 const API_BASE_URL = "https://backendcookie-8qc1.onrender.com";
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -79,11 +79,21 @@ document.addEventListener("DOMContentLoaded", async () => {
         cookiePreferencesModal.classList.remove("show");
     });
 
-    function savePreferences(preferences, accepted) {
+    async function savePreferences(preferences, accepted) {
         setCookie("cookiesAccepted", accepted, 365);
         setCookie("cookiePreferences", btoa(JSON.stringify(preferences)), 365);
-        sendPreferencesToDB(consentId, preferences);
-        saveLocationData(consentId);
+
+        // Get the user's IP address before sending preferences
+        const userIp = await getClientIPAddress();
+        if (!userIp) {
+            console.error("❌ Failed to fetch user IP. Preferences not saved.");
+            return;
+        }
+
+        // Send preferences and location data to the backend
+        sendPreferencesToDB(consentId, preferences, userIp);
+        saveLocationData(consentId, userIp);
+
         hideBanner();
     }
 
@@ -94,34 +104,42 @@ document.addEventListener("DOMContentLoaded", async () => {
         }, 500);
     }
 
-   async function sendPreferencesToDB(consentId, preferences) {
-    try {
-        // Fetch the real client IP from the backend
-        const ipResponse = await fetch(`${API_BASE_URL}/api/get-ipinfo`);
-        const ipData = await ipResponse.json();
-        const userIp = ipData.ip || "Unknown";
-
-        // Send preferences along with IP address
-        const response = await fetch(`${API_BASE_URL}/api/save`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ consentId, preferences, ipAddress: userIp }),
-        });
-
-        if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
-
-        const data = await response.json();
-        console.log("✅ Preferences saved:", data);
-    } catch (error) {
-        console.error("❌ Error saving preferences:", error.message);
-    }
-}
-
-
-    async function saveLocationData(consentId) {
+    async function getClientIPAddress() {
         try {
             const ipResponse = await fetch(`${API_BASE_URL}/api/get-ipinfo`);
-            const { ip: userIp = "Unknown" } = await ipResponse.json();
+            const ipData = await ipResponse.json();
+
+            if (!ipData || !ipData.ip) {
+                throw new Error("Invalid IP response");
+            }
+
+            console.log("✅ Detected IP Address:", ipData.ip);
+            return ipData.ip;
+        } catch (error) {
+            console.error("❌ Error fetching IP address:", error.message);
+            return null;
+        }
+    }
+
+    async function sendPreferencesToDB(consentId, preferences, userIp) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/save`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ consentId, preferences, ipAddress: userIp }),
+            });
+
+            if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+
+            const data = await response.json();
+            console.log("✅ Preferences saved:", data);
+        } catch (error) {
+            console.error("❌ Error saving preferences:", error.message);
+        }
+    }
+
+    async function saveLocationData(consentId, userIp) {
+        try {
             const geoResponse = await fetch(`http://ip-api.com/json/${userIp}`);
             const geoData = await geoResponse.json();
 
