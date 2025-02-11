@@ -138,26 +138,30 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    async function saveLocationData(consentId, ipData) {
-        try {
-            const locationData = {
-                consentId,
-                ipAddress: ipData.ip,
-                isp: ipData.asn.name || "Unknown ISP",
-                city: ipData.city || "Unknown City",
-                country: ipData.country_name || "Unknown Country",
-                latitude: ipData.latitude || null,
-                longitude: ipData.longitude || null,
-                postalCode: ipData.postal || "Unknown",
-                timezone: ipData.time_zone.name || "Unknown Timezone",
-            };
-
-            console.log("✅ User Location Data:", locationData);
-            sendLocationDataToDB(locationData);
-        } catch (error) {
-            console.error("❌ Error fetching real IP/location:", error.message);
+   async function saveLocationData(consentId, ipData) {
+    try {
+        if (!ipData || !ipData.ip) {
+            throw new Error("Invalid IP data received");
         }
+
+        const locationData = {
+            consentId,
+            ipAddress: ipData.ip,
+            isp: ipData.asn?.name || "Unknown ISP",  // ✅ Check if asn exists before accessing name
+            city: ipData.city || "Unknown City",
+            country: ipData.country_name || "Unknown Country",
+            latitude: ipData.latitude || null,
+            longitude: ipData.longitude || null,
+            postalCode: ipData.postal || "Unknown",
+            timezone: ipData.time_zone?.name || "Unknown Timezone",  // ✅ Prevents undefined error
+        };
+
+        console.log("✅ User Location Data:", locationData);
+        sendLocationDataToDB(locationData);
+    } catch (error) {
+        console.error("❌ Error fetching real IP/location:", error.message);
     }
+}
 
     async function sendLocationDataToDB(locationData) {
         try {
