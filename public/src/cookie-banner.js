@@ -36,7 +36,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     let consentId = getCookie("consentId") || generateShortUUID();
     setCookie("consentId", consentId, 365);
-    console.log("📌 Using Consent ID:", consentId);
 
     if (!getCookie("cookiesAccepted")) {
         setTimeout(() => cookieBanner.classList.add("show"), 500);
@@ -164,17 +163,22 @@ document.addEventListener("DOMContentLoaded", async () => {
 }
 
     async function sendLocationDataToDB(locationData) {
-        try {
-            await fetch(`${API_BASE_URL}/api/location`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(locationData),
-            });
-            console.log("✅ Location data saved successfully.");
-        } catch (error) {
-            console.error("❌ Error saving location data:", error);
-        }
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/location`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",  // ✅ Ensure JSON is sent
+            },
+            body: JSON.stringify(locationData),  // ✅ Ensure body is properly sent
+        });
+
+        if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+
+        console.log("✅ Location data saved successfully.");
+    } catch (error) {
+        console.error("❌ Error saving location data:", error.message);
     }
+}
 
     function createCookieSettingsButton() {
         if (document.getElementById("cookieSettingsButton")) return;
