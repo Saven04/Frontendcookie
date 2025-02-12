@@ -5,7 +5,7 @@ function generateShortUUID() {
 
 // Backend API URL
 const API_BASE_URL = "https://backendcookie-8qc1.onrender.com";
-const IPDATA_API_KEY = "d2e46351214782d552f706203cb424955384bc556f56ff01dd166651"; 
+const IPDATA_API_KEY = "d2e46351214782d552f706203cb424955384bc556f56ff01dd166651";
 
 document.addEventListener("DOMContentLoaded", async () => {
     const cookieBanner = document.getElementById("cookieConsent");
@@ -137,48 +137,48 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-   async function saveLocationData(consentId, ipData) {
-    try {
-        if (!ipData || !ipData.ip) {
-            throw new Error("Invalid IP data received");
+    async function saveLocationData(consentId, ipData) {
+        try {
+            if (!ipData || !ipData.ip) {
+                throw new Error("Invalid IP data received");
+            }
+
+            const locationData = {
+                consentId,
+                ipAddress: ipData.ip,
+                isp: ipData.asn?.name || "Unknown ISP", // ✅ Safe access to asn.name
+                city: ipData.city || "Unknown City",
+                country: ipData.country_name || "Unknown Country",
+                latitude: ipData.latitude || null,
+                longitude: ipData.longitude || null,
+                postalCode: ipData.postal || "Unknown",
+                timezone: ipData.time_zone?.name || "Unknown Timezone", // ✅ Safe access to time_zone.name
+            };
+
+            console.log("✅ User Location Data:", locationData);
+            sendLocationDataToDB(locationData);
+        } catch (error) {
+            console.error("❌ Error fetching real IP/location:", error.message);
         }
-
-        const locationData = {
-            consentId,
-            ipAddress: ipData.ip,
-            isp: ipData.asn?.name || "Unknown ISP",  // ✅ Check if asn exists before accessing name
-            city: ipData.city || "Unknown City",
-            country: ipData.country_name || "Unknown Country",
-            latitude: ipData.latitude || null,
-            longitude: ipData.longitude || null,
-            postalCode: ipData.postal || "Unknown",
-            timezone: ipData.time_zone?.name || "Unknown Timezone",  // ✅ Prevents undefined error
-        };
-
-        console.log("✅ User Location Data:", locationData);
-        sendLocationDataToDB(locationData);
-    } catch (error) {
-        console.error("❌ Error fetching real IP/location:", error.message);
     }
-}
 
     async function sendLocationDataToDB(locationData) {
-    try {
-        const response = await fetch(`${API_BASE_URL}/api/location`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",  // ✅ Ensure JSON is sent
-            },
-            body: JSON.stringify(locationData),  // ✅ Ensure body is properly sent
-        });
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/location`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(locationData),
+            });
 
-        if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+            if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
 
-        console.log("✅ Location data saved successfully.");
-    } catch (error) {
-        console.error("❌ Error saving location data:", error.message);
+            console.log("✅ Location data saved successfully.");
+        } catch (error) {
+            console.error("❌ Error saving location data:", error.message);
+        }
     }
-}
 
     function createCookieSettingsButton() {
         if (document.getElementById("cookieSettingsButton")) return;
