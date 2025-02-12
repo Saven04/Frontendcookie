@@ -17,34 +17,38 @@ document.addEventListener("DOMContentLoaded", async () => {
     const functionalCheckbox = document.getElementById("functional");
     const advertisingCheckbox = document.getElementById("advertising");
     const socialMediaCheckbox = document.getElementById("socialMedia");
-    const cookieSettingsButton = document.createElement("button");
 
+    const cookieSettingsButton = document.createElement("button");
     cookieSettingsButton.id = "cookieSettingsButton";
     cookieSettingsButton.innerHTML = "⚙️"; // Gear icon
-    cookieSettingsButton.style.position = "fixed";
-    cookieSettingsButton.style.top = "10px";
-    cookieSettingsButton.style.right = "10px";
-    cookieSettingsButton.style.backgroundColor = "transparent";
-    cookieSettingsButton.style.border = "none";
-    cookieSettingsButton.style.fontSize = "24px";
-    cookieSettingsButton.style.cursor = "pointer";
-    cookieSettingsButton.style.zIndex = "1000"; // Ensure it's above other elements
+    Object.assign(cookieSettingsButton.style, {
+        position: "fixed",
+        top: "10px",
+        right: "10px",
+        backgroundColor: "transparent",
+        border: "none",
+        fontSize: "24px",
+        cursor: "pointer",
+        zIndex: "1000",
+    });
     document.body.appendChild(cookieSettingsButton);
 
-    // Create "Delete My Data" button inside the modal
-    const deleteDataButton = document.createElement("button");
-    deleteDataButton.id = "deleteDataButton";
-    deleteDataButton.innerText = "Delete My Data";
-    deleteDataButton.style.marginTop = "10px";
-    deleteDataButton.style.backgroundColor = "#d9534f"; // Red color
-    deleteDataButton.style.color = "white";
-    deleteDataButton.style.border = "none";
-    deleteDataButton.style.padding = "10px";
-    deleteDataButton.style.cursor = "pointer";
-    deleteDataButton.style.borderRadius = "5px";
-    
-    // Append the button inside the cookie preferences modal
-    cookiePreferencesModal.appendChild(deleteDataButton);
+    // Ensure modal exists before appending the button
+    if (cookiePreferencesModal) {
+        const deleteDataButton = document.createElement("button");
+        deleteDataButton.id = "deleteDataButton";
+        deleteDataButton.innerText = "Delete My Data";
+        Object.assign(deleteDataButton.style, {
+            marginTop: "10px",
+            backgroundColor: "#d9534f",
+            color: "white",
+            border: "none",
+            padding: "10px",
+            cursor: "pointer",
+            borderRadius: "5px",
+        });
+        cookiePreferencesModal.appendChild(deleteDataButton);
+    }
 
     function setCookie(name, value, days) {
         const date = new Date();
@@ -53,13 +57,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     function getCookie(name) {
-        const nameEq = name + "=";
-        const cookies = document.cookie.split(";");
-        for (let c of cookies) {
-            c = c.trim();
-            if (c.indexOf(nameEq) === 0) return c.substring(nameEq.length);
-        }
-        return null;
+        const nameEq = `${name}=`;
+        return document.cookie.split("; ").find((c) => c.startsWith(nameEq))?.split("=")[1] || null;
     }
 
     function deleteCookie(name) {
@@ -72,13 +71,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         setTimeout(() => cookieBanner.classList.add("show"), 500);
     }
 
-    acceptCookiesButton.addEventListener("click", () => {
-        handleCookieConsent(true);
-    });
-
-    rejectCookiesButton.addEventListener("click", () => {
-        handleCookieConsent(false);
-    });
+    acceptCookiesButton.addEventListener("click", () => handleCookieConsent(true));
+    rejectCookiesButton.addEventListener("click", () => handleCookieConsent(false));
 
     function handleCookieConsent(accepted) {
         if (!consentId) {
@@ -158,8 +152,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ consentId, preferences }),
             });
-            const data = await response.json();
-            console.log("✅ Preferences saved:", data);
+            console.log("✅ Preferences saved:", await response.json());
         } catch (error) {
             console.error("❌ Error saving preferences:", error);
         }
@@ -209,36 +202,29 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-  deleteDataButton.addEventListener("click", async () => {
-    if (!consentId) {
-        alert("No data found to delete.");
-        return;
-    }
-
-    try {
-        const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/delete-my-data/${consentId}`, {
-            method: "DELETE",
-        });
-
-        if (!response.ok) {
-            throw new Error(`Failed to delete data: ${response.statusText}`);
+    deleteDataButton.addEventListener("click", async () => {
+        if (!consentId) {
+            alert("No data found to delete.");
+            return;
         }
 
-        // Delete cookies after successful API response
-        deleteCookie("consentId");
-        deleteCookie("cookiesAccepted");
-        deleteCookie("cookiePreferences");
+        try {
+            const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/delete-my-data/${consentId}`, {
+                method: "DELETE",
+            });
 
-        alert("Your data has been deleted.");
-        cookiePreferencesModal.classList.remove("show");
-    } catch (error) {
-        console.error("❌ Error deleting data:", error);
-        alert("Failed to delete data. Please try again later.");
-    }
+            if (!response.ok) {
+                throw new Error(`Failed to delete data: ${response.statusText}`);
+            }
+
+            // Delete all related cookies
+            ["consentId", "cookiesAccepted", "cookiePreferences"].forEach(deleteCookie);
+
+            alert("Your data has been deleted.");
+            cookiePreferencesModal.classList.remove("show");
+        } catch (error) {
+            console.error("❌ Error deleting data:", error);
+            alert("Failed to delete data. Please try again later.");
+        }
+    });
 });
-
-// Function to delete cookies
-function deleteCookie(name) {
-    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-}
-
