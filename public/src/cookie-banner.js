@@ -3,10 +3,7 @@ function generateShortUUID() {
     return Math.random().toString(36).substring(2, 10);
 }
 
-// Backend API URL
-const API_BASE_URL = "https://backendcookie-8qc1.onrender.com";
-const IPDATA_API_KEY = "d2e46351214782d552f706203cb424955384bc556f56ff01dd166651";
-
+// Document Ready Event
 document.addEventListener("DOMContentLoaded", async () => {
     const cookieBanner = document.getElementById("cookieConsent");
     const acceptCookiesButton = document.getElementById("acceptCookies");
@@ -15,36 +12,63 @@ document.addEventListener("DOMContentLoaded", async () => {
     const savePreferencesButton = document.getElementById("savePreferences");
     const cancelPreferencesButton = document.getElementById("cancelPreferences");
     const cookiePreferencesModal = document.getElementById("cookiePreferencesModal");
+    const strictlyNecessaryCheckbox = document.getElementById("strictlyNecessary");
+    const performanceCheckbox = document.getElementById("performance");
+    const functionalCheckbox = document.getElementById("functional");
+    const advertisingCheckbox = document.getElementById("advertising");
+    const socialMediaCheckbox = document.getElementById("socialMedia");
+    const cookieSettingsButton = document.createElement("button");
 
-    const checkboxes = {
-        performance: document.getElementById("performance"),
-        functional: document.getElementById("functional"),
-        advertising: document.getElementById("advertising"),
-        socialMedia: document.getElementById("socialMedia"),
-    };
+    cookieSettingsButton.id = "cookieSettingsButton";
+    cookieSettingsButton.innerHTML = "⚙️"; // Gear icon
+    cookieSettingsButton.style.position = "fixed";
+    cookieSettingsButton.style.top = "10px";
+    cookieSettingsButton.style.right = "10px";
+    cookieSettingsButton.style.backgroundColor = "transparent";
+    cookieSettingsButton.style.border = "none";
+    cookieSettingsButton.style.fontSize = "24px";
+    cookieSettingsButton.style.cursor = "pointer";
+    cookieSettingsButton.style.zIndex = "1000"; // Ensure it's above other elements
+    document.body.appendChild(cookieSettingsButton);
 
     function setCookie(name, value, days) {
         const date = new Date();
         date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-        document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/;secure;samesite=lax`;
+        document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/;secure;samesite=strict`;
     }
 
     function getCookie(name) {
-        const cookies = document.cookie.split("; ").find(row => row.startsWith(name + "="));
-        return cookies ? cookies.split("=")[1] : null;
+        const nameEq = name + "=";
+        const cookies = document.cookie.split(";");
+        for (let c of cookies) {
+            c = c.trim();
+            if (c.indexOf(nameEq) === 0) return c.substring(nameEq.length);
+        }
+        return null;
     }
 
-    let consentId = getCookie("consentId") || generateShortUUID();
-    setCookie("consentId", consentId, 365);
+    let consentId = getCookie("consentId");
 
     if (!getCookie("cookiesAccepted")) {
         setTimeout(() => cookieBanner.classList.add("show"), 500);
     }
 
-    acceptCookiesButton.addEventListener("click", () => handleCookieConsent(true));
-    rejectCookiesButton.addEventListener("click", () => handleCookieConsent(false));
+    acceptCookiesButton.addEventListener("click", () => {
+        handleCookieConsent(true);
+    });
+
+    rejectCookiesButton.addEventListener("click", () => {
+        handleCookieConsent(false);
+    });
 
     function handleCookieConsent(accepted) {
+        if (!consentId) {
+            consentId = generateShortUUID();
+            setCookie("consentId", consentId, 365);
+        }
+
+        console.log("📌 Using Consent ID:", consentId);
+
         const preferences = {
             strictlyNecessary: true,
             performance: accepted,
@@ -53,25 +77,43 @@ document.addEventListener("DOMContentLoaded", async () => {
             socialMedia: accepted,
         };
 
-        savePreferences(preferences, "true");
+        setCookie("cookiesAccepted", accepted.toString(), 365);
+        setCookie("cookiePreferences", JSON.stringify(preferences), 365);
+
+        sendPreferencesToDB(consentId, preferences);
+        saveLocationData(consentId);
+        hideBanner();
     }
 
     customizeCookiesButton.addEventListener("click", (event) => {
         event.preventDefault();
         cookiePreferencesModal.classList.add("show");
-        cookieBanner.classList.remove("show");
+        strictlyNecessaryCheckbox.checked = true;
+        strictlyNecessaryCheckbox.disabled = true;
     });
 
     savePreferencesButton.addEventListener("click", () => {
+        if (!consentId) {
+            consentId = generateShortUUID();
+            setCookie("consentId", consentId, 365);
+        }
+
+        console.log("📌 Using Consent ID:", consentId);
+
         const preferences = {
             strictlyNecessary: true,
-            performance: checkboxes.performance.checked,
-            functional: checkboxes.functional.checked,
-            advertising: checkboxes.advertising.checked,
-            socialMedia: checkboxes.socialMedia.checked,
+            performance: performanceCheckbox.checked,
+            functional: functionalCheckbox.checked,
+            advertising: advertisingCheckbox.checked,
+            socialMedia: socialMediaCheckbox.checked,
         };
 
-        savePreferences(preferences, "true");
+        setCookie("cookiesAccepted", "true", 365);
+        setCookie("cookiePreferences", JSON.stringify(preferences), 365);
+
+        sendPreferencesToDB(consentId, preferences);
+        saveLocationData(consentId);
+        hideBanner();
         cookiePreferencesModal.classList.remove("show");
     });
 
@@ -79,22 +121,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         cookiePreferencesModal.classList.remove("show");
     });
 
-    async function savePreferences(preferences, accepted) {
-        setCookie("cookiesAccepted", accepted, 365);
-        setCookie("cookiePreferences", btoa(JSON.stringify(preferences)), 365);
-
-        // Get the user's IP address before sending preferences
-        const userIpData = await getClientIPData();
-        if (!userIpData) {
-            console.error("❌ Failed to fetch user IP. Preferences not saved.");
-            return;
-        }
-
-        // Send preferences and location data to the backend
-        sendPreferencesToDB(consentId, preferences, userIpData.ip);
-        saveLocationData(consentId, userIpData);
-        hideBanner();
-    }
+    cookieSettingsButton.addEventListener("click", () => {
+        cookiePreferencesModal.classList.add("show");
+    });
 
     function hideBanner() {
         cookieBanner.classList.add("hide");
@@ -103,112 +132,61 @@ document.addEventListener("DOMContentLoaded", async () => {
         }, 500);
     }
 
-    async function getClientIPData() {
+    async function sendPreferencesToDB(consentId, preferences) {
         try {
-            const response = await fetch(`https://api.ipdata.co?api-key=${IPDATA_API_KEY}`);
-            const ipData = await response.json();
-
-            if (!ipData || !ipData.ip) {
-                throw new Error("Invalid IP response");
-            }
-
-            console.log("✅ Detected IP Address:", ipData.ip);
-            return ipData;
-        } catch (error) {
-            console.error("❌ Error fetching IP address:", error.message);
-            return null;
-        }
-    }
-
-    async function sendPreferencesToDB(consentId, preferences, userIp) {
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/save`, {
+            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/save", { // ✅ Updated API path
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ consentId, preferences, ipAddress: userIp }),
+                body: JSON.stringify({ consentId, preferences }),
             });
-
-            if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
-
             const data = await response.json();
             console.log("✅ Preferences saved:", data);
         } catch (error) {
-            console.error("❌ Error saving preferences:", error.message);
+            console.error("❌ Error saving preferences:", error);
         }
     }
 
-   async function saveLocationData(consentId, ipData) {
-    try {
-        if (!ipData || !ipData.ip) {
-            throw new Error("Invalid IP data received");
+    async function saveLocationData(consentId) {
+        try {
+            const response = await fetch("https://ipinfo.io/json?token=10772b28291307");
+            const data = await response.json();
+            const locationData = {
+                consentId,
+                ipAddress: data.ip,
+                isp: data.org,
+                city: data.city,
+                country: data.country,
+                latitude: null,
+                longitude: null,
+            };
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        locationData.latitude = position.coords.latitude;
+                        locationData.longitude = position.coords.longitude;
+                        sendLocationDataToDB(locationData);
+                    },
+                    () => sendLocationDataToDB(locationData)
+                );
+            } else {
+                sendLocationDataToDB(locationData);
+            }
+        } catch (error) {
+            console.error("❌ Error fetching location data:", error);
         }
-
-        // 🔹 Anonymize IP for GDPR compliance (removes last octet for IPv4)
-        const anonymizedIP = ipData.ip.includes(".")
-            ? ipData.ip.replace(/\.\d+$/, ".xxx")
-            : ipData.ip; // Keep unchanged for IPv6
-
-        const locationData = {
-            consentId,
-            ipAddress: anonymizedIP,  // ✅ Stores anonymized IP
-            isp: ipData.asn?.name || "Unknown ISP",
-            city: ipData.city || "Unknown City",
-            region: ipData.region || "Unknown Region",  // ✅ Added region
-            country: ipData.country_name || "Unknown Country",
-            latitude: (ipData.latitude >= -90 && ipData.latitude <= 90) ? ipData.latitude : null,  // ✅ Validates latitude
-            longitude: (ipData.longitude >= -180 && ipData.longitude <= 180) ? ipData.longitude : null,  // ✅ Validates longitude
-            postalCode: ipData.postal || "Unknown",
-            timezone: ipData.time_zone?.name || "Unknown Timezone",
-        };
-
-        console.log("✅ User Location Data:", locationData);
-        await sendLocationDataToDB(locationData);  // ✅ Ensure it's awaited for proper handling
-    } catch (error) {
-        console.error("❌ Error fetching real IP/location:", error.message);
     }
-}
-
 
     async function sendLocationDataToDB(locationData) {
         try {
-            const response = await fetch(`${API_BASE_URL}/api/location`, {
+            await fetch("https://backendcookie-8qc1.onrender.com/api/location", { // ✅ Updated API path
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(locationData),
             });
-
-            if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
-
             console.log("✅ Location data saved successfully.");
         } catch (error) {
-            console.error("❌ Error saving location data:", error.message);
+            console.error("❌ Error saving location data:", error);
         }
     }
-
-    function createCookieSettingsButton() {
-        if (document.getElementById("cookieSettingsButton")) return;
-
-        const button = document.createElement("button");
-        button.id = "cookieSettingsButton";
-        button.innerHTML = "⚙️";
-        Object.assign(button.style, {
-            position: "fixed",
-            top: "10px",
-            right: "10px",
-            backgroundColor: "transparent",
-            border: "none",
-            fontSize: "24px",
-            cursor: "pointer",
-            zIndex: "1000",
-        });
-        button.addEventListener("click", () => {
-            cookiePreferencesModal.classList.add("show");
-        });
-
-        document.body.appendChild(button);
-    }
-
-    createCookieSettingsButton();
 });
