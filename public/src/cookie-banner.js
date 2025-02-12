@@ -209,22 +209,36 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    deleteDataButton.addEventListener("click", async () => {
-        if (!consentId) return alert("No data found to delete.");
+  deleteDataButton.addEventListener("click", async () => {
+    if (!consentId) {
+        alert("No data found to delete.");
+        return;
+    }
 
-        try {
-            await fetch(`https://backendcookie-8qc1.onrender.com/api/delete/${consentId}`, { method: "DELETE" });
+    try {
+        const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/delete-my-data/${consentId}`, {
+            method: "DELETE",
+        });
 
-            deleteCookie("consentId");
-            deleteCookie("cookiesAccepted");
-            deleteCookie("cookiePreferences");
-
-            alert("Your data has been deleted.");
-            cookiePreferencesModal.classList.remove("show");
-        } catch (error) {
-            console.error("❌ Error deleting data:", error);
-            alert("Failed to delete data.");
+        if (!response.ok) {
+            throw new Error(`Failed to delete data: ${response.statusText}`);
         }
-    });
 
+        // Delete cookies after successful API response
+        deleteCookie("consentId");
+        deleteCookie("cookiesAccepted");
+        deleteCookie("cookiePreferences");
+
+        alert("Your data has been deleted.");
+        cookiePreferencesModal.classList.remove("show");
+    } catch (error) {
+        console.error("❌ Error deleting data:", error);
+        alert("Failed to delete data. Please try again later.");
+    }
 });
+
+// Function to delete cookies
+function deleteCookie(name) {
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+}
+
