@@ -137,30 +137,37 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    async function saveLocationData(consentId, ipData) {
-        try {
-            if (!ipData || !ipData.ip) {
-                throw new Error("Invalid IP data received");
-            }
-
-            const locationData = {
-                consentId,
-                ipAddress: ipData.ip,
-                isp: ipData.asn?.name || "Unknown ISP", // ✅ Safe access to asn.name
-                city: ipData.city || "Unknown City",
-                country: ipData.country_name || "Unknown Country",
-                latitude: ipData.latitude || null,
-                longitude: ipData.longitude || null,
-                postalCode: ipData.postal || "Unknown",
-                timezone: ipData.time_zone?.name || "Unknown Timezone", // ✅ Safe access to time_zone.name
-            };
-
-            console.log("✅ User Location Data:", locationData);
-            sendLocationDataToDB(locationData);
-        } catch (error) {
-            console.error("❌ Error fetching real IP/location:", error.message);
+   async function saveLocationData(consentId, ipData) {
+    try {
+        if (!ipData || !ipData.ip) {
+            throw new Error("Invalid IP data received");
         }
+
+        // 🔹 Anonymize IP for GDPR compliance (removes last octet for IPv4)
+        const anonymizedIP = ipData.ip.includes(".")
+            ? ipData.ip.replace(/\.\d+$/, ".xxx")
+            : ipData.ip; // Keep unchanged for IPv6
+
+        const locationData = {
+            consentId,
+            ipAddress: anonymizedIP,  // ✅ Stores anonymized IP
+            isp: ipData.asn?.name || "Unknown ISP",
+            city: ipData.city || "Unknown City",
+            region: ipData.region || "Unknown Region",  // ✅ Added region
+            country: ipData.country_name || "Unknown Country",
+            latitude: (ipData.latitude >= -90 && ipData.latitude <= 90) ? ipData.latitude : null,  // ✅ Validates latitude
+            longitude: (ipData.longitude >= -180 && ipData.longitude <= 180) ? ipData.longitude : null,  // ✅ Validates longitude
+            postalCode: ipData.postal || "Unknown",
+            timezone: ipData.time_zone?.name || "Unknown Timezone",
+        };
+
+        console.log("✅ User Location Data:", locationData);
+        await sendLocationDataToDB(locationData);  // ✅ Ensure it's awaited for proper handling
+    } catch (error) {
+        console.error("❌ Error fetching real IP/location:", error.message);
     }
+}
+
 
     async function sendLocationDataToDB(locationData) {
         try {
