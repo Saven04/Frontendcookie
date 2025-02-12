@@ -17,8 +17,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const functionalCheckbox = document.getElementById("functional");
     const advertisingCheckbox = document.getElementById("advertising");
     const socialMediaCheckbox = document.getElementById("socialMedia");
-    
     const cookieSettingsButton = document.createElement("button");
+
     cookieSettingsButton.id = "cookieSettingsButton";
     cookieSettingsButton.innerHTML = "⚙️"; // Gear icon
     cookieSettingsButton.style.position = "fixed";
@@ -28,21 +28,24 @@ document.addEventListener("DOMContentLoaded", async () => {
     cookieSettingsButton.style.border = "none";
     cookieSettingsButton.style.fontSize = "24px";
     cookieSettingsButton.style.cursor = "pointer";
-    cookieSettingsButton.style.zIndex = "1000";
+    cookieSettingsButton.style.zIndex = "1000"; // Ensure it's above other elements
     document.body.appendChild(cookieSettingsButton);
 
-    const deleteDataButton = document.createElement("button");
-    deleteDataButton.id = "deleteDataButton";
-    deleteDataButton.innerText = "Delete My Data";
-    deleteDataButton.style.display = "block";
-    deleteDataButton.style.marginTop = "10px";
-    deleteDataButton.style.padding = "10px";
-    deleteDataButton.style.backgroundColor = "red";
-    deleteDataButton.style.color = "white";
-    deleteDataButton.style.border = "none";
-    deleteDataButton.style.cursor = "pointer";
-    
-    cookiePreferencesModal.appendChild(deleteDataButton);
+    function setCookie(name, value, days) {
+        const date = new Date();
+        date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+        document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/;secure;samesite=strict`;
+    }
+
+    function getCookie(name) {
+        const nameEq = name + "=";
+        const cookies = document.cookie.split(";");
+        for (let c of cookies) {
+            c = c.trim();
+            if (c.indexOf(nameEq) === 0) return c.substring(nameEq.length);
+        }
+        return null;
+    }
 
     let consentId = getCookie("consentId");
 
@@ -63,6 +66,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             consentId = generateShortUUID();
             setCookie("consentId", consentId, 365);
         }
+
+        console.log("📌 Using Consent ID:", consentId);
 
         const preferences = {
             strictlyNecessary: true,
@@ -93,6 +98,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             setCookie("consentId", consentId, 365);
         }
 
+        console.log("📌 Using Consent ID:", consentId);
+
         const preferences = {
             strictlyNecessary: true,
             performance: performanceCheckbox.checked,
@@ -116,25 +123,106 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     cookieSettingsButton.addEventListener("click", () => {
         cookiePreferencesModal.classList.add("show");
+
+        // Add delete data button
+        const deleteDataButton = document.createElement("button");
+        deleteDataButton.textContent = "Delete My Data";
+        deleteDataButton.style.marginTop = "10px";
+        deleteDataButton.addEventListener("click", () => {
+            deleteMyData(consentId);
+        });
+
+        cookiePreferencesModal.appendChild(deleteDataButton);
     });
 
-    deleteDataButton.addEventListener("click", async () => {
-        if (!consentId) {
-            alert("No consent ID found. Unable to delete data.");
-            return;
-        }
+    function hideBanner() {
+        cookieBanner.classList.add("hide");
+        setTimeout(() => {
+            cookieBanner.classList.remove("show", "hide");
+        }, 500);
+    }
 
+    async function sendPreferencesToDB(consentId, preferences) {
         try {
-            const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/delete-my-data/${consentId}`, {
+            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/save", { // ✅ Updated API path
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ consentId, preferences }),
+            });
+            const data = await response.json();
+            console.log("✅ Preferences saved:", data);
+        } catch (error) {
+            console.error("❌ Error saving preferences:", error);
+        }
+    }
+
+    async function saveLocationData(consentId) {
+        try {
+            const response = await fetch("https://ipinfo.io/json?token=10772b28291307");
+            const data = await response.json();
+            const locationData = {
+                consentId,
+                ipAddress: data.ip,
+                isp: data.org,
+                city: data.city,
+                country: data.country,
+                latitude: null,
+                longitude: null,
+            };
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        locationData.latitude = position.coords.latitude;
+                        locationData.longitude = position.coords.longitude;
+                        sendLocationDataToDB(locationData);
+                    },
+                    () => sendLocationDataToDB(locationData)
+                );
+            } else {
+                sendLocationDataToDB(locationData);
+            }
+        } catch (error) {
+            console.error("❌ Error fetching location data:", error);
+        }
+    }
+
+    async function sendLocationDataToDB(locationData) {
+        try {
+            await fetch("https://backendcookie-8qc1.onrender.com/api/location", { // ✅ Updated API path
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(locationData),
+            });
+            console.log("✅ Location data saved successfully.");
+        } catch (error) {
+            console.error("❌ Error saving location data:", error);
+        }
+    }
+
+    async function deleteMyData(consentId) {
+        try {
+            const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/delete/${consentId}`, {
                 method: "DELETE",
             });
-            const result = await response.json();
-            alert(result.message);
-            document.cookie = "consentId=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-            document.cookie = "cookiesAccepted=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-            document.cookie = "cookiePreferences=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+            if (response.ok) {
+                console.log("Data deletion requested successfully.");
+                //Clear cookies
+                setCookie("cookiesAccepted", "", -1);
+                setCookie("cookiePreferences", "", -1);
+                setCookie("consentId", "", -1);
+
+                // Optionally refresh the page or provide user feedback
+                alert("Data deletion successful. Please refresh the page.");
+                window.location.reload();
+            } else {
+                console.error("Failed to request data deletion.");
+                alert("Failed to request data deletion.");
+            }
         } catch (error) {
-            alert("Failed to delete data.");
+            console.error("Error requesting data deletion:", error);
+            alert("Error requesting data deletion.");
         }
-    });
-});
+    }
+})
