@@ -40,10 +40,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         position: "fixed",
         top: "50px",
         right: "10px",
-        backgroundColor: "#fff",
+        backgroundColor: "rgba(0, 0, 0, 0.8)", // Transparent black background
+        color: "#fff", // White text color for visibility
         border: "1px solid #ccc",
         borderRadius: "5px",
-        boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
+        boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
         display: "none",
         zIndex: "1000",
     });
@@ -71,29 +72,31 @@ document.addEventListener("DOMContentLoaded", async () => {
     cookiePolicyOption.style.padding = "5px";
     cookiePolicyOption.style.cursor = "pointer";
     
-	cookiePolicyOption.addEventListener("click", () => {
-		window.open("/cookie-policy", "_blank");
-		settingsDropdown.style.display="none";
-	});
+    cookiePolicyOption.addEventListener("click", () => {
+        window.open("/cookie-policy", "_blank");
+        settingsDropdown.style.display = "none";
+    });
 
-	const privacyPolicyOption = document.createElement("div");
-	privacyPolicyOption.innerText="Privacy Policy";
-	privacyPolicyOption.style.padding="5px";
-	privacyPolicyOption.style.cursor="pointer";
+    const privacyPolicyOption = document.createElement("div");
+    privacyPolicyOption.innerText = "Privacy Policy";
+    
+	privacyPolicyOption.style.padding = "5px";
+	privacyPolicyOption.style.cursor = "pointer";
 
 	privacyPolicyOption.addEventListener("click", () => {
 		window.open("/privacy-policy", "_blank");
-		settingsDropdown.style.display="none";
+		settingsDropdown.style.display = "none";
 	});
 
-	const tosOption=document.createElement("div");
-	tosOption.innerText="Terms of Service";
-	tosOption.style.padding="5px";
-	tosOption.style.cursor="pointer";
+	const tosOption = document.createElement("div");
+	tosOption.innerText = "Terms of Service";
+
+	tosOption.style.padding = "5px";
+	tosOption.style.cursor = "pointer";
 
 	tosOption.addEventListener("click", () => {
 		window.open("/terms-of-service", "_blank");
-		settingsDropdown.style.display="none";
+		settingsDropdown.style.display = "none";
 	});
 
 	policiesSubMenu.appendChild(cookiePolicyOption);
@@ -101,16 +104,46 @@ document.addEventListener("DOMContentLoaded", async () => {
 	policiesSubMenu.appendChild(tosOption);
 
 	policiesOption.addEventListener("click", () => {
-		policiesSubMenu.style.display=policiesSubMenu.style.display==="none" ? "block" : "none";
+		policiesSubMenu.style.display =
+			policiesSubMenu.style.display === "none" ? "block" : "none";
+	});
+
+	const deleteDataOption = document.createElement("div");
+	deleteDataOption.innerText = "Delete My Data";
+	deleteDataOption.style.padding = "10px";
+	deleteDataOption.style.cursor = "pointer";
+
+	deleteDataOption.addEventListener("click", async () => {
+		if (!consentId) {
+			alert("No data found to delete.");
+			return;
+		}
+
+		try {
+			const response=await fetch(`https://backendcookie-8qc1.onrender.com/api/delete-my-data/${consentId}`, { method:'DELETE' });
+
+			if (!response.ok) throw new Error(`Failed to delete data:${response.statusText}`);
+
+			// Delete all related cookies
+			["consentId", "cookiesAccepted", "cookiePreferences"].forEach(deleteCookie);
+
+			alert("Your data has been deleted.");
+			settingsDropdown.style.display="none";
+		} catch (error) {
+			console.error("❌ Error deleting data:", error);
+			alert("Failed to delete data. Please try again later.");
+		}
 	});
 
 	settingsDropdown.appendChild(customizePreferenceOption);
 	settingsDropdown.appendChild(policiesOption);
 	settingsDropdown.appendChild(policiesSubMenu);
+	settingsDropdown.appendChild(deleteDataOption);
 	document.body.appendChild(settingsDropdown);
 
 	cookieSettingsButton.addEventListener("click", () => {
-		settingsDropdown.style.display=settingsDropdown.style.display==="none" ? "block" : "none";
+		settingsDropdown.style.display =
+			settingsDropdown.style.display ==="none" ? 'block' : 'none';
 	});
 
 	if (cookiePreferencesModal) {
@@ -279,4 +312,25 @@ document.addEventListener("DOMContentLoaded", async () => {
 	      }
 	  }
 
+	deleteDataButton.addEventListener('click', async () => {
+	    if (!consentId) {
+	        alert('No data found to delete.');
+	        return;
+	      }
+
+	    try {
+	        const response=await fetch(`https://backendcookie-8qc1.onrender.com/api/delete-my-data/${consentId}`, { method:'DELETE' });
+
+	        if (!response.ok) throw new Error(`Failed to delete data:${response.statusText}`);
+
+	        // Delete all related cookies
+	        ['consentId','cookiesAccepted','cookiePreferences'].forEach(deleteCookie);
+
+	        alert('Your data has been deleted.');
+	        cookiePreferencesModal.classList.remove('show');
+	      } catch (error) { 
+	      	console.error('❌ Error deleting data:', error); 
+	      	alert('Failed to delete data. Please try again later.'); 
+	      }
+	  });
 });
