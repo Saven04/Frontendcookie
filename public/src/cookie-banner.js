@@ -21,32 +21,40 @@ document.addEventListener("DOMContentLoaded", async () => {
     const cookieSettingsButton = document.createElement("button");
     cookieSettingsButton.id = "cookieSettingsButton";
     cookieSettingsButton.innerHTML = "⚙️"; // Gear icon
-    Object.assign(cookieSettingsButton.style, {
-        position: "fixed",
-        top: "10px",
-        right: "10px",
-        backgroundColor: "transparent",
-        border: "none",
-        fontSize: "24px",
-        cursor: "pointer",
-        zIndex: "1000",
-    });
-    document.body.appendChild(cookieSettingsButton);
-
-    // Create dropdown menu
-    const settingsDropdown = document.createElement("div");
-    settingsDropdown.id = "settingsDropdown";
     Object.assign(settingsDropdown.style, {
-        position: "fixed",
-        top: "50px",
-        right: "10px",
-        backgroundColor: "#fff",
-        border: "1px solid #ccc",
-        borderRadius: "5px",
-        boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
-        display: "none",
-        zIndex: "1000",
+    position: "fixed",
+    top: "50px",
+    right: "10px",
+    backgroundColor: "#333", // Dark background for contrast
+    color: "#fff", // White text
+    border: "1px solid #555", // Slightly visible border
+    borderRadius: "5px",
+    boxShadow: "0 2px 10px rgba(0, 0, 0, 0.3)", // Stronger shadow for visibility
+    display: "none",
+    zIndex: "1000",
+    padding: "10px", // Padding for better spacing
+    fontFamily: "Arial, sans-serif", // Consistent font
+    width: "200px" // Fixed width for uniformity
+});
+
+[customizePreferenceOption, policiesOption, deleteDataOption, cookiePolicyOption, privacyPolicyOption, tosOption].forEach(option => {
+    Object.assign(option.style, {
+        padding: "10px",
+        cursor: "pointer",
+        color: "#fff", // White text
+        backgroundColor: "#444", // Slightly lighter background
+        borderBottom: "1px solid #555" // Divider between options
     });
+
+    option.addEventListener("mouseover", () => {
+        option.style.backgroundColor = "#555"; // Highlight on hover
+    });
+
+    option.addEventListener("mouseout", () => {
+        option.style.backgroundColor = "#444"; // Reset on mouse out
+    });
+});
+
 
     const customizePreferenceOption = document.createElement("div");
     customizePreferenceOption.innerText = "Customize Preference";
