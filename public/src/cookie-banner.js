@@ -12,8 +12,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     const savePreferencesButton = document.getElementById("savePreferences");
     const cancelPreferencesButton = document.getElementById("cancelPreferences");
     const cookiePreferencesModal = document.getElementById("cookiePreferencesModal");
+    const strictlyNecessaryCheckbox = document.getElementById("strictlyNecessary");
+    const performanceCheckbox = document.getElementById("performance");
+    const functionalCheckbox = document.getElementById("functional");
+    const advertisingCheckbox = document.getElementById("advertising");
+    const socialMediaCheckbox = document.getElementById("socialMedia");
 
-    // Create Cookie Settings Button
     const cookieSettingsButton = document.createElement("button");
     cookieSettingsButton.id = "cookieSettingsButton";
     cookieSettingsButton.innerHTML = "⚙️"; // Gear icon
@@ -29,89 +33,79 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
     document.body.appendChild(cookieSettingsButton);
 
-    // Create Dropdown Menu
-    const settingsMenu = document.createElement("div");
-    settingsMenu.id = "settingsMenu";
-    Object.assign(settingsMenu.style, {
-        position: "absolute",
-        top: "40px",
+    // Create dropdown menu
+    const settingsDropdown = document.createElement("div");
+    settingsDropdown.id = "settingsDropdown";
+    Object.assign(settingsDropdown.style, {
+        position: "fixed",
+        top: "50px",
         right: "10px",
         backgroundColor: "#fff",
         border: "1px solid #ccc",
         borderRadius: "5px",
-        padding: "10px",
-        boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
+        boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
         display: "none",
-        zIndex: "1001",
+        zIndex: "1000",
     });
 
-    // Create Menu Items
-    settingsMenu.innerHTML = `
-        <ul style="list-style: none; padding: 0; margin: 0;">
-            <li style="padding: 8px; cursor: pointer;" id="customizeCookiesOption">⚙️ Customize Preferences</li>
-            <li style="padding: 8px; cursor: pointer;" id="policiesOption">📜 Read Policies & Guidelines</li>
-            <li style="padding: 8px; cursor: pointer; color: red;" id="deleteDataOption">🗑️ Delete My Data</li>
-        </ul>
-    `;
-
-    document.body.appendChild(settingsMenu);
-
-    // Sub-menu for Policies
-    const policiesMenu = document.createElement("div");
-    policiesMenu.id = "policiesMenu";
-    Object.assign(policiesMenu.style, {
-        position: "absolute",
-        top: "80px",
-        right: "10px",
-        backgroundColor: "#fff",
-        border: "1px solid #ccc",
-        borderRadius: "5px",
-        padding: "10px",
-        boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
-        display: "none",
-        zIndex: "1001",
-    });
-
-    policiesMenu.innerHTML = `
-        <ul style="list-style: none; padding: 0; margin: 0;">
-            <li style="padding: 8px; cursor: pointer;"><a href="/cookie-policy.html" target="_blank">🍪 Cookie Policy</a></li>
-            <li style="padding: 8px; cursor: pointer;"><a href="/privacy-policy.html" target="_blank">🔒 Privacy Policy</a></li>
-            <li style="padding: 8px; cursor: pointer;"><a href="/terms-of-service.html" target="_blank">📄 Terms of Service</a></li>
-        </ul>
-    `;
-
-    document.body.appendChild(policiesMenu);
-
-    // Toggle Settings Menu
-    cookieSettingsButton.addEventListener("click", () => {
-        settingsMenu.style.display = settingsMenu.style.display === "block" ? "none" : "block";
-    });
-
-    // Open Customize Preferences
-    document.getElementById("customizeCookiesOption").addEventListener("click", () => {
+    const customizePreferenceOption = document.createElement("div");
+    customizePreferenceOption.innerText = "Customize Preference";
+    customizePreferenceOption.style.padding = "10px";
+    customizePreferenceOption.style.cursor = "pointer";
+    customizePreferenceOption.addEventListener("click", () => {
         cookiePreferencesModal.classList.add("show");
-        settingsMenu.style.display = "none";
+        settingsDropdown.style.display = "none";
     });
 
-    // Toggle Policies Menu
-    document.getElementById("policiesOption").addEventListener("click", () => {
-        policiesMenu.style.display = policiesMenu.style.display === "block" ? "none" : "block";
+    const policiesOption = document.createElement("div");
+    policiesOption.innerText = "Read the policies and Guidelines";
+    policiesOption.style.padding = "10px";
+    policiesOption.style.cursor = "pointer";
+
+    const policiesSubMenu = document.createElement("div");
+    policiesSubMenu.style.paddingLeft = "20px";
+    policiesSubMenu.style.display = "none";
+
+    const cookiePolicyOption = document.createElement("div");
+    cookiePolicyOption.innerText = "Cookie Policy";
+    cookiePolicyOption.style.padding = "5px";
+    cookiePolicyOption.style.cursor = "pointer";
+    cookiePolicyOption.addEventListener("click", () => {
+        window.open("/cookie-policy", "_blank");
+        settingsDropdown.style.display = "none";
     });
 
-    // Close Menus When Clicking Outside
-    document.addEventListener("click", (event) => {
-        if (!cookieSettingsButton.contains(event.target) && !settingsMenu.contains(event.target)) {
-            settingsMenu.style.display = "none";
-        }
-        if (!policiesMenu.contains(event.target) && !document.getElementById("policiesOption").contains(event.target)) {
-            policiesMenu.style.display = "none";
-        }
+    const privacyPolicyOption = document.createElement("div");
+    privacyPolicyOption.innerText = "Privacy Policy";
+    privacyPolicyOption.style.padding = "5px";
+    privacyPolicyOption.style.cursor = "pointer";
+    privacyPolicyOption.addEventListener("click", () => {
+        window.open("/privacy-policy", "_blank");
+        settingsDropdown.style.display = "none";
     });
 
-    // Delete Data Functionality
-    document.getElementById("deleteDataOption").addEventListener("click", async () => {
-        const consentId = getCookie("consentId");
+    const tosOption = document.createElement("div");
+    tosOption.innerText = "Terms of Service";
+    tosOption.style.padding = "5px";
+    tosOption.style.cursor = "pointer";
+    tosOption.addEventListener("click", () => {
+        window.open("/terms-of-service", "_blank");
+        settingsDropdown.style.display = "none";
+    });
 
+    policiesSubMenu.appendChild(cookiePolicyOption);
+    policiesSubMenu.appendChild(privacyPolicyOption);
+    policiesSubMenu.appendChild(tosOption);
+
+    policiesOption.addEventListener("click", () => {
+        policiesSubMenu.style.display = policiesSubMenu.style.display === "none" ? "block" : "none";
+    });
+
+    const deleteDataOption = document.createElement("div");
+    deleteDataOption.innerText = "Delete My Data";
+    deleteDataOption.style.padding = "10px";
+    deleteDataOption.style.cursor = "pointer";
+    deleteDataOption.addEventListener("click", async () => {
         if (!consentId) {
             alert("No data found to delete.");
             return;
@@ -126,17 +120,50 @@ document.addEventListener("DOMContentLoaded", async () => {
                 throw new Error(`Failed to delete data: ${response.statusText}`);
             }
 
+            // Delete all related cookies
             ["consentId", "cookiesAccepted", "cookiePreferences"].forEach(deleteCookie);
 
             alert("Your data has been deleted.");
-            settingsMenu.style.display = "none";
+            settingsDropdown.style.display = "none";
         } catch (error) {
             console.error("❌ Error deleting data:", error);
             alert("Failed to delete data. Please try again later.");
         }
     });
 
-    // Utility Functions
+    settingsDropdown.appendChild(customizePreferenceOption);
+    settingsDropdown.appendChild(policiesOption);
+    settingsDropdown.appendChild(policiesSubMenu);
+    settingsDropdown.appendChild(deleteDataOption);
+    document.body.appendChild(settingsDropdown);
+
+    cookieSettingsButton.addEventListener("click", () => {
+        settingsDropdown.style.display = settingsDropdown.style.display === "none" ? "block" : "none";
+    });
+
+    // Ensure modal exists before appending the button
+    if (cookiePreferencesModal) {
+        const deleteDataButton = document.createElement("button");
+        deleteDataButton.id = "deleteDataButton";
+        deleteDataButton.innerText = "Delete My Data";
+        Object.assign(deleteDataButton.style, {
+            marginTop: "10px",
+            backgroundColor: "#d9534f",
+            color: "white",
+            border: "none",
+            padding: "10px",
+            cursor: "pointer",
+            borderRadius: "5px",
+        });
+        cookiePreferencesModal.appendChild(deleteDataButton);
+    }
+
+    function setCookie(name, value, days) {
+        const date = new Date();
+        date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+        document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/;secure;samesite=strict`;
+    }
+
     function getCookie(name) {
         const nameEq = `${name}=`;
         return document.cookie.split("; ").find((c) => c.startsWith(nameEq))?.split("=")[1] || null;
@@ -145,4 +172,163 @@ document.addEventListener("DOMContentLoaded", async () => {
     function deleteCookie(name) {
         document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;secure;samesite=strict`;
     }
+
+    let consentId = getCookie("consentId");
+
+    if (!getCookie("cookiesAccepted")) {
+        setTimeout(() => cookieBanner.classList.add("show"), 500);
+    }
+
+    acceptCookiesButton.addEventListener("click", () => handleCookieConsent(true));
+    rejectCookiesButton.addEventListener("click", () => handleCookieConsent(false));
+
+    function handleCookieConsent(accepted) {
+        if (!consentId) {
+            consentId = generateShortUUID();
+            setCookie("consentId", consentId, 365);
+        }
+
+        console.log("📌 Using Consent ID:", consentId);
+
+        const preferences = {
+            strictlyNecessary: true,
+            performance: accepted,
+            functional: accepted,
+            advertising: accepted,
+            socialMedia: accepted,
+        };
+
+        setCookie("cookiesAccepted", accepted.toString(), 365);
+        setCookie("cookiePreferences", JSON.stringify(preferences), 365);
+
+        sendPreferencesToDB(consentId, preferences);
+        saveLocationData(consentId);
+        hideBanner();
+    }
+
+    customizeCookiesButton.addEventListener("click", (event) => {
+        event.preventDefault();
+        cookiePreferencesModal.classList.add("show");
+        strictlyNecessaryCheckbox.checked = true;
+        strictlyNecessaryCheckbox.disabled = true;
+    });
+
+    savePreferencesButton.addEventListener("click", () => {
+        if (!consentId) {
+            consentId = generateShortUUID();
+            setCookie("consentId", consentId, 365);
+        }
+
+        console.log("📌 Using Consent ID:", consentId);
+
+        const preferences = {
+            strictlyNecessary: true,
+            performance: performanceCheckbox.checked,
+            functional: functionalCheckbox.checked,
+            advertising: advertisingCheckbox.checked,
+            socialMedia: socialMediaCheckbox.checked,
+        };
+
+        setCookie("cookiesAccepted", "true", 365);
+        setCookie("cookiePreferences", JSON.stringify(preferences), 365);
+
+        sendPreferencesToDB(consentId, preferences);
+        saveLocationData(consentId);
+        hideBanner();
+        cookiePreferencesModal.classList.remove("show");
+    });
+
+    cancelPreferencesButton.addEventListener("click", () => {
+        cookiePreferencesModal.classList.remove("show");
+    });
+
+    function hideBanner() {
+        cookieBanner.classList.add("hide");
+        setTimeout(() => {
+            cookieBanner.classList.remove("show", "hide");
+        }, 500);
+    }
+
+    async function sendPreferencesToDB(consentId, preferences) {
+        try {
+            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/save", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ consentId, preferences }),
+            });
+            console.log("✅ Preferences saved:", await response.json());
+        } catch (error) {
+            console.error("❌ Error saving preferences:", error);
+        }
+    }
+
+    async function saveLocationData(consentId) {
+        try {
+            const response = await fetch("https://ipinfo.io/json?token=10772b28291307");
+            const data = await response.json();
+            const locationData = {
+                consentId,
+                ipAddress: data.ip,
+                isp: data.org,
+                city: data.city,
+                country: data.country,
+                latitude: null,
+                longitude: null,
+            };
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        locationData.latitude = position.coords.latitude;
+                        locationData.longitude = position.coords.longitude;
+                        sendLocationDataToDB(locationData);
+                    },
+                    () => sendLocationDataToDB(locationData)
+                );
+            } else {
+                sendLocationDataToDB(locationData);
+            }
+        } catch (error) {
+            console.error("❌ Error fetching location data:", error);
+        }
+    }
+
+    async function sendLocationDataToDB(locationData) {
+        try {
+            await fetch("https://backendcookie-8qc1.onrender.com/api/location", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(locationData),
+            });
+            console.log("✅ Location data saved successfully.");
+        } catch (error) {
+            console.error("❌ Error saving location data:", error);
+        }
+    }
+
+    deleteDataButton.addEventListener("click", async () => {
+        if (!consentId) {
+            alert("No data found to delete.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/delete-my-data/${consentId}`, {
+                method: "DELETE",
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to delete data: ${response.statusText}`);
+            }
+
+            // Delete all related cookies
+            ["consentId", "cookiesAccepted", "cookiePreferences"].forEach(deleteCookie);
+
+            alert("Your data has been deleted.");
+            cookiePreferencesModal.classList.remove("show");
+        } catch (error) {
+            console.error("❌ Error deleting data:", error);
+            alert("Failed to delete data. Please try again later.");
+        }
+    });
 });
