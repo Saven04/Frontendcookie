@@ -40,11 +40,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         position: "fixed",
         top: "50px",
         right: "10px",
-        backgroundColor: "rgba(0, 0, 0, 0.8)", // Transparent black background
-        color: "#fff", // White text color for visibility
+        backgroundColor: "#fff",
         border: "1px solid #ccc",
         borderRadius: "5px",
-        boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
+        boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
         display: "none",
         zIndex: "1000",
     });
@@ -53,50 +52,46 @@ document.addEventListener("DOMContentLoaded", async () => {
     customizePreferenceOption.innerText = "Customize Preference";
     customizePreferenceOption.style.padding = "10px";
     customizePreferenceOption.style.cursor = "pointer";
-    customizePreferenceOption.addEventListener("click", () => {
-        cookiePreferencesModal.classList.add("show");
-        settingsDropdown.style.display = "none";
-    });
-
-    const policiesOption = document.createElement("div");
-    policiesOption.innerText = "Read the policies and Guidelines";
-    policiesOption.style.padding = "10px";
-    policiesOption.style.cursor = "pointer";
-
-    const policiesSubMenu = document.createElement("div");
-    policiesSubMenu.style.paddingLeft = "20px";
-    policiesSubMenu.style.display = "none";
-
-    const cookiePolicyOption = document.createElement("div");
-    cookiePolicyOption.innerText = "Cookie Policy";
-    cookiePolicyOption.style.padding = "5px";
-    cookiePolicyOption.style.cursor = "pointer";
     
-    cookiePolicyOption.addEventListener("click", () => {
-        window.open("/cookie-policy", "_blank");
-        settingsDropdown.style.display = "none";
-    });
-
-    const privacyPolicyOption = document.createElement("div");
-    privacyPolicyOption.innerText = "Privacy Policy";
-    
-	privacyPolicyOption.style.padding = "5px";
-	privacyPolicyOption.style.cursor = "pointer";
-
-	privacyPolicyOption.addEventListener("click", () => {
-		window.open("/privacy-policy", "_blank");
-		settingsDropdown.style.display = "none";
+	customizePreferenceOption.addEventListener("click", () => {
+	    cookiePreferencesModal.classList.add("show");
+	    settingsDropdown.style.display = "none";
 	});
 
-	const tosOption = document.createElement("div");
-	tosOption.innerText = "Terms of Service";
+	const policiesOption = document.createElement("div");
+	policiesOption.innerText = "Read the policies and Guidelines";
+	policiesOption.style.padding = "10px";
+	policiesOption.style.cursor = "pointer";
 
-	tosOption.style.padding = "5px";
-	tosOption.style.cursor = "pointer";
+	const policiesSubMenu = document.createElement("div");
+	policiesSubMenu.style.paddingLeft = "20px";
+	policiesSubMenu.style.display = "none";
 
+	const cookiePolicyOption = document.createElement("div");
+	cookiePolicyOption.innerText = "Cookie Policy";
+	cookiePolicyOption.style.padding = "5px";
+	cookiePolicyOption.style.cursor = "pointer";
+	cookiePolicyOption.addEventListener("click", () => {
+	    window.open("/cookie-policy", "_blank");
+	    settingsDropdown.style.display="none";
+	});
+
+	const privacyPolicyOption = document.createElement("div");
+	privacyPolicyOption.innerText="Privacy Policy";
+	privacyPolicyOption.style.padding="5px";
+	privacyPolicyOption.style.cursor="pointer";
+	privacyPolicyOption.addEventListener("click", () => {
+	    window.open("/privacy-policy", "_blank");
+	    settingsDropdown.style.display="none";
+	});
+
+	const tosOption=document.createElement("div");
+	tosOption.innerText="Terms of Service";
+	tosOption.style.padding="5px";
+	tosOption.style.cursor="pointer";
 	tosOption.addEventListener("click", () => {
-		window.open("/terms-of-service", "_blank");
-		settingsDropdown.style.display = "none";
+	    window.open("/terms-of-service", "_blank");
+	    settingsDropdown.style.display="none";
 	});
 
 	policiesSubMenu.appendChild(cookiePolicyOption);
@@ -104,63 +99,45 @@ document.addEventListener("DOMContentLoaded", async () => {
 	policiesSubMenu.appendChild(tosOption);
 
 	policiesOption.addEventListener("click", () => {
-		policiesSubMenu.style.display =
-			policiesSubMenu.style.display === "none" ? "block" : "none";
+	    policiesSubMenu.style.display=policiesSubMenu.style.display==="none" ? "block" : "none";
 	});
 
 	const deleteDataOption = document.createElement("div");
-	deleteDataOption.innerText = "Delete My Data";
-	deleteDataOption.style.padding = "10px";
-	deleteDataOption.style.cursor = "pointer";
+	deleteDataOption.innerText="Delete My Data"; // Added back to dropdown menu
+	deleteDataOption.style.padding="10px";
+	deleteDataOption.style.cursor="pointer";
 
 	deleteDataOption.addEventListener("click", async () => {
-		if (!consentId) {
-			alert("No data found to delete.");
-			return;
-		}
+	    if (!consentId) {
+	        alert('No data found to delete.');
+	        return;
+	      }
 
-		try {
-			const response=await fetch(`https://backendcookie-8qc1.onrender.com/api/delete-my-data/${consentId}`, { method:'DELETE' });
+	    try {
+	        const response=await fetch(`https://backendcookie-8qc1.onrender.com/api/delete-my-data/${consentId}`, { method:'DELETE' });
 
-			if (!response.ok) throw new Error(`Failed to delete data:${response.statusText}`);
+	        if (!response.ok) throw new Error(`Failed to delete data:${response.statusText}`);
 
-			// Delete all related cookies
-			["consentId", "cookiesAccepted", "cookiePreferences"].forEach(deleteCookie);
+	        // Delete all related cookies
+	        ['consentId','cookiesAccepted','cookiePreferences'].forEach(deleteCookie);
 
-			alert("Your data has been deleted.");
-			settingsDropdown.style.display="none";
-		} catch (error) {
-			console.error("❌ Error deleting data:", error);
-			alert("Failed to delete data. Please try again later.");
-		}
+	        alert('Your data has been deleted.');
+	        settingsDropdown.style.display='none';
+	      } catch (error) { 
+	      	console.error('❌ Error deleting data:', error); 
+	      	alert('Failed to delete data. Please try again later.'); 
+	      }
 	});
 
 	settingsDropdown.appendChild(customizePreferenceOption);
 	settingsDropdown.appendChild(policiesOption);
 	settingsDropdown.appendChild(policiesSubMenu);
-	settingsDropdown.appendChild(deleteDataOption);
+	settingsDropdown.appendChild(deleteDataOption); // Append delete option to dropdown
 	document.body.appendChild(settingsDropdown);
 
-	cookieSettingsButton.addEventListener("click", () => {
-		settingsDropdown.style.display =
-			settingsDropdown.style.display ==="none" ? 'block' : 'none';
-	});
-
-	if (cookiePreferencesModal) {
-	    const deleteDataButton=document.createElement('button');
-	    deleteDataButton.id='deleteDataButton';
-	    deleteDataButton.innerText='Delete My Data';
-	    Object.assign(deleteDataButton.style,{
-	        marginTop:'10px',
-	        backgroundColor:'#d9534f',
-	        color:'white',
-	        border:'none',
-	        padding:'10px',
-	        cursor:'pointer',
-	        borderRadius:'5px',
-	    });
-	    cookiePreferencesModal.appendChild(deleteDataButton);
-	  }
+	cookieSettingsButton.addEventListener('click', () => {
+	    settingsDropdown.style.display=settingsDropdown.style.display==="none" ? 'block' : 'none';
+	  });
 
 	function setCookie(name, value, days) {
 	    const date=new Date();
@@ -311,26 +288,4 @@ document.addEventListener("DOMContentLoaded", async () => {
 	        console.error('❌ Error saving location data:', error);
 	      }
 	  }
-
-	deleteDataButton.addEventListener('click', async () => {
-	    if (!consentId) {
-	        alert('No data found to delete.');
-	        return;
-	      }
-
-	    try {
-	        const response=await fetch(`https://backendcookie-8qc1.onrender.com/api/delete-my-data/${consentId}`, { method:'DELETE' });
-
-	        if (!response.ok) throw new Error(`Failed to delete data:${response.statusText}`);
-
-	        // Delete all related cookies
-	        ['consentId','cookiesAccepted','cookiePreferences'].forEach(deleteCookie);
-
-	        alert('Your data has been deleted.');
-	        cookiePreferencesModal.classList.remove('show');
-	      } catch (error) { 
-	      	console.error('❌ Error deleting data:', error); 
-	      	alert('Failed to delete data. Please try again later.'); 
-	      }
-	  });
 });
