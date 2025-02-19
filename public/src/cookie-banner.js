@@ -18,40 +18,37 @@ document.addEventListener("DOMContentLoaded", async () => {
     let consentId = getCookie("consentId");
 
     // Hide Cookie Settings Button if Not Logged In
-    if (!consentId) {
-        cookieSettingsButton.style.display = "none";
+    if (cookieSettingsButton) {
+        cookieSettingsButton.style.display = consentId ? "block" : "none";
     }
 
     // Function to Show Login Message
     function requireLogin(event) {
-        event.preventDefault(); // Block action
-        loginMessageBanner.style.display = "block";
-        setTimeout(() => {
-            loginMessageBanner.style.display = "none";
-        }, 3000);
+        if (!consentId) {
+            event.preventDefault(); // Block action
+            if (loginMessageBanner) {
+                loginMessageBanner.style.display = "block";
+                setTimeout(() => {
+                    loginMessageBanner.style.display = "none";
+                }, 3000);
+            } else {
+                alert("You must register and log in to manage cookie settings.");
+            }
+        }
     }
 
     // Block Accept, Reject, and Customize Until Logged In
     if (!consentId) {
-        acceptCookiesButton.addEventListener("click", requireLogin);
-        rejectCookiesButton.addEventListener("click", requireLogin);
-        customizeCookiesButton.addEventListener("click", requireLogin);
+        acceptCookiesButton?.addEventListener("click", requireLogin);
+        rejectCookiesButton?.addEventListener("click", requireLogin);
+        customizeCookiesButton?.addEventListener("click", requireLogin);
     } else {
         // Enable Cookie Actions Only if User is Logged In
-        acceptCookiesButton.addEventListener("click", () => handleCookieConsent(true));
-        rejectCookiesButton.addEventListener("click", () => handleCookieConsent(false));
-        customizeCookiesButton.addEventListener("click", () => requireAuthentication(openPreferencesModal));
-    }
-
-    function openPreferencesModal() {
-        cookiePreferencesModal.classList.add("show");
-    }
-
-    function requireAuthentication(callback) {
-        const isAuthenticated = confirm("Authentication required. Proceed?");
-        if (isAuthenticated) {
-            callback();
-        }
+        acceptCookiesButton?.addEventListener("click", () => handleCookieConsent(true));
+        rejectCookiesButton?.addEventListener("click", () => handleCookieConsent(false));
+        customizeCookiesButton?.addEventListener("click", () => {
+            cookiePreferencesModal?.classList.add("show");
+        });
     }
 
     // Function to Handle Cookie Consent
@@ -73,7 +70,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Save Preferences
-    savePreferencesButton.addEventListener("click", () => {
+    savePreferencesButton?.addEventListener("click", () => {
         if (!consentId) {
             consentId = generateShortUUID();
             setCookie("consentId", consentId, 365);
@@ -81,10 +78,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const preferences = {
             strictlyNecessary: true,
-            performance: document.getElementById("performance").checked,
-            functional: document.getElementById("functional").checked,
-            advertising: document.getElementById("advertising").checked,
-            socialMedia: document.getElementById("socialMedia").checked,
+            performance: document.getElementById("performance")?.checked || false,
+            functional: document.getElementById("functional")?.checked || false,
+            advertising: document.getElementById("advertising")?.checked || false,
+            socialMedia: document.getElementById("socialMedia")?.checked || false,
         };
 
         setCookie("cookiesAccepted", "true", 365);
@@ -93,18 +90,20 @@ document.addEventListener("DOMContentLoaded", async () => {
         sendPreferencesToDB(consentId, preferences);
         saveLocationData(consentId);
         hideBanner();
-        cookiePreferencesModal.classList.remove("show");
+        cookiePreferencesModal?.classList.remove("show");
     });
 
-    cancelPreferencesButton.addEventListener("click", () => {
-        cookiePreferencesModal.classList.remove("show");
+    cancelPreferencesButton?.addEventListener("click", () => {
+        cookiePreferencesModal?.classList.remove("show");
     });
 
     function hideBanner() {
-        cookieBanner.classList.add("hide");
-        setTimeout(() => {
-            cookieBanner.classList.remove("show", "hide");
-        }, 500);
+        if (cookieBanner) {
+            cookieBanner.classList.add("hide");
+            setTimeout(() => {
+                cookieBanner.classList.remove("show", "hide");
+            }, 500);
+        }
     }
 
     // Delete My Data Functionality
