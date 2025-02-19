@@ -115,9 +115,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         try {
-            const response = await fetch(https://backendcookie-8qc1.onrender.com/api/delete-my-data/${consentId}, {
-                method: "DELETE",
-            });
+    const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/delete-my-data/${consentId}`, {
+        method: "DELETE",
+    });
+
 
             if (!response.ok) {
                 throw new Error(Failed to delete data: ${response.statusText});
