@@ -113,12 +113,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         try {
-            const response = await fetch(https://backendcookie-8qc1.onrender.com/api/delete-my-data/${consentId}, {
+            const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/delete-my-data/${consentId}`, {
                 method: "DELETE",
             });
 
             if (!response.ok) {
-                throw new Error(Failed to delete data: ${response.statusText});
+                throw new Error(`Failed to delete data: ${response.statusText}`);
             }
 
             // Delete all related cookies
@@ -145,16 +145,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     function setCookie(name, value, days) {
         const date = new Date();
         date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-        document.cookie = ${name}=${value};expires=${date.toUTCString()};path=/;secure;samesite=strict;
+        document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/;secure;samesite=strict`;
     }
 
     function getCookie(name) {
-        const nameEq = ${name}=;
+        const nameEq = `${name}=`;
         return document.cookie.split("; ").find((c) => c.startsWith(nameEq))?.split("=")[1] || null;
     }
 
     function deleteCookie(name) {
-        document.cookie = ${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;secure;samesite=strict;
+        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;secure;samesite=strict`;
     }
 
     let consentId = getCookie("consentId");
