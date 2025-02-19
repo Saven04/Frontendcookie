@@ -13,7 +13,7 @@
 
 <body>
     <!-- Cookie Consent Banner -->
-    <div id="cookieConsent" class="cookie-banner">
+    <div id="cookieConsent" class="cookie-banner" style="display: none;">
         <div class="cookie-banner-content">
             <p><strong>We value your privacy!</strong><br>  
                 We use cookies to enhance your experience, analyze site traffic, and serve personalized content.  
@@ -32,38 +32,6 @@
                 <button id="customizeCookies" class="customize-button" aria-label="Customize cookie preferences">Customize</button>
             </div>
             <p id="loginMessageBanner" style="color: red; display: none;">You must log in to manage your cookie preferences.</p>
-        </div>
-    </div>
-
-    <!-- Cookie Preferences Modal -->
-    <div id="cookiePreferencesModal" class="cookie-preferences-modal">
-        <div class="modal-content">
-            <h1>Customize Your Preferences</h1>
-            <p id="loginMessageModal" style="color: red; display: none;">You must log in to manage your cookie preferences.</p>
-            <div class="cookie-category">
-                <input type="checkbox" id="strictlyNecessary" checked disabled>
-                <label for="strictlyNecessary">Strictly Necessary Cookies (Required for website functionality)</label>
-            </div>
-            <div class="cookie-category">
-                <input type="checkbox" id="performance">
-                <label for="performance">Performance (Analytical) Cookies</label>
-            </div>
-            <div class="cookie-category">
-                <input type="checkbox" id="functional">
-                <label for="functional">Functional Cookies (Preferences)</label>
-            </div>
-            <div class="cookie-category">
-                <input type="checkbox" id="advertising">
-                <label for="advertising">Advertising (Targeting) Cookies</label>
-            </div>
-            <div class="cookie-category">
-                <input type="checkbox" id="socialMedia">
-                <label for="socialMedia">Social Media Cookies</label>
-            </div>
-            <div class="modal-buttons">
-                <button id="savePreferences" class="save-button">Save Preferences</button>
-                <button id="cancelPreferences" class="cancel-button">Cancel</button>
-            </div>
         </div>
     </div>
 
@@ -111,8 +79,11 @@
             const consentGiven = getCookie("cookiesAccepted");
 
             // Show the banner only if no consent is given
-            if (!consentGiven && cookieBanner) {
+            if (!consentGiven) {
+                console.log("No consent found, showing cookie banner.");
                 cookieBanner.style.display = "block";
+            } else {
+                console.log("Consent already given, hiding banner.");
             }
 
             // Function to show login message and block action
