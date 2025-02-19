@@ -2,54 +2,28 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     event.preventDefault(); // Prevent default form submission
 
     const registerButton = document.querySelector(".login-button");
-    registerButton.disabled = true; // Disable button to prevent multiple clicks
+    registerButton.disabled = true;
     registerButton.textContent = "Registering...";
 
     const username = document.getElementById("username").value.trim();
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
     const confirmPassword = document.getElementById("confirmPassword").value.trim();
-    
-    // Ensure messageBox exists
-    let messageBox = document.getElementById("messageBox");
-    if (!messageBox) {
-        messageBox = document.createElement("div");
-        messageBox.id = "messageBox";
-        document.body.appendChild(messageBox);
-    }
 
-    // Validate inputs
     if (!username || !email || !password || !confirmPassword) {
-        showMessage("All fields are required!", "error");
+        alert("All fields are required!");
         resetButton();
         return;
     }
 
-    // Validate username (alphanumeric, underscores, 3-16 chars)
-    const usernameRegex = /^[a-zA-Z0-9_]{3,16}$/;
-    if (!usernameRegex.test(username)) {
-        showMessage("Invalid username! Use 3-16 characters (letters, numbers, underscores).", "error");
-        resetButton();
-        return;
-    }
-
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        showMessage("Invalid email format!", "error");
-        resetButton();
-        return;
-    }
-
-    // Validate password strength
     if (password.length < 6) {
-        showMessage("Password must be at least 6 characters long.", "error");
+        alert("Password must be at least 6 characters long.");
         resetButton();
         return;
     }
 
     if (password !== confirmPassword) {
-        showMessage("Passwords do not match!", "error");
+        alert("Passwords do not match!");
         resetButton();
         return;
     }
@@ -64,38 +38,41 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         const data = await response.json();
 
         if (response.ok) {
-            showMessage("✅ Registration successful! Redirecting to login...", "success");
+            alert("✅ Registration successful!");
+
+            // Store session data (assuming user gets a token)
+            localStorage.setItem("authToken", data.token);
+            localStorage.setItem("userId", data.userId);
+
+            // Enable the consent banner
+            enableConsentBanner();
+
             setTimeout(() => {
-                document.getElementById("registerForm").reset(); // Reset form
-                window.location.href = "index.html"; // Redirect to login page
+                document.getElementById("registerForm").reset();
+                window.location.href = "index.html";
             }, 1500);
         } else {
-            showMessage(`❌ ${data.message || "Registration failed. Please try again."}`, "error");
+            alert(`❌ ${data.message || "Registration failed."}`);
         }
     } catch (error) {
         console.error("❌ Error:", error);
-        showMessage("Registration failed. Check your internet connection and try again.", "error");
+        alert("Registration failed. Please try again.");
     } finally {
         resetButton();
     }
 });
 
-// Function to reset the button after an action
+// Function to reset the button
 function resetButton() {
     const registerButton = document.querySelector(".login-button");
     registerButton.disabled = false;
     registerButton.textContent = "Register";
 }
 
-// Function to show messages dynamically
-function showMessage(message, type) {
-    const messageBox = document.getElementById("messageBox");
-    if (messageBox) {
-        messageBox.textContent = message;
-        messageBox.className = `message ${type}`; // Assuming CSS styles for success & error messages
-        messageBox.style.display = "block";
-        setTimeout(() => { messageBox.style.display = "none"; }, 3000);
-    } else {
-        alert(message);
-    }
+// Function to enable the consent banner after successful registration
+function enableConsentBanner() {
+    const banner = document.getElementById("consent-banner");
+    const buttons = banner.querySelectorAll("button");
+    banner.classList.remove("disabled");
+    buttons.forEach(button => button.removeAttribute("disabled"));
 }
