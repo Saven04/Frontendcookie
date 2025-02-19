@@ -69,10 +69,4 @@ function resetButton() {
     registerButton.textContent = "Register";
 }
 
-// Function to enable the consent banner after successful registration
-function enableConsentBanner() {
-    const banner = document.getElementById("consent-banner");
-    const buttons = banner.querySelectorAll("button");
-    banner.classList.remove("disabled");
-    buttons.forEach(button => button.removeAttribute("disabled"));
-}
+
