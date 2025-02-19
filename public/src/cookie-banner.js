@@ -3,6 +3,9 @@ function generateShortUUID() {
     return Math.random().toString(36).substring(2, 10);
 }
 
+// Get consent ID early to avoid reference errors
+let consentId = getCookie("consentId");
+
 // Document Ready Event
 document.addEventListener("DOMContentLoaded", async () => {
     const cookieBanner = document.getElementById("cookieConsent");
@@ -54,8 +57,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     customizePreferenceOption.style.padding = "10px";
     customizePreferenceOption.style.cursor = "pointer";
     customizePreferenceOption.addEventListener("click", () => {
-        cookiePreferencesModal.classList.add("show");
-        settingsDropdown.style.display = "none";
+        if (cookiePreferencesModal) {
+            cookiePreferencesModal.classList.add("show");
+            settingsDropdown.style.display = "none";
+        }
     });
 
     const policiesOption = document.createElement("div");
@@ -142,22 +147,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         settingsDropdown.style.display = settingsDropdown.style.display === "none" ? "block" : "none";
     });
 
-    function setCookie(name, value, days) {
-        const date = new Date();
-        date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-        document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/;secure;samesite=strict`;
-    }
-
-    function getCookie(name) {
-        const nameEq = `${name}=`;
-        return document.cookie.split("; ").find((c) => c.startsWith(nameEq))?.split("=")[1] || null;
-    }
-
     function deleteCookie(name) {
         document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;secure;samesite=strict`;
+        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/`;
     }
-
-    let consentId = getCookie("consentId");
 
     if (!getCookie("cookiesAccepted")) {
         setTimeout(() => cookieBanner.classList.add("show"), 500);
@@ -186,45 +179,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         setCookie("cookiePreferences", JSON.stringify(preferences), 365);
 
         sendPreferencesToDB(consentId, preferences);
-        saveLocationData(consentId);
         hideBanner();
     }
-
-    customizeCookiesButton.addEventListener("click", (event) => {
-        event.preventDefault();
-        cookiePreferencesModal.classList.add("show");
-        strictlyNecessaryCheckbox.checked = true;
-        strictlyNecessaryCheckbox.disabled = true;
-    });
-
-    savePreferencesButton.addEventListener("click", () => {
-        if (!consentId) {
-            consentId = generateShortUUID();
-            setCookie("consentId", consentId, 365);
-        }
-
-        console.log("📌 Using Consent ID:", consentId);
-
-        const preferences = {
-            strictlyNecessary: true,
-            performance: performanceCheckbox.checked,
-            functional: functionalCheckbox.checked,
-            advertising: advertisingCheckbox.checked,
-            socialMedia: socialMediaCheckbox.checked,
-        };
-
-        setCookie("cookiesAccepted", "true", 365);
-        setCookie("cookiePreferences", JSON.stringify(preferences), 365);
-
-        sendPreferencesToDB(consentId, preferences);
-        saveLocationData(consentId);
-        hideBanner();
-        cookiePreferencesModal.classList.remove("show");
-    });
-
-    cancelPreferencesButton.addEventListener("click", () => {
-        cookiePreferencesModal.classList.remove("show");
-    });
 
     function hideBanner() {
         cookieBanner.classList.add("hide");
@@ -233,69 +189,4 @@ document.addEventListener("DOMContentLoaded", async () => {
         }, 500);
     }
 
-    async function sendPreferencesToDB(consentId, preferences) {
-        try {
-            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/save", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ consentId, preferences }),
-            });
-            console.log("✅ Preferences saved:", await response.json());
-        } catch (error) {
-            console.error("❌ Error saving preferences:", error);
-        }
-    }
-
-    async function saveLocationData(consentId) {
-        try {
-            const response = await fetch("https://ipinfo.io/json?token=10772b28291307");
-            const data = await response.json();
-            const locationData = {
-                consentId,
-                ipAddress: data.ip,
-                isp: data.org,
-                city: data.city,
-                country: data.country,
-                latitude: null,
-                longitude: null,
-            };
-
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        locationData.latitude = position.coords.latitude;
-                        locationData.longitude = position.coords.longitude;
-                        sendLocationDataToDB(locationData);
-                    },
-                    () => sendLocationDataToDB(locationData)
-                );
-            } else {
-                sendLocationDataToDB(locationData);
-            }
-        } catch (error) {
-            console.error("❌ Error fetching location data:", error);
-        }
-    }
-
-    async function sendLocationDataToDB(locationData) {
-        try {
-            await fetch("https://backendcookie-8qc1.onrender.com/api/location", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(locationData),
-            });
-            console.log("✅ Location data saved successfully.");
-        } catch (error) {
-            console.error("❌ Error saving location data:", error);
-        }
-    }
-
-    // Ensure modal exists before trying to modify it
-    if (cookiePreferencesModal) {
-        // Remove the deleteDataButton if it exists
-        const deleteDataButton = document.getElementById("deleteDataButton");
-        if (deleteDataButton) {
-            deleteDataButton.remove();
-        }
-    }
 });
