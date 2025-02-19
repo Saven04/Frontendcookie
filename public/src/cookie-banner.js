@@ -3,8 +3,21 @@ function generateShortUUID() {
     return Math.random().toString(36).substring(2, 10);
 }
 
-// Get consent ID early to avoid reference errors
-let consentId = getCookie("consentId");
+// Cookie handling functions (moved to the top)
+function setCookie(name, value, days) {
+    const date = new Date();
+    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+    document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/;secure;samesite=strict`;
+}
+
+function getCookie(name) {
+    const nameEq = `${name}=`;
+    return document.cookie.split("; ").find((c) => c.startsWith(nameEq))?.split("=")[1] || null;
+}
+
+function deleteCookie(name) {
+    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;secure;samesite=strict`;
+}
 
 // Document Ready Event
 document.addEventListener("DOMContentLoaded", async () => {
@@ -21,20 +34,24 @@ document.addEventListener("DOMContentLoaded", async () => {
     const advertisingCheckbox = document.getElementById("advertising");
     const socialMediaCheckbox = document.getElementById("socialMedia");
 
-    const cookieSettingsButton = document.createElement("button");
-    cookieSettingsButton.id = "cookieSettingsButton";
-    cookieSettingsButton.innerHTML = "⚙️"; // Gear icon
-    Object.assign(cookieSettingsButton.style, {
-        position: "fixed",
-        top: "10px",
-        right: "10px",
-        backgroundColor: "transparent",
-        border: "none",
-        fontSize: "24px",
-        cursor: "pointer",
-        zIndex: "1000",
-    });
-    document.body.appendChild(cookieSettingsButton);
+    // Ensure setting button exists
+    let cookieSettingsButton = document.getElementById("cookieSettingsButton");
+    if (!cookieSettingsButton) {
+        cookieSettingsButton = document.createElement("button");
+        cookieSettingsButton.id = "cookieSettingsButton";
+        cookieSettingsButton.innerHTML = "⚙️"; // Gear icon
+        Object.assign(cookieSettingsButton.style, {
+            position: "fixed",
+            top: "10px",
+            right: "10px",
+            backgroundColor: "transparent",
+            border: "none",
+            fontSize: "24px",
+            cursor: "pointer",
+            zIndex: "1000",
+        });
+        document.body.appendChild(cookieSettingsButton);
+    }
 
     // Create dropdown menu
     const settingsDropdown = document.createElement("div");
@@ -57,10 +74,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     customizePreferenceOption.style.padding = "10px";
     customizePreferenceOption.style.cursor = "pointer";
     customizePreferenceOption.addEventListener("click", () => {
-        if (cookiePreferencesModal) {
-            cookiePreferencesModal.classList.add("show");
-            settingsDropdown.style.display = "none";
-        }
+        cookiePreferencesModal.classList.add("show");
+        settingsDropdown.style.display = "none";
     });
 
     const policiesOption = document.createElement("div");
@@ -107,50 +122,16 @@ document.addEventListener("DOMContentLoaded", async () => {
         policiesSubMenu.style.display = policiesSubMenu.style.display === "none" ? "block" : "none";
     });
 
-    const deleteDataOption = document.createElement("div");
-    deleteDataOption.innerText = "Delete My Data";
-    deleteDataOption.style.padding = "10px";
-    deleteDataOption.style.cursor = "pointer";
-    deleteDataOption.addEventListener("click", async () => {
-        if (!consentId) {
-            alert("No data found to delete.");
-            return;
-        }
-
-        try {
-            const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/delete-my-data/${consentId}`, {
-                method: "DELETE",
-            });
-
-            if (!response.ok) {
-                throw new Error(`Failed to delete data: ${response.statusText}`);
-            }
-
-            // Delete all related cookies
-            ["consentId", "cookiesAccepted", "cookiePreferences"].forEach(deleteCookie);
-
-            alert("Your data has been deleted.");
-            settingsDropdown.style.display = "none";
-        } catch (error) {
-            console.error("❌ Error deleting data:", error);
-            alert("Failed to delete data. Please try again later.");
-        }
-    });
-
     settingsDropdown.appendChild(customizePreferenceOption);
     settingsDropdown.appendChild(policiesOption);
     settingsDropdown.appendChild(policiesSubMenu);
-    settingsDropdown.appendChild(deleteDataOption);
     document.body.appendChild(settingsDropdown);
 
     cookieSettingsButton.addEventListener("click", () => {
         settingsDropdown.style.display = settingsDropdown.style.display === "none" ? "block" : "none";
     });
 
-    function deleteCookie(name) {
-        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;secure;samesite=strict`;
-        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/`;
-    }
+    let consentId = getCookie("consentId");
 
     if (!getCookie("cookiesAccepted")) {
         setTimeout(() => cookieBanner.classList.add("show"), 500);
@@ -178,9 +159,40 @@ document.addEventListener("DOMContentLoaded", async () => {
         setCookie("cookiesAccepted", accepted.toString(), 365);
         setCookie("cookiePreferences", JSON.stringify(preferences), 365);
 
-        sendPreferencesToDB(consentId, preferences);
         hideBanner();
     }
+
+    customizeCookiesButton.addEventListener("click", (event) => {
+        event.preventDefault();
+        cookiePreferencesModal.classList.add("show");
+        strictlyNecessaryCheckbox.checked = true;
+        strictlyNecessaryCheckbox.disabled = true;
+    });
+
+    savePreferencesButton.addEventListener("click", () => {
+        if (!consentId) {
+            consentId = generateShortUUID();
+            setCookie("consentId", consentId, 365);
+        }
+
+        const preferences = {
+            strictlyNecessary: true,
+            performance: performanceCheckbox.checked,
+            functional: functionalCheckbox.checked,
+            advertising: advertisingCheckbox.checked,
+            socialMedia: socialMediaCheckbox.checked,
+        };
+
+        setCookie("cookiesAccepted", "true", 365);
+        setCookie("cookiePreferences", JSON.stringify(preferences), 365);
+
+        hideBanner();
+        cookiePreferencesModal.classList.remove("show");
+    });
+
+    cancelPreferencesButton.addEventListener("click", () => {
+        cookiePreferencesModal.classList.remove("show");
+    });
 
     function hideBanner() {
         cookieBanner.classList.add("hide");
@@ -188,5 +200,4 @@ document.addEventListener("DOMContentLoaded", async () => {
             cookieBanner.classList.remove("show", "hide");
         }, 500);
     }
-
 });
