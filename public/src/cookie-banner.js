@@ -1,4 +1,5 @@
-// Function to generate a short unique consent ID
+// Function to generate a short unique consent ID if needed
+// Note: This function might not be used if consentId comes from the server on login
 function generateShortUUID() {
     return Math.random().toString(36).substring(2, 10);
 }
@@ -40,8 +41,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         position: "fixed",
         top: "50px",
         right: "10px",
-        backgroundColor: "rgba(0, 0, 0, 0.8)", // Transparent black background
-        color: "#fff", // White text color for visibility
+        backgroundColor: "rgba(0, 0, 0, 0.8)", 
+        color: "#fff", 
         border: "1px solid #ccc",
         borderRadius: "5px",
         boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
@@ -107,6 +108,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     deleteDataOption.style.padding = "10px";
     deleteDataOption.style.cursor = "pointer";
     deleteDataOption.addEventListener("click", async () => {
+        let consentId = localStorage.getItem('consentId'); // Retrieve consentId from localStorage
         if (!consentId) {
             alert("No data found to delete.");
             return;
@@ -123,6 +125,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             // Delete all related cookies
             ["consentId", "cookiesAccepted", "cookiePreferences"].forEach(deleteCookie);
+            localStorage.removeItem('consentId'); // Remove consentId from localStorage
 
             alert("Your data has been deleted.");
             settingsDropdown.style.display = "none";
@@ -145,22 +148,29 @@ document.addEventListener("DOMContentLoaded", async () => {
     function setCookie(name, value, days) {
         const date = new Date();
         date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-        document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/;secure;samesite=strict`;
+        document.cookie = `${name}=${encodeURIComponent(value)};expires=${date.toUTCString()};path=/;secure;samesite=strict`;
     }
 
     function getCookie(name) {
-        const nameEq = `${name}=`;
-        return document.cookie.split("; ").find((c) => c.startsWith(nameEq))?.split("=")[1] || null;
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift());
     }
 
     function deleteCookie(name) {
         document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;secure;samesite=strict`;
     }
 
-    let consentId = getCookie("consentId");
+    // Store consentId from login in localStorage rather than in a cookie if not already stored
+    let consentId = localStorage.getItem('consentId') || getCookie("consentId");
 
-    if (!getCookie("cookiesAccepted")) {
-        setTimeout(() => cookieBanner.classList.add("show"), 500);
+    if (!consentId) {
+        // If there's no consentId, do not show the banner until user logs in
+        cookieBanner.style.display = "none";
+    } else {
+        if (!getCookie("cookiesAccepted")) {
+            setTimeout(() => cookieBanner.classList.add("show"), 500);
+        }
     }
 
     acceptCookiesButton.addEventListener("click", () => handleCookieConsent(true));
@@ -168,8 +178,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     function handleCookieConsent(accepted) {
         if (!consentId) {
-            consentId = generateShortUUID();
-            setCookie("consentId", consentId, 365);
+            // If consentId doesn't exist, do not proceed with consent actions
+            return;
         }
 
         console.log("📌 Using Consent ID:", consentId);
@@ -192,6 +202,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     customizeCookiesButton.addEventListener("click", (event) => {
         event.preventDefault();
+        if (!consentId) {
+            alert("Please log in to customize your cookie preferences.");
+            return;
+        }
         cookiePreferencesModal.classList.add("show");
         strictlyNecessaryCheckbox.checked = true;
         strictlyNecessaryCheckbox.disabled = true;
@@ -199,8 +213,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     savePreferencesButton.addEventListener("click", () => {
         if (!consentId) {
-            consentId = generateShortUUID();
-            setCookie("consentId", consentId, 365);
+            alert("Please log in to save your preferences.");
+            return;
         }
 
         console.log("📌 Using Consent ID:", consentId);
@@ -240,7 +254,11 @@ document.addEventListener("DOMContentLoaded", async () => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ consentId, preferences }),
             });
-            console.log("✅ Preferences saved:", await response.json());
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const result = await response.json();
+            console.log("✅ Preferences saved:", result);
         } catch (error) {
             console.error("❌ Error saving preferences:", error);
         }
@@ -267,7 +285,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                         locationData.longitude = position.coords.longitude;
                         sendLocationDataToDB(locationData);
                     },
-                    () => sendLocationDataToDB(locationData)
+                    () => sendLocationDataToDB(locationData) // Fallback if geolocation fails
                 );
             } else {
                 sendLocationDataToDB(locationData);
