@@ -2,28 +2,30 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     event.preventDefault(); // Prevent default form submission
 
     const registerButton = document.querySelector(".login-button");
-    registerButton.disabled = true;
+    registerButton.disabled = true; // Disable button to prevent multiple clicks
     registerButton.textContent = "Registering...";
 
     const username = document.getElementById("username").value.trim();
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
     const confirmPassword = document.getElementById("confirmPassword").value.trim();
+    const messageBox = document.getElementById("messageBox"); // Assuming you have a message div
 
+    // Validate inputs
     if (!username || !email || !password || !confirmPassword) {
-        alert("All fields are required!");
+        showMessage("All fields are required!", "error");
         resetButton();
         return;
     }
 
     if (password.length < 6) {
-        alert("Password must be at least 6 characters long.");
+        showMessage("Password must be at least 6 characters long.", "error");
         resetButton();
         return;
     }
 
     if (password !== confirmPassword) {
-        alert("Passwords do not match!");
+        showMessage("Passwords do not match!", "error");
         resetButton();
         return;
     }
@@ -38,35 +40,38 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         const data = await response.json();
 
         if (response.ok) {
-            alert("✅ Registration successful!");
-
-            // Store session data (assuming user gets a token)
-            localStorage.setItem("authToken", data.token);
-            localStorage.setItem("userId", data.userId);
-
-            // Enable the consent banner
-            enableConsentBanner();
-
+            showMessage("✅ Registration successful! Redirecting to login...", "success");
             setTimeout(() => {
-                document.getElementById("registerForm").reset();
-                window.location.href = "index.html";
+                document.getElementById("registerForm").reset(); // Reset form
+                window.location.href = "index.html"; // Redirect to login page
             }, 1500);
         } else {
-            alert(`❌ ${data.message || "Registration failed."}`);
+            showMessage(`❌ ${data.message || "Registration failed."}`, "error");
         }
     } catch (error) {
         console.error("❌ Error:", error);
-        alert("Registration failed. Please try again.");
+        showMessage("Registration failed. Please check your internet connection and try again.", "error");
     } finally {
         resetButton();
     }
 });
 
-// Function to reset the button
+// Function to reset the button after an action
 function resetButton() {
     const registerButton = document.querySelector(".login-button");
     registerButton.disabled = false;
     registerButton.textContent = "Register";
 }
 
-
+// Function to show messages dynamically
+function showMessage(message, type) {
+    const messageBox = document.getElementById("messageBox");
+    if (messageBox) {
+        messageBox.textContent = message;
+        messageBox.className = `message ${type}`; // Assuming CSS styles for success & error messages
+        messageBox.style.display = "block";
+        setTimeout(() => { messageBox.style.display = "none"; }, 3000);
+    } else {
+        alert(message);
+    }
+}
