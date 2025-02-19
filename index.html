@@ -95,35 +95,37 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const consentId = localStorage.getItem("consentId");
-            const cookieBanner = document.getElementById("cookieConsent");
-            const acceptButton = document.getElementById("acceptCookies");
-            const rejectButton = document.getElementById("rejectCookies");
-            const customizeButton = document.getElementById("customizeCookies");
-            const cookieSettingsButton = document.getElementById("cookieSettings"); // Make sure this button exists
-            const loginMessageBanner = document.getElementById("loginMessageBanner");
-            const loginMessageModal = document.getElementById("loginMessageModal");
+    const consentId = localStorage.getItem("consentId"); // Check if user is authenticated
+    const acceptButton = document.getElementById("acceptCookies");
+    const rejectButton = document.getElementById("rejectCookies");
+    const customizeButton = document.getElementById("customizeCookies");
+    const cookieSettingsButton = document.getElementById("cookieSettings"); // Button for settings
+    const loginMessageBanner = document.getElementById("loginMessageBanner");
 
-            // Hide cookie settings button if user is not logged in
-            if (cookieSettingsButton && !consentId) {
-                cookieSettingsButton.style.display = "none";
-            }
+    // Hide cookie settings button if user is not logged in
+    if (cookieSettingsButton && !consentId) {
+        cookieSettingsButton.style.display = "none";
+    }
 
-            // Show login message when clicking accept, reject, or customize
-            function requireLogin(event) {
-                if (!consentId) {
-                    event.preventDefault();
-                    loginMessageBanner.style.display = "block";
-                    setTimeout(() => {
-                        loginMessageBanner.style.display = "none";
-                    }, 3000);
-                }
-            }
+    // Function to show login message and block action
+    function requireLogin(event) {
+        if (!consentId) {
+            event.preventDefault(); // Block the button action
+            loginMessageBanner.style.display = "block";
+            setTimeout(() => {
+                loginMessageBanner.style.display = "none";
+            }, 3000);
+        }
+    }
 
-            acceptButton.addEventListener("click", requireLogin);
-            rejectButton.addEventListener("click", requireLogin);
-            customizeButton.addEventListener("click", requireLogin);
-        });
+    // Block the buttons unless user is authenticated
+    if (!consentId) {
+        acceptButton.addEventListener("click", requireLogin);
+        rejectButton.addEventListener("click", requireLogin);
+        customizeButton.addEventListener("click", requireLogin);
+    }
+});
+
     </script>
 
 </body>
