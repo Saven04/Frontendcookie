@@ -121,7 +121,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
             if (!response.ok) {
-                throw new Error(Failed to delete data: ${response.statusText});
+                throw new Error(`Failed to delete data: ${response.statusText}`);
             }
 
             // Delete all related cookies
