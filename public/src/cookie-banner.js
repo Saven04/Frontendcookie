@@ -13,16 +13,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     const cancelPreferencesButton = document.getElementById("cancelPreferences");
     const cookiePreferencesModal = document.getElementById("cookiePreferencesModal");
     const cookieSettingsButton = document.getElementById("cookieSettingsButton");
-    const loginMessageBanner = document.getElementById("loginMessageBanner");
 
     let consentId = getCookie("consentId");
 
-    // Show Cookie Banner if No Consent Found
-    if (!consentId && cookieBanner) {
-        console.log("No consent found, showing cookie banner.");
+    // Show banner only if consent is not given
+    if (!getCookie("cookiesAccepted")) {
         cookieBanner.classList.add("show");
-    } else {
-        console.log("Consent found:", consentId);
     }
 
     // Hide Cookie Settings Button if Not Logged In
@@ -30,33 +26,38 @@ document.addEventListener("DOMContentLoaded", async () => {
         cookieSettingsButton.style.display = consentId ? "block" : "none";
     }
 
-    // Function to Show Login Message
-    function requireLogin(event) {
-        if (!consentId) {
-            event.preventDefault();
-            if (loginMessageBanner) {
-                loginMessageBanner.style.display = "block";
-                setTimeout(() => {
-                    loginMessageBanner.style.display = "none";
-                }, 3000);
-            } else {
-                alert("You must register and log in to manage cookie settings.");
-            }
-        }
-    }
+    // Unblock buttons after registration
+    if (sessionStorage.getItem("registered")) {
+        acceptCookiesButton?.removeEventListener("click", requireLogin);
+        rejectCookiesButton?.removeEventListener("click", requireLogin);
+        customizeCookiesButton?.removeEventListener("click", requireLogin);
 
-    // Block Actions Until Logged In
-    if (!consentId) {
-        acceptCookiesButton?.addEventListener("click", requireLogin);
-        rejectCookiesButton?.addEventListener("click", requireLogin);
-        customizeCookiesButton?.addEventListener("click", requireLogin);
-    } else {
-        // Enable Cookie Actions Only if User is Logged In
         acceptCookiesButton?.addEventListener("click", () => handleCookieConsent(true));
         rejectCookiesButton?.addEventListener("click", () => handleCookieConsent(false));
         customizeCookiesButton?.addEventListener("click", () => {
             cookiePreferencesModal?.classList.add("show");
         });
+
+        sessionStorage.removeItem("registered"); // Clear after use
+    } else {
+        // Block Accept, Reject, and Customize Until Logged In
+        if (!consentId) {
+            acceptCookiesButton?.addEventListener("click", requireLogin);
+            rejectCookiesButton?.addEventListener("click", requireLogin);
+            customizeCookiesButton?.addEventListener("click", requireLogin);
+        } else {
+            acceptCookiesButton?.addEventListener("click", () => handleCookieConsent(true));
+            rejectCookiesButton?.addEventListener("click", () => handleCookieConsent(false));
+            customizeCookiesButton?.addEventListener("click", () => {
+                cookiePreferencesModal?.classList.add("show");
+            });
+        }
+    }
+
+    // Function to Show Login Message
+    function requireLogin(event) {
+        event.preventDefault();
+        alert("You must register and log in to manage cookie settings.");
     }
 
     // Function to Handle Cookie Consent
@@ -114,36 +115,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    // Delete My Data Functionality
-    async function deleteMyData() {
-        if (!consentId) {
-            alert("No data found to delete.");
-            return;
-        }
-
-        try {
-            const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/delete-my-data/${consentId}`, {
-                method: "DELETE",
-            });
-
-            if (!response.ok) {
-                throw new Error(`Failed to delete data: ${response.statusText}`);
-            }
-
-            ["consentId", "cookiesAccepted", "cookiePreferences"].forEach(deleteCookie);
-
-            alert("Your data has been deleted.");
-            location.reload();
-        } catch (error) {
-            console.error("❌ Error deleting data:", error);
-            alert("Failed to delete data. Please try again later.");
-        }
-    }
-
-    // Attach Delete Data Event Listener
-    const deleteDataOption = document.getElementById("deleteDataOption");
-    if (deleteDataOption) {
-        deleteDataOption.addEventListener("click", deleteMyData);
+    // Redirect after registration
+    if (window.location.pathname.includes("register.html")) {
+        document.getElementById("registerForm")?.addEventListener("submit", (event) => {
+            event.preventDefault();
+            sessionStorage.setItem("registered", "true"); // Store session flag
+            window.location.href = "index.html"; // Redirect after registration
+        });
     }
 
     // Cookie Helper Functions
@@ -219,5 +197,5 @@ document.addEventListener("DOMContentLoaded", async () => {
         } catch (error) {
             console.error("❌ Error saving location data:", error);
         }
-    }  
+    }
 });
