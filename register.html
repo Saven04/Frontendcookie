@@ -12,26 +12,22 @@
             <div class="card-header">
                 <h2>Create an Account</h2>
             </div>
-            <form id="registerForm" novalidate>
+            <form id="registerForm">
                 <div class="input-group">
                     <label for="username">Username</label>
-                    <input type="text" id="username" placeholder="Enter your username" pattern="^[a-zA-Z0-9_]{3,16}$" required>
-                    <span class="error-message" id="usernameError"></span>
+                    <input type="text" id="username" placeholder="Enter your username" required>
                 </div>
                 <div class="input-group">
                     <label for="email">Email</label>
-                    <input type="email" id="email" placeholder="Enter your email" required autocomplete="off">
-                    <span class="error-message" id="emailError"></span>
+                    <input type="email" id="email" placeholder="Enter your email" required>
                 </div>
                 <div class="input-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" placeholder="Enter your password" required minlength="6" autocomplete="off">
-                    <span class="error-message" id="passwordError"></span>
+                    <input type="password" id="password" placeholder="Enter your password" required>
                 </div>
                 <div class="input-group">
                     <label for="confirmPassword">Confirm Password</label>
-                    <input type="password" id="confirmPassword" placeholder="Confirm your password" required autocomplete="off">
-                    <span class="error-message" id="confirmPasswordError"></span>
+                    <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
                 </div>
                 <button type="submit" class="login-button">Register</button>
             </form>
@@ -39,6 +35,15 @@
         </div>
     </div>
 
+    <!-- Consent Banner (Disabled Initially) -->
+    <div id="consent-banner" class="cookie-banner disabled">
+        <p>This site uses cookies. Manage your preferences.</p>
+        <button id="acceptCookies" disabled>Accept All</button>
+        <button id="rejectCookies" disabled>Reject All</button>
+        <button id="customizeCookies" disabled>Customize</button>
+    </div>
+
     <script src="public/src/register.js"></script>
-</body>  
+    <script src="public/src/cookie-banner.js"></script>
+</body>
 </html>
