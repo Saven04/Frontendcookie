@@ -17,6 +17,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     let consentId = getCookie("consentId");
 
+    // Show Cookie Banner if No Consent Found
+    if (!consentId && cookieBanner) {
+        console.log("No consent found, showing cookie banner.");
+        cookieBanner.classList.add("show");
+    } else {
+        console.log("Consent found:", consentId);
+    }
+
     // Hide Cookie Settings Button if Not Logged In
     if (cookieSettingsButton) {
         cookieSettingsButton.style.display = consentId ? "block" : "none";
@@ -25,7 +33,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Function to Show Login Message
     function requireLogin(event) {
         if (!consentId) {
-            event.preventDefault(); // Block action
+            event.preventDefault();
             if (loginMessageBanner) {
                 loginMessageBanner.style.display = "block";
                 setTimeout(() => {
@@ -37,7 +45,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    // Block Accept, Reject, and Customize Until Logged In
+    // Block Actions Until Logged In
     if (!consentId) {
         acceptCookiesButton?.addEventListener("click", requireLogin);
         rejectCookiesButton?.addEventListener("click", requireLogin);
@@ -122,11 +130,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                 throw new Error(`Failed to delete data: ${response.statusText}`);
             }
 
-            // Delete all related cookies
             ["consentId", "cookiesAccepted", "cookiePreferences"].forEach(deleteCookie);
 
             alert("Your data has been deleted.");
-            location.reload(); // Refresh page after deletion
+            location.reload();
         } catch (error) {
             console.error("❌ Error deleting data:", error);
             alert("Failed to delete data. Please try again later.");
@@ -212,5 +219,5 @@ document.addEventListener("DOMContentLoaded", async () => {
         } catch (error) {
             console.error("❌ Error saving location data:", error);
         }
-    }
+    }  
 });
