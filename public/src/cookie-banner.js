@@ -1,11 +1,11 @@
 // Function to generate a short unique consent ID
 function generateShortUUID() {
-    // Using crypto for stronger randomness
-    return crypto.randomUUID().slice(0, 8);
+    return Math.random().toString(36).substring(2, 10);
 }
 
 // Document Ready Event
 document.addEventListener("DOMContentLoaded", async () => {
+    // Check for elements and setup references
     const cookieBanner = document.getElementById("cookieConsent");
     const acceptCookiesButton = document.getElementById("acceptCookies");
     const rejectCookiesButton = document.getElementById("rejectCookies");
@@ -118,7 +118,33 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; secure; samesite=strict`;
     }
 
+    // Get or create consentId
     let consentId = getCookie("consentId");
+
+    if (!consentId) {
+        console.log("No consentId found, generating one...");
+        // Fetch a new consentId from the server
+        try {
+            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/auth/register", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: 'anonymous', email: '', password: '' }) // Use appropriate data for registration
+            });
+            const data = await response.json();
+            if (response.ok) {
+                consentId = data.consentId;
+                setCookie("consentId", consentId, 365);
+            } else {
+                console.error("Failed to get consentId:", data.error);
+                consentId = generateShortUUID(); // Fallback if server call fails
+                setCookie("consentId", consentId, 365);
+            }
+        } catch (error) {
+            console.error("Failed to register and get consentId:", error);
+            consentId = generateShortUUID(); // Fallback if server call fails
+            setCookie("consentId", consentId, 365);
+        }
+    }
 
     if (!getCookie("cookiesAccepted")) {
         setTimeout(() => cookieBanner.classList.add("show"), 500);
@@ -128,11 +154,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     rejectCookiesButton.addEventListener("click", () => handleCookieConsent(false));
 
     function handleCookieConsent(accepted) {
-        if (!consentId) {
-            consentId = generateShortUUID();
-            setCookie("consentId", consentId, 365);
-        }
-
         console.log("📌 Using Consent ID:", consentId);
 
         const preferences = {
@@ -159,11 +180,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     savePreferencesButton.addEventListener("click", () => {
-        if (!consentId) {
-            consentId = generateShortUUID();
-            setCookie("consentId", consentId, 365);
-        }
-
         console.log("📌 Using Consent ID:", consentId);
 
         const preferences = {
@@ -209,7 +225,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.log("✅ Preferences saved:", result);
         } catch (error) {
             console.error("❌ Error saving preferences:", error);
-            // Here you might want to notify the user or log this error more visibly
+            // Handle error, perhaps show a user notification
         }
     }
 
