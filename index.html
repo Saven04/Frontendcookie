@@ -31,6 +31,7 @@
                 <button id="rejectCookies" class="reject-button" aria-label="Reject all cookies">Reject All</button>
                 <button id="customizeCookies" class="customize-button" aria-label="Customize cookie preferences">Customize</button>
             </div>
+            <p id="loginMessageBanner" style="color: red; display: none;">You must log in to manage your cookie preferences.</p>
         </div>
     </div>
 
@@ -38,33 +39,27 @@
     <div id="cookiePreferencesModal" class="cookie-preferences-modal">
         <div class="modal-content">
             <h1>Customize Your Preferences</h1>
-            <br>
-            <p id="loginMessage" style="color: red; display: none;">You must log in to manage your cookie preferences.</p>
+            <p id="loginMessageModal" style="color: red; display: none;">You must log in to manage your cookie preferences.</p>
             <div class="cookie-category">
                 <input type="checkbox" id="strictlyNecessary" checked disabled>
                 <label for="strictlyNecessary">Strictly Necessary Cookies (Required for website functionality)</label>
             </div>
-            <br>
             <div class="cookie-category">
                 <input type="checkbox" id="performance">
                 <label for="performance">Performance (Analytical) Cookies</label>
             </div>
-            <br>
             <div class="cookie-category">
                 <input type="checkbox" id="functional">
                 <label for="functional">Functional Cookies (Preferences)</label>
             </div>
-            <br>
             <div class="cookie-category">
                 <input type="checkbox" id="advertising">
                 <label for="advertising">Advertising (Targeting) Cookies</label>
             </div>
-            <br>
             <div class="cookie-category">
                 <input type="checkbox" id="socialMedia">
                 <label for="socialMedia">Social Media Cookies</label>
             </div>
-            <br>
             <div class="modal-buttons">
                 <button id="savePreferences" class="save-button">Save Preferences</button>
                 <button id="cancelPreferences" class="cancel-button">Cancel</button>
@@ -102,30 +97,32 @@
         document.addEventListener("DOMContentLoaded", () => {
             const consentId = localStorage.getItem("consentId");
             const cookieBanner = document.getElementById("cookieConsent");
-            const cookieSettingsButton = document.getElementById("customizeCookies");
             const acceptButton = document.getElementById("acceptCookies");
             const rejectButton = document.getElementById("rejectCookies");
-            const loginMessage = document.getElementById("loginMessage");
+            const customizeButton = document.getElementById("customizeCookies");
+            const cookieSettingsButton = document.getElementById("cookieSettings"); // Make sure this button exists
+            const loginMessageBanner = document.getElementById("loginMessageBanner");
+            const loginMessageModal = document.getElementById("loginMessageModal");
 
-            // Hide cookie settings button if not logged in
-            if (!consentId) {
+            // Hide cookie settings button if user is not logged in
+            if (cookieSettingsButton && !consentId) {
                 cookieSettingsButton.style.display = "none";
             }
 
-            // Show login message if trying to modify cookies without logging in
+            // Show login message when clicking accept, reject, or customize
             function requireLogin(event) {
                 if (!consentId) {
                     event.preventDefault();
-                    loginMessage.style.display = "block";
+                    loginMessageBanner.style.display = "block";
                     setTimeout(() => {
-                        loginMessage.style.display = "none";
+                        loginMessageBanner.style.display = "none";
                     }, 3000);
                 }
             }
 
             acceptButton.addEventListener("click", requireLogin);
             rejectButton.addEventListener("click", requireLogin);
-            cookieSettingsButton.addEventListener("click", requireLogin);
+            customizeButton.addEventListener("click", requireLogin);
         });
     </script>
 
