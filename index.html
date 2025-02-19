@@ -15,19 +15,15 @@
     <!-- Cookie Consent Banner -->
     <div id="cookieConsent" class="cookie-banner">
         <div class="cookie-banner-content">
-            <p><strong>We value your privacy!</strong><br>  
-                We use cookies to enhance your experience, analyze site traffic, and serve personalized content.  
-                <br><br>
-                <span id="cookieBannerMessage">
-                    Please <a href="login.html">log in</a> to manage your cookie preferences.
-                </span>
+            <p id="cookieBannerMessage"><strong>We value your privacy!</strong><br>
+                Please log in to manage your cookie preferences.
             </p>
 
-            <!-- Buttons -->
-            <div class="cookie-buttons">
-                <button id="acceptCookies" class="accept-button" aria-label="Accept all cookies" disabled>Accept All</button>
-                <button id="rejectCookies" class="reject-button" aria-label="Reject all cookies" disabled>Reject All</button>
-                <button id="customizeCookies" class="customize-button" aria-label="Customize cookie preferences" disabled>Customize</button>
+            <!-- Buttons (Hidden until login) -->
+            <div class="cookie-buttons" id="cookieButtons" style="display: none;">
+                <button id="acceptCookies" class="accept-button" aria-label="Accept all cookies">Accept All</button>
+                <button id="rejectCookies" class="reject-button" aria-label="Reject all cookies">Reject All</button>
+                <button id="customizeCookies" class="customize-button" aria-label="Customize cookie preferences">Customize</button>
             </div>
         </div>
     </div>
@@ -39,27 +35,22 @@
             <br>
             <div class="cookie-category">
                 <input type="checkbox" id="strictlyNecessary" checked disabled>
-                <label for="strictlyNecessary" class="cookie-label" data-cookie-type="strictlyNecessary" data-info="Strictly necessary cookies are essential for the website's basic functionalities. These cookies ensure the site functions properly. <a href='cookie-policy.html' target='_blank'>Learn More</a>">Strictly Necessary Cookies (Required for website functionality)</label>
+                <label for="strictlyNecessary" class="cookie-label" data-cookie-type="strictlyNecessary" data-info="Strictly necessary cookies are essential for the website's basic functionalities. These cookies ensure the site functions properly. <a href= cookie-policy.html target='_blank'>Learn More</a>">Strictly Necessary Cookies (Required for website functionality)</label>
             </div>
             <br>
             <div class="cookie-category">
                 <input type="checkbox" id="performance">
-                <label for="performance" class="cookie-label" data-cookie-type="performance" data-info="Performance cookies help us understand how visitors interact with our website. These cookies are used to improve website performance and functionality. <a href='cookie-policy.html' target='_blank'>Learn More</a>">Performance (Analytical) Cookies</label>
+                <label for="performance" class="cookie-label" data-cookie-type="performance" data-info="Performance cookies help us understand how visitors interact with our website. These cookies are used to improve website performance and functionality. <a href= cookie-policy.html target='_blank'>Learn More</a>">Performance (Analytical) Cookies</label>
             </div>
             <br>
             <div class="cookie-category">
                 <input type="checkbox" id="functional">
-                <label for="functional" class="cookie-label" data-cookie-type="functional" data-info="Functional cookies allow the website to remember your preferences and personalize the user experience. <a href='cookie-policy.html' target='_blank'>Learn More</a>">Functional Cookies (Preferences)</label>
+                <label for="functional" class="cookie-label" data-cookie-type="functional" data-info="Functional cookies allow the website to remember your preferences and personalize the user experience. <a href= cookie-policy.html target='_blank'>Learn More</a>">Functional Cookies (Preferences)</label>
             </div>
             <br>
             <div class="cookie-category">
                 <input type="checkbox" id="advertising">
-                <label for="advertising" class="cookie-label" data-cookie-type="advertising" data-info="Advertising cookies help us provide you with personalized ads based on your interests and browsing history. <a href='cookie-policy.html' target='_blank'>Learn More</a>">Advertising (Targeting) Cookies</label>
-            </div>
-            <br>
-            <div class="cookie-category">
-                <input type="checkbox" id="socialMedia">
-                <label for="socialMedia" class="cookie-label" data-cookie-type="socialMedia" data-info="Social Media cookies allow you to share content and interact with social media platforms like Facebook and Twitter. <a href='cookie-policy.html' target='_blank'>Learn More</a>">Social Media Cookies</label>
+                <label for="advertising" class="cookie-label" data-cookie-type="advertising" data-info="Advertising cookies help us provide you with personalized ads based on your interests and browsing history. <a href= cookie-policy.html target='_blank'>Learn More</a>">Advertising (Targeting) Cookies</label>
             </div>
             <br>
             <div class="modal-buttons">
@@ -68,9 +59,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Cookie Settings Button (Hidden until login) -->
-    <button id="cookieSettingsBtn" class="cookie-settings-btn" style="display: none;">⚙️ Cookie Settings</button>
 
     <!-- Login Page Content -->
     <div class="login-container">
@@ -89,6 +77,7 @@
                 </div>
                 <button type="submit" class="login-button">Login</button>
                 <a href="#" class="forgot-password">Forgot Password?</a>
+
                 <button type="button" class="register-button" onclick="window.location.href='register.html'">Register</button>
             </form>
         </div>
@@ -100,25 +89,13 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const cookieSettingsBtn = document.getElementById("cookieSettingsBtn");
-            const acceptCookiesBtn = document.getElementById("acceptCookies");
-            const rejectCookiesBtn = document.getElementById("rejectCookies");
-            const customizeCookiesBtn = document.getElementById("customizeCookies");
+            const consentId = localStorage.getItem("consentId");
+            const cookieButtons = document.getElementById("cookieButtons");
             const cookieBannerMessage = document.getElementById("cookieBannerMessage");
 
-            const consentId = localStorage.getItem("consentId");
-
             if (consentId) {
-                // User is logged in, enable cookie buttons
-                acceptCookiesBtn.removeAttribute("disabled");
-                rejectCookiesBtn.removeAttribute("disabled");
-                customizeCookiesBtn.removeAttribute("disabled");
-
-                // Show settings button
-                cookieSettingsBtn.style.display = "block";
-
-                // Update banner message
-                cookieBannerMessage.innerHTML = "We use cookies to enhance your experience. You can manage your preferences below.";
+                cookieButtons.style.display = "block"; // Show buttons if logged in
+                cookieBannerMessage.innerHTML = "<strong>We value your privacy!</strong><br>Manage your cookie preferences below.";
             }
         });
     </script>
