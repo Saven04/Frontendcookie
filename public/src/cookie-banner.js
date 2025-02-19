@@ -234,15 +234,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     async function sendPreferencesToDB(consentId, preferences) {
+        const endpoint = "https://backendcookie-8qc1.onrender.com/api/save"; // Ensure this is correct
         try {
-            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/save", {
+            const response = await fetch(endpoint, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ consentId, preferences }),
             });
-            console.log("✅ Preferences saved:", await response.json());
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const result = await response.json();
+            console.log("✅ Preferences saved:", result);
         } catch (error) {
             console.error("❌ Error saving preferences:", error);
+            // Here you might want to notify the user or log this error more visibly
         }
     }
 
