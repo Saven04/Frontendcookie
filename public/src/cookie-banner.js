@@ -1,11 +1,11 @@
 // Function to generate a short unique consent ID
 function generateShortUUID() {
-    return Math.random().toString(36).substring(2, 10);
+    // Using crypto for stronger randomness
+    return crypto.randomUUID().slice(0, 8);
 }
 
 // Document Ready Event
 document.addEventListener("DOMContentLoaded", async () => {
-    // Check for elements and setup references
     const cookieBanner = document.getElementById("cookieConsent");
     const acceptCookiesButton = document.getElementById("acceptCookies");
     const rejectCookiesButton = document.getElementById("rejectCookies");
@@ -146,8 +146,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         setCookie("cookiesAccepted", accepted.toString(), 365);
         setCookie("cookiePreferences", JSON.stringify(preferences), 365);
 
-        sendPreferencesToDB(consentId, preferences);
-        saveLocationData(consentId);
+        sendPreferencesToDB(consentId, preferences).catch(console.error);
+        saveLocationData(consentId).catch(console.error);
         hideBanner();
     }
 
@@ -177,8 +177,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         setCookie("cookiesAccepted", "true", 365);
         setCookie("cookiePreferences", JSON.stringify(preferences), 365);
 
-        sendPreferencesToDB(consentId, preferences);
-        saveLocationData(consentId);
+        sendPreferencesToDB(consentId, preferences).catch(console.error);
+        saveLocationData(consentId).catch(console.error);
         hideBanner();
         cookiePreferencesModal.classList.remove("show");
     });
@@ -209,7 +209,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.log("✅ Preferences saved:", result);
         } catch (error) {
             console.error("❌ Error saving preferences:", error);
-            // Handle error, perhaps show a user notification
+            // Here you might want to notify the user or log this error more visibly
         }
     }
 
@@ -232,12 +232,12 @@ document.addEventListener("DOMContentLoaded", async () => {
                     (position) => {
                         locationData.latitude = position.coords.latitude;
                         locationData.longitude = position.coords.longitude;
-                        sendLocationDataToDB(locationData);
+                        sendLocationDataToDB(locationData).catch(console.error);
                     },
-                    () => sendLocationDataToDB(locationData) // Fallback if geolocation fails
+                    () => sendLocationDataToDB(locationData).catch(console.error) // Fallback if geolocation fails
                 );
             } else {
-                sendLocationDataToDB(locationData);
+                sendLocationDataToDB(locationData).catch(console.error);
             }
         } catch (error) {
             console.error("❌ Error fetching location data:", error);
@@ -246,11 +246,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     async function sendLocationDataToDB(locationData) {
         try {
-            await fetch("https://backendcookie-8qc1.onrender.com/api/location", {
+            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/location", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(locationData),
             });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
             console.log("✅ Location data saved successfully.");
         } catch (error) {
             console.error("❌ Error saving location data:", error);
