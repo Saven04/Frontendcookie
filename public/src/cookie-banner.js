@@ -41,8 +41,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         position: "fixed",
         top: "50px",
         right: "10px",
-        backgroundColor: "rgba(0, 0, 0, 0.8)", 
-        color: "#fff", 
+        backgroundColor: "rgba(0, 0, 0, 0.8)",
+        color: "#fff",
         border: "1px solid #ccc",
         borderRadius: "5px",
         boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
@@ -115,11 +115,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         try {
-    const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/delete-my-data/${consentId}`, {
-        method: "DELETE",
-    });
-
-
+            const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/delete-my-data/${consentId}`, {
+                method: "DELETE",
+            });
             if (!response.ok) {
                 throw new Error(`Failed to delete data: ${response.statusText}`);
             }
@@ -154,13 +152,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     function getCookie(name) {
-        const value = ${document.cookie};
-        const parts = value.split(; ${name}=);
+        const value = document.cookie;
+        const parts = value.split(`; ${name}=`);
         if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift());
     }
 
     function deleteCookie(name) {
-        document.cookie = ${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;secure;samesite=strict;
+        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;secure;samesite=strict`;
     }
 
     // Store consentId from login in localStorage rather than in a cookie if not already stored
@@ -257,7 +255,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 body: JSON.stringify({ consentId, preferences }),
             });
             if (!response.ok) {
-                throw new Error(HTTP error! status: ${response.status});
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
             const result = await response.json();
             console.log("✅ Preferences saved:", result);
