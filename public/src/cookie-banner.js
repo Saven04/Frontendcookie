@@ -24,13 +24,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Function to Show Login Message
     function requireLogin(event) {
-        if (!consentId) {
-            event.preventDefault(); // Block action
-            loginMessageBanner.style.display = "block";
-            setTimeout(() => {
-                loginMessageBanner.style.display = "none";
-            }, 3000);
-        }
+        event.preventDefault(); // Block action
+        loginMessageBanner.style.display = "block";
+        setTimeout(() => {
+            loginMessageBanner.style.display = "none";
+        }, 3000);
     }
 
     // Block Accept, Reject, and Customize Until Logged In
@@ -42,9 +40,18 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Enable Cookie Actions Only if User is Logged In
         acceptCookiesButton.addEventListener("click", () => handleCookieConsent(true));
         rejectCookiesButton.addEventListener("click", () => handleCookieConsent(false));
-        customizeCookiesButton.addEventListener("click", () => {
-            cookiePreferencesModal.classList.add("show");
-        });
+        customizeCookiesButton.addEventListener("click", () => requireAuthentication(openPreferencesModal));
+    }
+
+    function openPreferencesModal() {
+        cookiePreferencesModal.classList.add("show");
+    }
+
+    function requireAuthentication(callback) {
+        const isAuthenticated = confirm("Authentication required. Proceed?");
+        if (isAuthenticated) {
+            callback();
+        }
     }
 
     // Function to Handle Cookie Consent
