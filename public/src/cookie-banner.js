@@ -54,12 +54,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    // Function to Show Login Message
-    function requireLogin(event) {
-        event.preventDefault();
-        alert("You must register and log in to manage cookie settings.");
-    }
-
     // Function to Handle Cookie Consent
     function handleCookieConsent(accepted) {
         const preferences = {
