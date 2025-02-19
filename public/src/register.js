@@ -9,7 +9,14 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
     const confirmPassword = document.getElementById("confirmPassword").value.trim();
-    const messageBox = document.getElementById("messageBox"); // Assuming you have a message div
+    
+    // Ensure messageBox exists
+    let messageBox = document.getElementById("messageBox");
+    if (!messageBox) {
+        messageBox = document.createElement("div");
+        messageBox.id = "messageBox";
+        document.body.appendChild(messageBox);
+    }
 
     // Validate inputs
     if (!username || !email || !password || !confirmPassword) {
@@ -18,6 +25,23 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         return;
     }
 
+    // Validate username (alphanumeric, underscores, 3-16 chars)
+    const usernameRegex = /^[a-zA-Z0-9_]{3,16}$/;
+    if (!usernameRegex.test(username)) {
+        showMessage("Invalid username! Use 3-16 characters (letters, numbers, underscores).", "error");
+        resetButton();
+        return;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        showMessage("Invalid email format!", "error");
+        resetButton();
+        return;
+    }
+
+    // Validate password strength
     if (password.length < 6) {
         showMessage("Password must be at least 6 characters long.", "error");
         resetButton();
@@ -46,11 +70,11 @@ document.getElementById("registerForm").addEventListener("submit", async functio
                 window.location.href = "index.html"; // Redirect to login page
             }, 1500);
         } else {
-            showMessage(`❌ ${data.message || "Registration failed."}`, "error");
+            showMessage(`❌ ${data.message || "Registration failed. Please try again."}`, "error");
         }
     } catch (error) {
         console.error("❌ Error:", error);
-        showMessage("Registration failed. Please check your internet connection and try again.", "error");
+        showMessage("Registration failed. Check your internet connection and try again.", "error");
     } finally {
         resetButton();
     }
