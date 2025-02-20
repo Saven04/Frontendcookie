@@ -91,22 +91,51 @@ body {
     border-radius: 6px;
     font-size: 16px;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    text-transform: uppercase;
+    font-weight: 500; /* Slightly bold for better emphasis */
 }
 
 .btn-custom:hover {
     background-color: var(--secondary-color);
     transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
 }
 
-/* Register Button */
+.btn-custom:active {
+    transform: scale(0.98); /* Slightly shrink on click for interaction feel */
+}
+
+/* Register Button (More emphasis on hover) */
 .register-button {
     background-color: var(--primary-color);
     margin-top: 10px;
+    padding: 12px;
+    width: 100%;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    font-weight: 500;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .register-button:hover {
     background-color: var(--secondary-color);
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.register-button:active {
+    transform: scale(0.98); /* Shrink on click */
+}
+
+/* Buttons Active Focus (Optional: Adds focus ring for accessibility) */
+.btn-custom:focus, .register-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(102, 95, 247, 0.4); /* Glow effect on focus */
 }
 
 /* Forgot Password */
