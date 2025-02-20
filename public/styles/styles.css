@@ -41,6 +41,7 @@ body {
     animation: fadeIn 0.8s ease-in-out;
 }
 
+/* Fade In Animation */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-20px); }
     to { opacity: 1; transform: translateY(0); }
@@ -51,7 +52,6 @@ body {
     font-size: 26px;
     margin-bottom: 15px;
     font-weight: bold;
-    color: var(--text-light);
 }
 
 /* Input Fields */
@@ -63,7 +63,6 @@ body {
 .input-group label {
     font-size: 14px;
     color: var(--text-muted);
-    margin-bottom: 5px;
 }
 
 .input-group input {
@@ -71,128 +70,116 @@ body {
     font-size: 16px;
     border: 1px solid var(--input-border);
     border-radius: 6px;
-    background: var(--input-bg);
+    background-color: var(--input-bg);
     color: var(--text-light);
     outline: none;
-    transition: border 0.3s ease-in-out;
+    transition: border-color 0.3s ease-in-out; /* Smooth transition for border color */
+}
+
+.input-group input::placeholder { /* Placeholder styles */
+    color: var(--text-muted);
+}
+
+.input-group input:hover {
+   border-color: var(--primary-color); /* Change border color on hover */
 }
 
 .input-group input:focus {
-    border-color: var(--secondary-color);
+   border-color: var(--secondary-color);
 }
 
 /* Buttons */
-.btn-custom {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 12px;
-    width: 100%;
-    border: none;
-    border-radius: 6px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    text-transform: uppercase;
-    font-weight: 500; /* Slightly bold for better emphasis */
+.btn-custom,
+.register-button { /* Combine similar styles for DRY principle */
+   background-color: var(--primary-color);
+   color: white; 
+   padding: 12px; 
+   width: 100%; 
+   border-radius: 6px; 
+   font-size: 16px; 
+   cursor:pointer; 
+   transition:border-color .3s ease,
+               transform .3s ease,
+               box-shadow .3s ease; 
+   text-transform:utf-8 uppercase; 
+   font-weight:bold; 
+   box-shadow :0 4px8 rgba(0,0,0,.1); /* Subtle shadow for depth */ 
 }
 
-.btn-custom:hover {
-    background-color: var(--secondary-color);
-    transform: scale(1.05);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+.btn-custom:hover,
+.register-button:hover { 
+   background-color :var(--secondary-color); 
+   transform :scale(1.05); 
+   box-shadow :06px rgba(0,0,0,.2); /* Stronger shadow on hover */ 
 }
 
-.btn-custom:active {
-    transform: scale(0.98); /* Slightly shrink on click for interaction feel */
+.btn-custom :active,
+.register-button :active { 
+   transform :scale(.98); /* Slightly shrink on click for interaction feel */ 
 }
 
-/* Register Button (More emphasis on hover) */
-.register-button {
-    background-color: var(--primary-color);
-    margin-top: 10px;
-    padding: 12px;
-    width: 100%;
-    border-radius: 6px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    font-weight: 500;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+/* Buttons Active Focus (Optional) */
+.btn-custom :focus,
+.register-button :focus { 
+   outline:none; 
+   box-shadow :0 0 .3rem rgba(102,95,247,.4); /* Glow effect on focus */ 
 }
 
-.register-button:hover {
-    background-color: var(--secondary-color);
-    transform: scale(1.05);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+/* Forgot Password Link */
+.forgot-password { 
+   color :var(--text-muted); 
+   text-align:center; 
+   display:block; 
+   margin-top :10px; 
+   text-decoration:none; 
+   transition :color .3s; 
 }
 
-.register-button:active {
-    transform: scale(0.98); /* Shrink on click */
+.forgot-password:hover { 
+   color :var(--text-light); 
 }
 
-/* Buttons Active Focus (Optional: Adds focus ring for accessibility) */
-.btn-custom:focus, .register-button:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(102, 95, 247, 0.4); /* Glow effect on focus */
+/* Social Login Section */
+.social-login { 
+   text-align:center; 
+   margin-top :20px; 
 }
 
-/* Forgot Password */
-.forgot-password {
-    color: var(--text-muted);
-    text-align: center;
-    display: block;
-    margin-top: 10px;
-    text-decoration: none;
-    transition: color 0.3s;
+.social-login p { 
+   font-size :14px; 
+   color :var(--text-muted);  
+   margin-bottom :15px;  
 }
 
-.forgot-password:hover {
-    color: var(--text-light);
+.social-button {  
+   display:flex;  
+   align-items:center;  
+   justify-content:center;  
+   padding :12px20px;  
+   font-size :16px;  
+   border :1px solid var(--input-border);  
+   color :var(--text-muted);  
+   background :transparent;  
+   cursor:pointer;  
+   width :100%;  
+   border-radius :6px;  
+   margin-bottom :10px;  
+   transition :all .3s ease-in-out;  
 }
 
-/* Social Login */
-.social-login {
-    text-align: center;
-    margin-top: 20px;
+.social-button:hover {  
+   background :rgba(255,255,255,.1);  
+   transform :scale(1.05);  
 }
 
-.social-login p {
-    font-size: 14px;
-    color: var(--text-muted);
-    margin-bottom: 15px;
-}
-
-.social-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 12px 20px;
-    font-size: 16px;
-    border: 1px solid var(--input-border);
-    color: var(--text-muted);
-    background: transparent;
-    cursor: pointer;
-    width: 100%;
-    border-radius: 6px;
-    margin-bottom: 10px;
-    transition: all 0.3s;
-}
-
-.social-button:hover {
-    background: rgba(255, 255, 255, 0.1);
-    transform: scale(1.05);
-}
-
-.social-button img {
-    width: 20px;
-    margin-right: 10px;
+.social-button img {  
+   width :20px;  
+   margin-right :10px;  
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
-    .login-container {
-        width: 90%;
-    }
+@media (max-width :768px) {   
+      .login-container {   
+          width :90%;   
+      }   
 }
