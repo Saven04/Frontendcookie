@@ -17,6 +17,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     const functionalCheckbox = document.getElementById("functional");
     const advertisingCheckbox = document.getElementById("advertising");
     const socialMediaCheckbox = document.getElementById("socialMedia");
+    const selectAllButton = document.createElement("button");
+    selectAllButton.id = "selectAllButton";
+    selectAllButton.innerText = "Select All";
+    selectAllButton.style.margin = "10px 0";
+    selectAllButton.style.cursor = "pointer";
 
     const cookieSettingsButton = document.createElement("button");
     cookieSettingsButton.id = "cookieSettingsButton";
@@ -195,6 +200,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         cookiePreferencesModal.classList.add("show");
         strictlyNecessaryCheckbox.checked = true;
         strictlyNecessaryCheckbox.disabled = true;
+        loadPreferences();
     });
 
     savePreferencesButton.addEventListener("click", () => {
@@ -220,6 +226,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         saveLocationData(consentId);
         hideBanner();
         cookiePreferencesModal.classList.remove("show");
+        alert("Preferences saved successfully!");
     });
 
     cancelPreferencesButton.addEventListener("click", () => {
@@ -290,6 +297,23 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
+    function loadPreferences() {
+        const preferences = JSON.parse(getCookie("cookiePreferences") || "{}");
+        performanceCheckbox.checked = preferences.performance || false;
+        functionalCheckbox.checked = preferences.functional || false;
+        advertisingCheckbox.checked = preferences.advertising || false;
+        socialMediaCheckbox.checked = preferences.socialMedia || false;
+    }
+
+    selectAllButton.addEventListener("click", () => {
+        const allChecked = performanceCheckbox.checked && functionalCheckbox.checked && advertisingCheckbox.checked && socialMediaCheckbox.checked;
+        performanceCheckbox.checked = !allChecked;
+        functionalCheckbox.checked = !allChecked;
+        advertisingCheckbox.checked = !allChecked;
+        socialMediaCheckbox.checked = !allChecked;
+        selectAllButton.innerText = allChecked ? "Select All" : "Deselect All";
+    });
+
     // Ensure modal exists before trying to modify it
     if (cookiePreferencesModal) {
         // Remove the deleteDataButton if it exists
@@ -297,5 +321,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (deleteDataButton) {
             deleteDataButton.remove();
         }
+
+        // Add the selectAllButton to the modal
+        cookiePreferencesModal.insertBefore(selectAllButton, savePreferencesButton);
     }
 });
