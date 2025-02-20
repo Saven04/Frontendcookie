@@ -1,19 +1,39 @@
- /* Register Button Styles */
- .register-section {
+/* Register Button Styles */
+.register-section {
     text-align: center;
     margin-top: 15px;
 }
 
 .register-button {
     display: inline-block;
-    padding: 10px 15px;
+    padding: 12px 20px; /* Slightly larger for better tap targets on mobile */
     background-color: #45a049;
     color: white;
     text-decoration: none;
-    border-radius: 5px;
+    border-radius: 8px; /* Slightly rounder for a modern feel */
     margin-top: 10px;
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transition for hover effect */
 }
 
 .register-button:hover {
     background-color: #0056b3;
+    transform: translateY(-3px); /* Subtle lift on hover for better UX */
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .register-button {
+        background-color: #6c8e3b; /* Slightly darker for dark mode */
+    }
+
+    .register-button:hover {
+        background-color: #004b8e; /* Darker hover effect for dark mode */
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 576px) {
+    .register-button {
+        padding: 15px 25px; /* More padding on smaller screens */
+    }
 }
