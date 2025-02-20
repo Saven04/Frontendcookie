@@ -7,10 +7,7 @@
 
 body {
     font-family: 'Roboto', sans-serif;
-    background-image: url('../image/Background.jpg'); /* Ensure this path is correct */
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+    background: url('../image/Background.jpg') no-repeat center center/cover;
     height: 100vh;
     display: flex;
     justify-content: center;
@@ -18,97 +15,114 @@ body {
     color: #fff;
 }
 
-@keyframes fadeIn {
-    0% {
-        opacity: 0;
-        top: -50px;
-    }
-    100% {
-        opacity: 1;
-        top: 0;
-    }
+/* Dark Mode Support */
+:root {
+    --primary-color: #4CAF50;
+    --secondary-color: #6605f7;
+    --background-dark: #121212;
+    --text-light: #fff;
+    --text-muted: #ccc;
+    --input-bg: #222;
+    --input-border: #555;
 }
 
 /* Login Page Styles */
 .login-container {
     display: flex;
-    justify-content: center;
-    align-items: center;
     flex-direction: column;
+    align-items: center;
     width: 100%;
     max-width: 400px;
-    background-color: rgba(0, 0, 0, 0.6);
-    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.75);
+    border-radius: 12px;
     padding: 30px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    animation: fadeIn 0.8s ease-in-out;
 }
 
-.login-card {
-    width: 100%;
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .card-header h2 {
     text-align: center;
-    font-size: 24px;
-    margin-bottom: 20px;
-    color: #fff;
+    font-size: 26px;
+    margin-bottom: 15px;
+    font-weight: bold;
+    color: var(--text-light);
 }
 
+/* Input Fields */
 .input-group {
     margin-bottom: 15px;
-    display: flex;
-    flex-direction: column;
+    width: 100%;
 }
 
 .input-group label {
     font-size: 14px;
-    color: #ccc;
+    color: var(--text-muted);
     margin-bottom: 5px;
 }
 
 .input-group input {
     padding: 12px;
     font-size: 16px;
-    border: none;
-    border-radius: 5px;
-    background-color: #333;
-    color: white;
+    border: 1px solid var(--input-border);
+    border-radius: 6px;
+    background: var(--input-bg);
+    color: var(--text-light);
     outline: none;
+    transition: border 0.3s ease-in-out;
 }
 
-.input-group input::placeholder {
-    color: #bbb;
+.input-group input:focus {
+    border-color: var(--secondary-color);
 }
 
-.login-button {
-    background-color: #4CAF50;
+/* Buttons */
+.btn-custom {
+    background-color: var(--primary-color);
     color: white;
     padding: 12px;
     width: 100%;
     border: none;
-    border-radius: 5px;
+    border-radius: 6px;
     font-size: 16px;
     cursor: pointer;
-    margin-bottom: 10px;
-    transition: background-color 0.3s;
+    transition: all 0.3s;
 }
 
-.login-button:hover {
-    background-color: #6605f7;
+.btn-custom:hover {
+    background-color: var(--secondary-color);
+    transform: scale(1.05);
 }
 
+/* Register Button */
+.register-button {
+    background-color: var(--primary-color);
+    margin-top: 10px;
+}
+
+.register-button:hover {
+    background-color: var(--secondary-color);
+}
+
+/* Forgot Password */
 .forgot-password {
-    color: #bbb;
+    color: var(--text-muted);
     text-align: center;
     display: block;
     margin-top: 10px;
     text-decoration: none;
+    transition: color 0.3s;
 }
 
 .forgot-password:hover {
-    color: #fff;
+    color: var(--text-light);
 }
 
+/* Social Login */
 .social-login {
     text-align: center;
     margin-top: 20px;
@@ -116,7 +130,7 @@ body {
 
 .social-login p {
     font-size: 14px;
-    color: #ccc;
+    color: var(--text-muted);
     margin-bottom: 15px;
 }
 
@@ -126,18 +140,19 @@ body {
     justify-content: center;
     padding: 12px 20px;
     font-size: 16px;
-    background-color: transparent;
-    border: 1px solid #ccc;
-    color: #ccc;
+    border: 1px solid var(--input-border);
+    color: var(--text-muted);
+    background: transparent;
     cursor: pointer;
     width: 100%;
-    border-radius: 5px;
+    border-radius: 6px;
     margin-bottom: 10px;
-    transition: background-color 0.3s;
+    transition: all 0.3s;
 }
 
 .social-button:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.05);
 }
 
 .social-button img {
@@ -145,32 +160,9 @@ body {
     margin-right: 10px;
 }
 
-/* Register Button Styles */
-.register-button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 12px;
-    width: 100%;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    text-align: center;
-    margin-top: 10px;
-    transition: background-color 0.3s;
-}
-
-.register-button:hover {
-    background-color: #6605f7;
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
     .login-container {
-        width: 90%;
-    }
-
-    .cookie-banner {
         width: 90%;
     }
 }
