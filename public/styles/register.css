@@ -1,39 +1,48 @@
-/* Register Button Styles */
+/* Register Section */
 .register-section {
     text-align: center;
     margin-top: 15px;
 }
 
+/* Register Button Styles */
 .register-button {
     display: inline-block;
-    padding: 12px 20px; /* Slightly larger for better tap targets on mobile */
+    padding: 12px 20px;
     background-color: #45a049;
     color: white;
     text-decoration: none;
-    border-radius: 8px; /* Slightly rounder for a modern feel */
-    margin-top: 10px;
-    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transition for hover effect */
+    border-radius: 12px; /* More rounded for a modern look */
+    font-weight: bold; /* Add bold text for emphasis */
+    text-transform: uppercase; /* Add uppercase text for consistency */
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
 .register-button:hover {
     background-color: #0056b3;
-    transform: translateY(-3px); /* Subtle lift on hover for better UX */
+    transform: translateY(-3px); /* Subtle lift effect */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Stronger shadow on hover for visual feedback */
+}
+
+.register-button:active {
+    transform: translateY(0px); /* Reset the lift effect when the button is clicked */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Return to the original shadow */
 }
 
 /* Dark Mode Support */
 @media (prefers-color-scheme: dark) {
     .register-button {
-        background-color: #6c8e3b; /* Slightly darker for dark mode */
+        background-color: #6c8e3b; /* Adjust for dark mode */
     }
 
     .register-button:hover {
-        background-color: #004b8e; /* Darker hover effect for dark mode */
+        background-color: #004b8e; /* Darker hover color */
     }
 }
 
-/* Responsive Design */
+/* Mobile-Friendly Design (Bootstrap responsiveness) */
 @media (max-width: 576px) {
     .register-button {
-        padding: 15px 25px; /* More padding on smaller screens */
+        padding: 15px 25px; /* Slightly bigger padding for better touch targets on mobile */
     }
 }
