@@ -18,79 +18,77 @@ document.addEventListener("DOMContentLoaded", async () => {
     const advertisingCheckbox = document.getElementById("advertising");
     const socialMediaCheckbox = document.getElementById("socialMedia");
 
+    // COOKIE SETTINGS BUTTON (Improved with Bootstrap)
     const cookieSettingsButton = document.createElement("button");
     cookieSettingsButton.id = "cookieSettingsButton";
-    cookieSettingsButton.innerHTML = "⚙️"; // Gear icon
-    Object.assign(cookieSettingsButton.style, {
+    cookieSettingsButton.innerHTML = "⚙️ Cookie Settings"; // More descriptive text
+    cookieSettingsButton.classList.add("btn", "btn-outline-light", "btn-sm", "rounded-pill"); // Bootstrap classes
+    Object.assign(cookieSettingsButton.style, { // Overriding Bootstrap styles for custom look
         position: "fixed",
         top: "10px",
         right: "10px",
-        backgroundColor: "transparent",
-        border: "none",
-        fontSize: "24px",
-        cursor: "pointer",
         zIndex: "1000",
+        fontSize: "14px",
     });
     document.body.appendChild(cookieSettingsButton);
 
-    // Create dropdown menu
+    // Create dropdown menu (Improved with Bootstrap)
     const settingsDropdown = document.createElement("div");
     settingsDropdown.id = "settingsDropdown";
-    Object.assign(settingsDropdown.style, {
+    settingsDropdown.classList.add("dropdown-menu", "dropdown-menu-end", "shadow"); // Bootstrap classes
+    Object.assign(settingsDropdown.style, { // Overriding Bootstrap styles for custom look
         position: "fixed",
         top: "50px",
         right: "10px",
-        backgroundColor: "rgba(0, 0, 0, 0.8)", // Transparent black background
-        color: "#fff", // White text color for visibility
-        border: "1px solid #ccc",
-        borderRadius: "5px",
-        boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
-        display: "none",
         zIndex: "1000",
+        display: "none", // Hidden by default
     });
 
-    const customizePreferenceOption = document.createElement("div");
-    customizePreferenceOption.innerText = "Customize Preference";
-    customizePreferenceOption.style.padding = "10px";
-    customizePreferenceOption.style.cursor = "pointer";
-    customizePreferenceOption.addEventListener("click", () => {
+    const customizePreferenceOption = document.createElement("a");
+    customizePreferenceOption.innerText = "Customize Preferences";
+    customizePreferenceOption.classList.add("dropdown-item"); // Bootstrap class
+    customizePreferenceOption.href = "#"; // Use a link to prevent page jumping
+    customizePreferenceOption.addEventListener("click", (event) => {
+        event.preventDefault(); // Prevent the link from navigating
         cookiePreferencesModal.classList.add("show");
         settingsDropdown.style.display = "none";
     });
 
     const policiesOption = document.createElement("div");
-    policiesOption.innerText = "Read the policies and Guidelines";
-    policiesOption.style.padding = "10px";
-    policiesOption.style.cursor = "pointer";
+    policiesOption.innerText = "Policies & Guidelines";
+    policiesOption.classList.add("dropdown-item"); // Bootstrap class
 
     const policiesSubMenu = document.createElement("div");
-    policiesSubMenu.style.paddingLeft = "20px";
-    policiesSubMenu.style.display = "none";
+    policiesSubMenu.classList.add("dropdown-menu", "shadow"); // Bootstrap classes
+    Object.assign(policiesSubMenu.style, {
+        paddingLeft: "0px", // Adjusted to align with dropdown menu
+        display: "none",
+    });
 
-    const cookiePolicyOption = document.createElement("div");
+    const cookiePolicyOption = document.createElement("a");
     cookiePolicyOption.innerText = "Cookie Policy";
-    cookiePolicyOption.style.padding = "5px";
-    cookiePolicyOption.style.cursor = "pointer";
+    cookiePolicyOption.classList.add("dropdown-item"); // Bootstrap class
+    cookiePolicyOption.href = "/cookie-policy";
+    cookiePolicyOption.target = "_blank";
     cookiePolicyOption.addEventListener("click", () => {
-        window.open("/cookie-policy", "_blank");
         settingsDropdown.style.display = "none";
     });
 
-    const privacyPolicyOption = document.createElement("div");
+    const privacyPolicyOption = document.createElement("a");
     privacyPolicyOption.innerText = "Privacy Policy";
-    privacyPolicyOption.style.padding = "5px";
-    privacyPolicyOption.style.cursor = "pointer";
+    privacyPolicyOption.classList.add("dropdown-item"); // Bootstrap class
+    privacyPolicyOption.href = "/privacy-policy";
+    privacyPolicyOption.target = "_blank";
     privacyPolicyOption.addEventListener("click", () => {
-        window.open("/privacy-policy", "_blank");
         settingsDropdown.style.display = "none";
     });
 
-    const tosOption = document.createElement("div");
+    const tosOption = document.createElement("a");
     tosOption.innerText = "Terms of Service";
-    tosOption.style.padding = "5px";
-    tosOption.style.cursor = "pointer";
+    tosOption.classList.add("dropdown-item"); // Bootstrap class
+    tosOption.href = "/terms-of-service";
+    tosOption.target = "_blank";
     tosOption.addEventListener("click", () => {
-        window.open("/terms-of-service", "_blank");
         settingsDropdown.style.display = "none";
     });
 
@@ -98,15 +96,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     policiesSubMenu.appendChild(privacyPolicyOption);
     policiesSubMenu.appendChild(tosOption);
 
-    policiesOption.addEventListener("click", () => {
+    policiesOption.addEventListener("click", (event) => {
+        event.preventDefault(); // Prevent any default action
         policiesSubMenu.style.display = policiesSubMenu.style.display === "none" ? "block" : "none";
     });
 
-    const deleteDataOption = document.createElement("div");
+    const deleteDataOption = document.createElement("a");
     deleteDataOption.innerText = "Delete My Data";
-    deleteDataOption.style.padding = "10px";
-    deleteDataOption.style.cursor = "pointer";
-    deleteDataOption.addEventListener("click", async () => {
+    deleteDataOption.classList.add("dropdown-item", "text-danger"); // Bootstrap classes (red text)
+    deleteDataOption.href = "#"; // Prevent page jumping
+    deleteDataOption.addEventListener("click", async (event) => {
+        event.preventDefault();
         if (!consentId) {
             alert("No data found to delete.");
             return;
