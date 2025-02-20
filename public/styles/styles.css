@@ -7,12 +7,13 @@
 
 body {
     font-family: 'Roboto', sans-serif;
-    background: url('../image/Background.jpg') no-repeat center center/cover;
+    background: linear-gradient(to bottom right, rgba(0, 0, 0, 0.7), rgba(34, 34, 34, 0.7)), url('../image/Background.jpg') no-repeat center center/cover; /* Gradient overlay for better text visibility */
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     color: #fff;
+    background-attachment: fixed; /* Parallax effect */
 }
 
 /* Dark Mode Support */
@@ -33,7 +34,7 @@ body {
     align-items: center;
     width: 100%;
     max-width: 400px;
-    background: rgba(0, 0, 0, 0.75);
+    background: rgba(0, 0, 0, 0.75); /* Slightly transparent for visual depth */
     border-radius: 12px;
     padding: 30px;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
