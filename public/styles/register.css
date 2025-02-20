@@ -1,29 +1,31 @@
 /* Register Section */
 .register-section {
-    text-align: center;
-    margin-top: 15px;
+    text-align: center; /* Center align text */
+    margin-top: 15px; /* Space above the section */
 }
 
 /* Register Button Styles */
 .register-button {
-    display: inline-block;
-    padding: 12px 20px;
-    background-color: #45a049;
-    color: white;
-    text-decoration: none;
+    display: inline-block; /* Inline block for proper spacing */
+    padding: 12px 20px; /* Padding for button */
+    background-color: #45a049; /* Green background color */
+    color: white; /* Text color */
+    text-decoration: none; /* No underline */
     border-radius: 12px; /* More rounded for a modern look */
     font-weight: bold; /* Add bold text for emphasis */
-    text-transform: uppercase; /* Add uppercase text for consistency */
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    text-transform: uppercase; /* Uppercase text for consistency */
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease; /* Smooth transitions */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
+/* Hover Effects */
 .register-button:hover {
-    background-color: #0056b3;
-    transform: translateY(-3px); /* Subtle lift effect */
+    background-color: #0056b3; /* Change to a blue shade on hover */
+    transform: translateY(-3px); /* Subtle lift effect on hover */
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Stronger shadow on hover for visual feedback */
 }
 
+/* Active State Effects */
 .register-button:active {
     transform: translateY(0px); /* Reset the lift effect when the button is clicked */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Return to the original shadow */
@@ -32,11 +34,11 @@
 /* Dark Mode Support */
 @media (prefers-color-scheme: dark) {
     .register-button {
-        background-color: #6c8e3b; /* Adjust for dark mode */
+        background-color: #6c8e3b; /* Adjust background color for dark mode */
     }
 
     .register-button:hover {
-        background-color: #004b8e; /* Darker hover color */
+        background-color: #004b8e; /* Darker hover color for dark mode */
     }
 }
 
@@ -44,5 +46,8 @@
 @media (max-width: 576px) {
     .register-button {
         padding: 15px 25px; /* Slightly bigger padding for better touch targets on mobile */
+        font-size: 1.1rem; /* Increase font size for better readability on smaller screens */
+        width: 100%; /* Make button full width on mobile for easier tapping */
+        border-radius: 8px; /* Slightly less rounded corners for mobile aesthetics */
     }
 }
