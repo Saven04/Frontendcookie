@@ -95,34 +95,35 @@ body {
    color: white; 
    padding: 12px; 
    width: 100%; 
+   border: none; /* Remove default button border */
    border-radius: 6px; 
    font-size: 16px; 
    cursor:pointer; 
    transition:border-color .3s ease,
                transform .3s ease,
                box-shadow .3s ease; 
-   text-transform:utf-8 uppercase; 
+   text-transform:uppercase;  /*transforming to uppercase*/
    font-weight:bold; 
-   box-shadow :0 4px8 rgba(0,0,0,.1); /* Subtle shadow for depth */ 
+   box-shadow :0 4px 8px rgba(0,0,0,.1); /* Subtle shadow for depth */ 
 }
 
 .btn-custom:hover,
 .register-button:hover { 
    background-color :var(--secondary-color); 
    transform :scale(1.05); 
-   box-shadow :06px rgba(0,0,0,.2); /* Stronger shadow on hover */ 
+   box-shadow :0 6px 12px rgba(0,0,0,.2); /* Stronger shadow on hover */ 
 }
 
-.btn-custom :active,
-.register-button :active { 
+.btn-custom:active,
+.register-button:active { 
    transform :scale(.98); /* Slightly shrink on click for interaction feel */ 
 }
 
 /* Buttons Active Focus (Optional) */
-.btn-custom :focus,
-.register-button :focus { 
+.btn-custom:focus,
+.register-button:focus { 
    outline:none; 
-   box-shadow :0 0 .3rem rgba(102,95,247,.4); /* Glow effect on focus */ 
+   box-shadow :0 0 0 3px rgba(102,95,247,.4); /* Glow effect on focus */ 
 }
 
 /* Forgot Password Link */
@@ -155,7 +156,7 @@ body {
    display:flex;  
    align-items:center;  
    justify-content:center;  
-   padding :12px20px;  
+   padding :12px 20px;  
    font-size :16px;  
    border :1px solid var(--input-border);  
    color :var(--text-muted);  
