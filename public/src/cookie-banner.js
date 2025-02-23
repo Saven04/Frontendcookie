@@ -12,6 +12,10 @@ function handleAcceptCookies() {
     handleCookieConsent(true);
 }
 
+function handleRejectCookies() {
+    handleCookieConsent(false);
+}
+
 // Get or create Consent ID
 function getOrCreateConsentID() {
     let consentId = localStorage.getItem("consentId");
