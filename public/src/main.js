@@ -72,6 +72,11 @@ async function loginUser(email, password) {
 
 // Function to show a custom modal
 function showModal(message, type) {
+    const existingModal = document.getElementById("customModal");
+    if (existingModal) {
+        existingModal.remove(); // Remove any existing modal to avoid duplicates
+    }
+
     const modalContainer = document.createElement("div");
     modalContainer.id = "customModal";
     modalContainer.classList.add("modal", type);
@@ -92,7 +97,6 @@ function showModal(message, type) {
     modalContent.appendChild(messageElement);
     modalContent.appendChild(closeButton);
     modalContainer.appendChild(modalContent);
-
     document.body.appendChild(modalContainer);
 
     // Automatically close the modal after 3 seconds
