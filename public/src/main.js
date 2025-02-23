@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Redirect logged-in users away from the login page
     if (isUserLoggedIn() && window.location.pathname.includes("index.html")) {
-        window.location.href = "/userDashboard.html";
+        window.location.href = "userDashboard.html";  // Fixed relative path
     }
 });
 
@@ -48,7 +48,11 @@ async function loginUser(email, password) {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password }),
         });
-    
+
+        if (!response.ok) {
+            throw new Error(`Server error: ${response.status} ${response.statusText}`);
+        }
+
         // Check if the response is JSON
         const contentType = response.headers.get("content-type");
         if (!contentType || !contentType.includes("application/json")) {
@@ -56,18 +60,19 @@ async function loginUser(email, password) {
             console.error("❌ Unexpected response:", textResponse);
             throw new Error("Invalid response from server.");
         }
-    
+
         const data = await response.json();
-    
-        if (!response.ok) {
+
+        if (data.token) {
+            localStorage.setItem("token", data.token);
+            alert("✅ Login successful!");
+            window.location.href = "userDashboard.html"; // Ensure correct path
+        } else {
             throw new Error(data.message || "Login failed.");
         }
-    
-        alert("✅ Login successful!");
-        window.location.href = "/userDashboard.html";
     } catch (error) {
         console.error("❌ Login error:", error);
-        alert(`❌ Login failed: ${error.message}`);
+        showModal(`❌ Login failed: ${error.message}`, "error");
     }
 }
 
