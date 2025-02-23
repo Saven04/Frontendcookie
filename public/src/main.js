@@ -40,25 +40,24 @@ function isUserLoggedIn() {
     return localStorage.getItem("token") !== null;
 }
 
-// Function to handle user login
 async function loginUser(email, password) {
     try {
-        const response = await fetch("https://backendcookie-8qc1.onrender.com/api/login", {
+        const response = await fetch("https://backendcookie-8qc1.onrender.com/api/auth/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password }),
+            credentials: "include", // Allows session cookies if used
         });
 
         if (!response.ok) {
+            const errorText = await response.text(); // Read response text
+            console.error("❌ Server error:", errorText);
             throw new Error(`Server error: ${response.status} ${response.statusText}`);
         }
 
-        // Check if the response is JSON
         const contentType = response.headers.get("content-type");
         if (!contentType || !contentType.includes("application/json")) {
-            const textResponse = await response.text();
-            console.error("❌ Unexpected response:", textResponse);
-            throw new Error("Invalid response from server.");
+            throw new Error("Invalid server response format.");
         }
 
         const data = await response.json();
@@ -75,6 +74,7 @@ async function loginUser(email, password) {
         showModal(`❌ Login failed: ${error.message}`, "error");
     }
 }
+
 
 // Function to show a custom modal
 function showModal(message, type) {
