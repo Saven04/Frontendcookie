@@ -43,37 +43,31 @@ function isUserLoggedIn() {
 // ✅ Updated loginUser function to handle both JWT and session-based logins
 async function loginUser(email, password) {
     try {
-        const response = await fetch("https://backendcookie-8qc1.onrender.com/api/auth/login", {
+        const response = await fetch("https://backendcookie-8qc1.onrender.com/api/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password }),
-            credentials: "include", // Allows session cookies for authentication
         });
 
+        const data = await response.json(); // Parse JSON response
+        console.log("🚀 Server Response:", data); // Debugging response
+
         if (!response.ok) {
-            const errorText = await response.text();
-            console.error("❌ Server error:", errorText);
-            throw new Error(`Server error: ${response.status} ${response.statusText}`);
+            throw new Error(data.message || "Invalid credentials"); // This only runs for error cases
         }
 
-        const data = await response.json();
-        console.log("🔹 Server Response:", data); // Debugging log to check response structure
+        // ✅ Store JWT token and user info if login is successful
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
 
-        // ✅ FIX: Check for `userId` instead of expecting a token
-        if (data.userId) {
-            alert("✅ Login successful!");
-            window.location.href = "userDashboard.html"; 
-            return; // Prevents further execution
-        }
-
-        // If there's no userId, treat it as an error
-        throw new Error(data.message || "Login failed.");
-        
+        showModal("✅ Login successful!", "success");
+        setTimeout(() => {
+            window.location.href = "/userDashboard.html"; // Redirect to dashboard
+        }, 1500);
     } catch (error) {
-        console.error("❌ Login error:", error);
+        console.error("Login error:", error);
         showModal(`❌ Login failed: ${error.message}`, "error");
     }
-}
 
 
 // ✅ Function to attach JWT token to API requests
