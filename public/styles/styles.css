@@ -1,186 +1,139 @@
-/* General Styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Roboto', sans-serif;
-    background: linear-gradient(to bottom right, rgba(0, 0, 0, 0.7), rgba(34, 34, 34, 0.7)), url('../image/Background.jpg') no-repeat center center/cover; /* Gradient overlay for better text visibility */
-    height: 100vh;
+/* Cookie Consent Banner */
+.cookie-banner {
+    position: fixed;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    max-width: 700px;
+    background: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    padding: 15px 20px;
     display: flex;
     justify-content: center;
     align-items: center;
-    color: #fff;
-    background-attachment: fixed; /* Parallax effect */
-}
-
-/* Dark Mode Support */
-:root {
-    --primary-color: #4CAF50;
-    --secondary-color: #6605f7;
-    --background-dark: #121212;
-    --text-light: #fff;
-    --text-muted: #ccc;
-    --input-bg: #222;
-    --input-border: #555;
-}
-
-/* Login Page Styles */
-.login-container {
-    display: flex;
+    font-size: 0.9rem;
+    z-index: 1000;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     flex-direction: column;
-    align-items: center;
-    width: 100%;
-    max-width: 400px;
-    background: rgba(0, 0, 0, 0.75); /* Slightly transparent for visual depth */
-    border-radius: 12px;
-    padding: 30px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
-    animation: fadeIn 0.8s ease-in-out;
-}
-
-/* Fade In Animation */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.card-header h2 {
     text-align: center;
-    font-size: 26px;
-    margin-bottom: 15px;
-    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.5s ease, top 0.5s ease;
 }
 
-/* Input Fields */
-.input-group {
-    margin-bottom: 15px;
+.cookie-banner.show {
+    opacity: 1;
+    top: 20px;
+}
+
+.cookie-banner-content p {
+    margin: 0;
+    line-height: 1.5;
+    font-size: 1rem;
+}
+
+.cookie-banner a {
+    color: #6a11cb;
+    text-decoration: underline;
+}
+
+.cookie-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.cookie-buttons button {
+    padding: 8px 15px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border-radius: 5px;
+    border: none;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.accept-button {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.reject-button {
+    background-color: #f44336;
+    color: white;
+}
+
+.customize-button {
+    background-color: #2196F3;
+    color: white;
+}
+
+.cookie-buttons button:hover {
+    opacity: 0.8;
+    transform: scale(1.05);
+}
+
+/* Cookie Preferences Modal */
+.cookie-preferences-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.cookie-preferences-modal.show {
+    display: flex;
+}
+
+.modal-content {
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 500px;
     width: 100%;
+    text-align: left;
 }
 
-.input-group label {
-    font-size: 14px;
-    color: var(--text-muted);
+.cookie-category {
+    margin-bottom: 10px;
 }
 
-.input-group input {
-    padding: 12px;
-    font-size: 16px;
-    border: 1px solid var(--input-border);
-    border-radius: 6px;
-    background-color: var(--input-bg);
-    color: var(--text-light);
-    outline: none;
-    transition: border-color 0.3s ease-in-out; /* Smooth transition for border color */
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
 }
 
-.input-group input::placeholder { /* Placeholder styles */
-    color: var(--text-muted);
+.save-button, .cancel-button {
+    padding: 8px 15px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border-radius: 5px;
+    border: none;
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-.input-group input:hover {
-   border-color: var(--primary-color); /* Change border color on hover */
+.save-button {
+    background-color: #4CAF50;
+    color: white;
 }
 
-.input-group input:focus {
-   border-color: var(--secondary-color);
+.cancel-button {
+    background-color: #f44336;
+    color: white;
 }
 
-/* Buttons */
-.btn-custom,
-.register-button { /* Combine similar styles for DRY principle */
-   background-color: var(--primary-color);
-   color: white; 
-   padding: 12px; 
-   width: 100%; 
-   border: none; /* Remove default button border */
-   border-radius: 6px; 
-   font-size: 16px; 
-   cursor:pointer; 
-   transition:border-color .3s ease,
-               transform .3s ease,
-               box-shadow .3s ease; 
-   text-transform:uppercase;  /*transforming to uppercase*/
-   font-weight:bold; 
-   box-shadow :0 4px 8px rgba(0,0,0,.1); /* Subtle shadow for depth */ 
+.save-button:hover, .cancel-button:hover {
+    opacity: 0.8;
+    transform: scale(1.05);
 }
 
-.btn-custom:hover,
-.register-button:hover { 
-   background-color :var(--secondary-color); 
-   transform :scale(1.05); 
-   box-shadow :0 6px 12px rgba(0,0,0,.2); /* Stronger shadow on hover */ 
-}
-
-.btn-custom:active,
-.register-button:active { 
-   transform :scale(.98); /* Slightly shrink on click for interaction feel */ 
-}
-
-/* Buttons Active Focus (Optional) */
-.btn-custom:focus,
-.register-button:focus { 
-   outline:none; 
-   box-shadow :0 0 0 3px rgba(102,95,247,.4); /* Glow effect on focus */ 
-}
-
-/* Forgot Password Link */
-.forgot-password { 
-   color :var(--text-muted); 
-   text-align:center; 
-   display:block; 
-   margin-top :10px; 
-   text-decoration:none; 
-   transition :color .3s; 
-}
-
-.forgot-password:hover { 
-   color :var(--text-light); 
-}
-
-/* Social Login Section */
-.social-login { 
-   text-align:center; 
-   margin-top :20px; 
-}
-
-.social-login p { 
-   font-size :14px; 
-   color :var(--text-muted);  
-   margin-bottom :15px;  
-}
-
-.social-button {  
-   display:flex;  
-   align-items:center;  
-   justify-content:center;  
-   padding :12px 20px;  
-   font-size :16px;  
-   border :1px solid var(--input-border);  
-   color :var(--text-muted);  
-   background :transparent;  
-   cursor:pointer;  
-   width :100%;  
-   border-radius :6px;  
-   margin-bottom :10px;  
-   transition :all .3s ease-in-out;  
-}
-
-.social-button:hover {  
-   background :rgba(255,255,255,.1);  
-   transform :scale(1.05);  
-}
-
-.social-button img {  
-   width :20px;  
-   margin-right :10px;  
-}
-
-/* Responsive Design */
-@media (max-width :768px) {   
-      .login-container {   
-          width :90%;   
-      }   
-}
+/* Cookie Info Popup (Updated) */
