@@ -3,6 +3,11 @@ function generateShortUUID() {
     return Math.random().toString(36).substring(2, 10);
 }
 
+// Function to check if user is logged in
+function isUserLoggedIn() {
+    return localStorage.getItem("token") !== null;
+}
+
 // Document Ready Event
 document.addEventListener("DOMContentLoaded", async () => {
     const cookieBanner = document.getElementById("cookieConsent");
@@ -107,6 +112,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     deleteDataOption.style.padding = "10px";
     deleteDataOption.style.cursor = "pointer";
     deleteDataOption.addEventListener("click", async () => {
+        if (!isUserLoggedIn()) {
+            alert("Please log in to delete your data.");
+            return;
+        }
+
         if (!consentId) {
             alert("No data found to delete.");
             return;
@@ -140,6 +150,25 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     cookieSettingsButton.addEventListener("click", () => {
         settingsDropdown.style.display = settingsDropdown.style.display === "none" ? "block" : "none";
+    });
+
+    // Hide Cookie Settings button for non-logged-in users
+    if (cookieSettingsButton) {
+        cookieSettingsButton.style.display = isUserLoggedIn() ? "block" : "none";
+    }
+
+    // Restrict cookie interactions for non-logged-in users
+    function restrictCookieInteraction(event) {
+        if (!isUserLoggedIn()) {
+            event.preventDefault();
+            alert("Please log in or register to manage cookie preferences.");
+            return false;
+        }
+    }
+
+    // Apply restriction to Accept, Reject, and Customize buttons
+    document.querySelectorAll("#acceptCookies, #rejectCookies, #customizeCookies").forEach(button => {
+        button.addEventListener("click", restrictCookieInteraction);
     });
 
     function setCookie(name, value, days) {
