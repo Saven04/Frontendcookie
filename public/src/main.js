@@ -1,14 +1,8 @@
-import { setCookie, getCookie } from './cookieSettings.js';
-
-
-setCookie("example", "value", 7);
-console.log(getCookie("example"));
-
+// Import cookie functions (if using ES6 modules)
+// import { setCookie, getCookie } from './cookieSettings.js';
 
 document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("loginForm");
-
-    
 
     // Handle form submission
     if (loginForm) {
@@ -21,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Validate inputs
             if (!emailField || !passwordField) {
+                console.error("Error: Missing input fields in the DOM.");
                 showModal("Error: Missing input fields in the DOM.", "error");
                 return;
             }
@@ -62,7 +57,7 @@ async function loginUser(email, password) {
         });
 
         const data = await response.json();
-        console.log("🚀 Server Response:", data); 
+        console.log("🚀 Server Response:", data);
 
         if (!response.ok) {
             throw new Error(data.message || "Invalid credentials");
@@ -70,8 +65,8 @@ async function loginUser(email, password) {
 
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
-
         showModal("✅ Login successful!", "success");
+
         setTimeout(() => {
             window.location.href = "/userDashboard.html";
         }, 1500);
@@ -80,8 +75,6 @@ async function loginUser(email, password) {
         showModal(`❌ Login failed: ${error.message}`, "error");
     }
 }
-
-
 
 // ✅ Function to attach JWT token to API requests
 function getAuthHeaders() {
@@ -98,7 +91,6 @@ async function fetchUserData() {
                 "Content-Type": "application/json",
                 ...getAuthHeaders(), // Attach token to request
             },
-            credentials: "include",
         });
 
         if (!response.ok) {
@@ -115,8 +107,10 @@ async function fetchUserData() {
 // ✅ Logout function
 function logoutUser() {
     localStorage.removeItem("token");
-    alert("✅ Logged out successfully!");
-    window.location.href = "login.html";
+    showModal("✅ Logged out successfully!", "success");
+    setTimeout(() => {
+        window.location.href = "login.html";
+    }, 1500);
 }
 
 // ✅ Function to show a custom modal
@@ -140,7 +134,10 @@ function showModal(message, type) {
     closeButton.textContent = "Close";
     closeButton.classList.add("close-button");
     closeButton.addEventListener("click", () => {
-        document.body.removeChild(modalContainer);
+        const modal = document.getElementById("customModal");
+        if (modal) {
+            document.body.removeChild(modal);
+        }
     });
 
     modalContent.appendChild(messageElement);
@@ -150,8 +147,9 @@ function showModal(message, type) {
 
     // Automatically close the modal after 3 seconds
     setTimeout(() => {
-        if (document.getElementById("customModal")) {
-            document.body.removeChild(modalContainer);
+        const modal = document.getElementById("customModal");
+        if (modal) {
+            document.body.removeChild(modal);
         }
     }, 3000);
 }
