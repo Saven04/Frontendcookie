@@ -1,26 +1,53 @@
-// src/login.js
-document.getElementById('login-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
+document.addEventListener("DOMContentLoaded", () => {
+    const loginForm = document.getElementById("loginForm");
 
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
+    if (loginForm) {
+        loginForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
 
+            console.log(`Email: ${email}, Password: ${password}`);
+
+            await loginUser(email, password);
+        });
+    }
+
+
+    // Redirect logged-in users away from the login page
+    if (isUserLoggedIn() && window.location.pathname.includes("index.html")) {
+        window.location.href = "/userDashboard.html";
+    }
+});
+
+// Function to check if the user is logged in
+function isUserLoggedIn() {
+    return localStorage.getItem("token") !== null;
+}
+
+
+// Function to handle user login
+async function loginUser(email, password) {
     try {
-        const response = await fetch('/auth/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password })
+        const response = await fetch("https://backendcookie-8qc1.onrender.com/api/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
         });
 
         const data = await response.json();
-        if (response.ok) {
-            alert('Login successful!');
-            window.location.href = '/userDashboard.html'; // Redirect to dashboard
-        } else {
-            alert(data.error || 'Login failed.');
+
+        if (!response.ok) {
+            throw new Error(data.message || "Invalid credentials");
         }
+
+        localStorage.setItem("token", data.token); // Store JWT token
+        localStorage.setItem("user", JSON.stringify(data.user)); // Store user info
+
+        alert("Login successful!");
+        window.location.href = "/userDashboard.html"; // Redirect to dashboard
     } catch (error) {
-        console.error(error);
-        alert('An error occurred. Please try again.');
+        console.error("Login error:", error);
+        alert("Login failed. Please check your credentials.");
     }
-});
+}
