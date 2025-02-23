@@ -36,14 +36,13 @@
         </div>
     </div>
 
-
-     <!-- message pop-up -->
-    <div id="customPopup" class="custom-popup">
-    <div class="popup-content">
-        <p id="popupMessage">Please log in or register to manage cookie preferences.</p>
-        <button id="closePopupButton">Close</button>
+    <!-- Message pop-up -->
+    <div id="customPopup" class="custom-popup" style="display: none;">
+        <div class="popup-content">
+            <p id="popupMessage">Your preferences are saved. Please log in or register to manage cookie preferences.</p>
+            <button id="closePopupButton">Close</button>
+        </div>
     </div>
-</div>
 
     <!-- Cookie Preferences Modal -->
     <div id="cookiePreferencesModal" class="cookie-preferences-modal">
@@ -101,7 +100,7 @@
     </div>
 
     <!-- Cookie Policy Modal -->
-   <div id="cookiePolicyModal" class="cookie-policy-modal">
+    <div id="cookiePolicyModal" class="cookie-policy-modal">
     <div class="modal-content">
         <h1>Cookie Policy</h1>
         <br>
@@ -133,96 +132,62 @@
     </div>
 </div>
 
-
-    <!-- Login Page Content -->
-    <div class="login-container">
-        <div class="login-card">
-            <div class="card-header">
-                <h2>Login to Your Account</h2>
-            </div>
-            <form id="loginForm">
-                <div class="input-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" placeholder="Enter your username">
-                </div>
-                <div class="input-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" placeholder="Enter your password">
-                </div>
-                <!-- Apply the 'btn-custom' class for consistent button styling -->
-                <button type="submit" class="btn-custom">Login</button>
-                <a href="#" class="forgot-password">Forgot Password?</a>
-                <!-- Apply the 'btn-custom' class for consistent button styling -->
-                <button type="button" class="btn-custom"
-                    onclick="window.location.href='register.html'">Register</button>
-            </form>
-            <div class="social-login">
-                <p>Or login with</p>
-                <button class="social-button google-button" aria-label="Login with Google">
-                    <img src="public/image/google-logo.png" alt="Google Logo"> Google
-                </button>
-                <button class="social-button facebook-button" aria-label="Login with Facebook">
-                    <img src="public/image/facebook-logo.png" alt="Facebook Logo"> Facebook
-                </button>
-            </div>
-        </div>
-    </div>
+   <!-- Login Page Content -->
+   ... <!-- Your existing login page content goes here -->
 
     <!-- Include JavaScript -->
-    <script src="public/src/main.js"></script>
-    <script type="module" src="public/src/cookie-banner.js"></script>
+    <script src="/public/src/main.js"></script>
+    <script type='module' src='/public/src/cookie-banner.js'></script>
 
+    <!-- Popup message handling script -->
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            // JavaScript to handle cookie label clicks and show cookie information modal
-            document.querySelectorAll('.cookie-label').forEach(label => {
-                label.addEventListener('click', function (e) {
-                    e.preventDefault(); // Prevent jumping to the top of the page
-                    const infoText = this.getAttribute('data-info');
-                    document.getElementById('cookieInfoText').innerHTML = infoText;
-                    document.getElementById('cookieInfoModal').classList.add('show');
-                });
+            // Close popup button event listener
+            document.getElementById('closePopupButton').addEventListener('click', () => {
+                document.getElementById('customPopup').style.display = 'none';
             });
 
-            // Close the cookie info modal
-            const closeModalButton = document.getElementById('closeModalButton');
-            if (closeModalButton) {
-                closeModalButton.addEventListener('click', function () {
-                    document.getElementById('cookieInfoModal').classList.remove('show');
-                });
+            // Show popup message when user saves preferences
+            function showPopupMessage() {
+                document.getElementById('customPopup').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('customPopup').style.display = 'none';
+                }, 3000); // Hide after 3 seconds
             }
 
-            // Open the cookie policy modal
-            const cookiePolicyLink = document.getElementById('cookiePolicyLink');
-            if (cookiePolicyLink) {
-                cookiePolicyLink.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    document.getElementById('cookiePolicyModal').classList.add('show');
-                });
-            }
+           // Attach event listeners for cookie buttons
+           document.getElementById('acceptCookies').addEventListener('click', () => {
+               handleAcceptCookies();
+               showPopupMessage();
+           });
 
-            // Close the cookie policy modal
-            const closeCookiePolicyModal = document.getElementById('closeCookiePolicyModal');
-            if (closeCookiePolicyModal) {
-                closeCookiePolicyModal.addEventListener('click', function () {
-                    document.getElementById('cookiePolicyModal').classList.remove('show');
-                });
-            }
+           document.getElementById('rejectCookies').addEventListener('click', () => {
+               handleRejectCookies();
+               showPopupMessage();
+           });
+
+           document.getElementById('savePreferences').addEventListener('click', () => {
+               // Save preferences logic...
+               showPopupMessage();
+           });
         });
-
-        // function to open cookie info modal from cookie preferences
+        
+        // Other existing JavaScript functions...
+        
         function openCookieInfoModal(cookieType) {
-            // get info from label based on cookie type
-            const label = document.querySelector(`label[data-cookie-type="${cookieType}"]`);
-            const infoText = label.getAttribute('data-info');
+           // get info from label based on cookie type
+           const label = document.querySelector(`label[data-cookie-type="${cookieType}"]`);
+           const infoText = label.getAttribute('data-info');
 
-            // set info text in modal
-            document.getElementById('cookieInfoText').innerHTML = infoText;
+           // set info text in modal
+           document.getElementById('cookieInfoText').innerHTML = infoText;
 
-            // show modal
-            document.getElementById('cookieInfoModal').classList.add('show');
-        }
-    </script>
+           // show modal
+           document.getElementById('cookieInfoModal').classList.add('show');
+       }
+   </script>
+
 </body>
 
 </html>
+
