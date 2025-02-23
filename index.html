@@ -122,19 +122,32 @@
                 <h2>Login to Your Account</h2>
             </div>
             <form id="loginForm">
+                <!-- Username Input -->
                 <div class="input-group">
                     <label for="username">Username</label>
-                    <input type="text" id="username" placeholder="Enter your username">
+                    <input type="text" id="username" placeholder="Enter your username" required>
                 </div>
+
+                <!-- Password Input -->
                 <div class="input-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" placeholder="Enter your password">
+                    <input type="password" id="password" placeholder="Enter your password" required>
                 </div>
+
+                <!-- Error Message Placeholder -->
+                <div class="error-message" id="errorMessage"></div>
+
+                <!-- Login Button -->
                 <button type="submit" class="login-button">Login</button>
+
+                <!-- Forgot Password Link -->
                 <a href="#" class="forgot-password">Forgot Password?</a>
-               
+
+                <!-- Register Button -->
                 <button type="button" class="register-button" onclick="window.location.href='register.html'">Register</button>
             </form>
+
+            <!-- Social Login Options -->
             <div class="social-login">
                 <p>Or login with</p>
                 <button class="social-button google-button">
@@ -152,7 +165,6 @@
 
     <!-- Include JavaScript -->
     <script src="public/src/main.js"></script>
-    <!-- Add the uuid library import as a module -->
     <script type="module" src="public/src/cookie-banner.js"></script>
 
    <script>
