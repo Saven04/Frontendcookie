@@ -1,15 +1,55 @@
 document.addEventListener("DOMContentLoaded", () => {
-   
-
     const loginForm = document.getElementById("loginForm");
-    loginForm.addEventListener("submit", (event) => {
-        event.preventDefault();
-        const username = document.getElementById("username").value;
-        const password = document.getElementById("password").value;
 
-        
-        console.log(`Username: ${username}, Password: ${password}`);
-    });
+    if (loginForm) {
+        loginForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
 
-    
+            console.log(`Username: ${username}, Password: ${password}`);
+
+            await loginUser(username, password);
+        });
+    }
+
+    // Restrict cookie interactions for non-logged-in users
+    document.body.addEventListener("click", restrictCookieInteraction);
 });
+
+// Function to check if the user is logged in
+function isUserLoggedIn() {
+    return localStorage.getItem("token") !== null;
+}
+
+// Function to prevent unauthorized cookie interactions
+function restrictCookieInteraction(event) {
+    if (!isUserLoggedIn() && !event.target.closest("#loginButton")) {
+        event.preventDefault();
+        alert("Please log in or register to manage cookie preferences.");
+    }
+}
+
+// Function to handle user login
+async function loginUser(username, password) {
+    try {
+        const response = await fetch("https://backendcookie-8qc1.onrender.com/api/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, password }),
+        });
+
+        if (!response.ok) {
+            throw new Error("Invalid credentials");
+        }
+
+        const data = await response.json();
+        localStorage.setItem("token", data.token); // Store JWT token
+
+        alert("Login successful!");
+        window.location.href = "/dashboard.html"; // Redirect to dashboard
+    } catch (error) {
+        console.error("Login error:", error);
+        alert("Login failed. Please check your credentials.");
+    }
+}
