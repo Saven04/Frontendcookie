@@ -1,18 +1,33 @@
 document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("loginForm");
 
+    // Handle form submission
     if (loginForm) {
         loginForm.addEventListener("submit", async (event) => {
             event.preventDefault();
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
 
-            console.log(`Email: ${email}, Password: ${password}`);
+            // Get input values
+            const emailField = document.getElementById("email");
+            const passwordField = document.getElementById("password");
 
+            // Validate inputs
+            if (!emailField || !passwordField) {
+                showModal("Error: Missing input fields in the DOM.", "error");
+                return;
+            }
+
+            const email = emailField.value.trim();
+            const password = passwordField.value.trim();
+
+            if (!email || !password) {
+                showModal("Please enter both email and password.", "error");
+                return;
+            }
+
+            // Call the login function
             await loginUser(email, password);
         });
     }
-
 
     // Redirect logged-in users away from the login page
     if (isUserLoggedIn() && window.location.pathname.includes("index.html")) {
@@ -24,7 +39,6 @@ document.addEventListener("DOMContentLoaded", () => {
 function isUserLoggedIn() {
     return localStorage.getItem("token") !== null;
 }
-
 
 // Function to handle user login
 async function loginUser(email, password) {
@@ -41,13 +55,50 @@ async function loginUser(email, password) {
             throw new Error(data.message || "Invalid credentials");
         }
 
+        // Store JWT token and user info
         localStorage.setItem("token", data.token); // Store JWT token
         localStorage.setItem("user", JSON.stringify(data.user)); // Store user info
 
-        alert("Login successful!");
-        window.location.href = "/userDashboard.html"; // Redirect to dashboard
+        // Show success message and redirect
+        showModal("✅ Login successful!", "success");
+        setTimeout(() => {
+            window.location.href = "/userDashboard.html"; // Redirect to dashboard
+        }, 1500);
     } catch (error) {
         console.error("Login error:", error);
-        alert("Login failed. Please check your credentials.");
+        showModal(`❌ Login failed: ${error.message}`, "error");
     }
+}
+
+// Function to show a custom modal
+function showModal(message, type) {
+    const modalContainer = document.createElement("div");
+    modalContainer.id = "customModal";
+    modalContainer.classList.add("modal", type);
+
+    const modalContent = document.createElement("div");
+    modalContent.classList.add("modal-content");
+
+    const messageElement = document.createElement("p");
+    messageElement.textContent = message;
+
+    const closeButton = document.createElement("button");
+    closeButton.textContent = "Close";
+    closeButton.classList.add("close-button");
+    closeButton.addEventListener("click", () => {
+        document.body.removeChild(modalContainer);
+    });
+
+    modalContent.appendChild(messageElement);
+    modalContent.appendChild(closeButton);
+    modalContainer.appendChild(modalContent);
+
+    document.body.appendChild(modalContainer);
+
+    // Automatically close the modal after 3 seconds
+    setTimeout(() => {
+        if (document.getElementById("customModal")) {
+            document.body.removeChild(modalContainer);
+        }
+    }, 3000);
 }
