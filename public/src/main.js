@@ -13,12 +13,10 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Restrict cookie interactions for non-logged-in users
-    document.body.addEventListener("click", restrictCookieInteraction);
 
     // Redirect logged-in users away from the login page
     if (isUserLoggedIn() && window.location.pathname.includes("index.html")) {
-        window.location.href = "/dashboard.html";
+        window.location.href = "/userDashboard.html";
     }
 });
 
