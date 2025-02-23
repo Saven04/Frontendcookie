@@ -8,10 +8,6 @@ function isUserLoggedIn() {
     return localStorage.getItem("token") !== null;
 }
 
-function handleAcceptCookies() {
-    handleCookieConsent(true);
-}
-
 // Get or create Consent ID
 function getOrCreateConsentID() {
     let consentId = localStorage.getItem("consentId");
@@ -160,7 +156,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     const policiesOption = document.createElement("div");
-    policiesOption.innerText = "Read the policies and Guidelines";
+    policiesOption.innerText = "Read the Policies and Guidelines";
     policiesOption.style.padding = "10px";
     policiesOption.style.cursor = "pointer";
 
