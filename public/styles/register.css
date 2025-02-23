@@ -1,6 +1,6 @@
 /* Register Section */
 .register-section {
-    text-align: center; /* Center align text */
+    text-align: center; /* Center align all content */
     margin-top: 15px; /* Space above the section */
 }
 
@@ -9,45 +9,94 @@
     display: inline-block; /* Inline block for proper spacing */
     padding: 12px 20px; /* Padding for button */
     background-color: #45a049; /* Green background color */
-    color: white; /* Text color */
-    text-decoration: none; /* No underline */
-    border-radius: 12px; /* More rounded for a modern look */
-    font-weight: bold; /* Add bold text for emphasis */
+    color: white; /* White text for contrast */
+    text-decoration: none; /* Remove underline from links */
+    border: none; /* Remove default borders */
+    border-radius: 12px; /* Rounded corners for a modern look */
+    font-weight: bold; /* Bold text for emphasis */
     text-transform: uppercase; /* Uppercase text for consistency */
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease; /* Smooth transitions */
+    font-size: 1rem; /* Base font size */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: 
+        background-color 0.3s ease, 
+        transform 0.2s ease, 
+        box-shadow 0.3s ease; /* Smooth transitions for hover effects */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
 /* Hover Effects */
 .register-button:hover {
-    background-color: #0056b3; /* Change to a blue shade on hover */
-    transform: translateY(-3px); /* Subtle lift effect on hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Stronger shadow on hover for visual feedback */
+    background-color: #0056b3; /* Change to blue shade on hover */
+    transform: translateY(-3px); /* Slight lift effect on hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Stronger shadow for visual feedback */
 }
 
 /* Active State Effects */
 .register-button:active {
-    transform: translateY(0px); /* Reset the lift effect when the button is clicked */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Return to the original shadow */
+    transform: translateY(0px); /* Reset lift effect when clicked */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Return to original shadow */
 }
 
 /* Dark Mode Support */
 @media (prefers-color-scheme: dark) {
     .register-button {
-        background-color: #6c8e3b; /* Adjust background color for dark mode */
+        background-color: #6c8e3b; /* Adjusted green for dark mode */
     }
-
     .register-button:hover {
-        background-color: #004b8e; /* Darker hover color for dark mode */
+        background-color: #004b8e; /* Darker blue for hover in dark mode */
     }
 }
 
-/* Mobile-Friendly Design (Bootstrap responsiveness) */
+/* Mobile-Friendly Design */
 @media (max-width: 576px) {
     .register-button {
-        padding: 15px 25px; /* Slightly bigger padding for better touch targets on mobile */
-        font-size: 1.1rem; /* Increase font size for better readability on smaller screens */
-        width: 100%; /* Make button full width on mobile for easier tapping */
+        padding: 15px 25px; /* Larger padding for better touch targets */
+        font-size: 1.1rem; /* Increase font size for readability */
+        width: 100%; /* Full-width button for easier tapping */
         border-radius: 8px; /* Slightly less rounded corners for mobile aesthetics */
+    }
+}
+
+/* Additional Styling for Input Fields */
+.register-input {
+    width: 100%; /* Full width for input fields */
+    padding: 12px; /* Padding inside input fields */
+    margin: 10px 0; /* Spacing between inputs */
+    border: 1px solid #ccc; /* Light gray border */
+    border-radius: 8px; /* Rounded corners */
+    font-size: 1rem; /* Consistent font size */
+    transition: border-color 0.3s ease; /* Smooth transition for focus effect */
+}
+
+.register-input:focus {
+    border-color: #45a049; /* Highlight border color on focus */
+    outline: none; /* Remove default outline */
+    box-shadow: 0 0 5px rgba(69, 160, 73, 0.5); /* Subtle glow effect on focus */
+}
+
+/* Form Container */
+.register-form {
+    max-width: 400px; /* Limit form width for better readability */
+    margin: 0 auto; /* Center the form horizontally */
+    padding: 20px; /* Padding inside the form */
+    background-color: #f9f9f9; /* Light background for contrast */
+    border-radius: 12px; /* Rounded corners for the form container */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+/* Dark Mode Support for Form */
+@media (prefers-color-scheme: dark) {
+    .register-form {
+        background-color: #333; /* Dark background for dark mode */
+        color: #fff; /* White text for contrast */
+    }
+    .register-input {
+        background-color: #444; /* Dark input background */
+        color: #fff; /* White text for inputs */
+        border-color: #555; /* Darker border color */
+    }
+    .register-input:focus {
+        border-color: #6c8e3b; /* Highlight border color for dark mode */
+        box-shadow: 0 0 5px rgba(108, 142, 59, 0.5); /* Glow effect for dark mode */
     }
 }

@@ -9,23 +9,20 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
     const confirmPassword = document.getElementById("confirmPassword").value.trim();
-    const messageBox = document.getElementById("messageBox"); // Assuming you have a message div
 
     // Validate inputs
     if (!username || !email || !password || !confirmPassword) {
-        showMessage("All fields are required!", "error");
+        showModal("All fields are required!", "error");
         resetButton();
         return;
     }
-
     if (password.length < 6) {
-        showMessage("Password must be at least 6 characters long.", "error");
+        showModal("Password must be at least 6 characters long.", "error");
         resetButton();
         return;
     }
-
     if (password !== confirmPassword) {
-        showMessage("Passwords do not match!", "error");
+        showModal("Passwords do not match!", "error");
         resetButton();
         return;
     }
@@ -38,19 +35,18 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         });
 
         const data = await response.json();
-
         if (response.ok) {
-            showMessage("✅ Registration successful! Redirecting to login...", "success");
+            showModal("✅ Registration successful! Redirecting to login...", "success");
             setTimeout(() => {
                 document.getElementById("registerForm").reset(); // Reset form
                 window.location.href = "index.html"; // Redirect to login page
             }, 1500);
         } else {
-            showMessage(`❌ ${data.message || "Registration failed."}`, "error");
+            showModal(`❌ ${data.message || "Registration failed."}`, "error");
         }
     } catch (error) {
         console.error("❌ Error:", error);
-        showMessage("Registration failed. Please check your internet connection and try again.", "error");
+        showModal("Registration failed. Please check your internet connection and try again.", "error");
     } finally {
         resetButton();
     }
@@ -63,15 +59,35 @@ function resetButton() {
     registerButton.textContent = "Register";
 }
 
-// Function to show messages dynamically
-function showMessage(message, type) {
-    const messageBox = document.getElementById("messageBox");
-    if (messageBox) {
-        messageBox.textContent = message;
-        messageBox.className = `message ${type}`; // Assuming CSS styles for success & error messages
-        messageBox.style.display = "block";
-        setTimeout(() => { messageBox.style.display = "none"; }, 3000);
-    } else {
-        alert(message);
-    }
+// Function to show a custom modal
+function showModal(message, type) {
+    const modalContainer = document.createElement("div");
+    modalContainer.id = "customModal";
+    modalContainer.classList.add("modal", type);
+
+    const modalContent = document.createElement("div");
+    modalContent.classList.add("modal-content");
+
+    const messageElement = document.createElement("p");
+    messageElement.textContent = message;
+
+    const closeButton = document.createElement("button");
+    closeButton.textContent = "Close";
+    closeButton.classList.add("close-button");
+    closeButton.addEventListener("click", () => {
+        document.body.removeChild(modalContainer);
+    });
+
+    modalContent.appendChild(messageElement);
+    modalContent.appendChild(closeButton);
+    modalContainer.appendChild(modalContent);
+
+    document.body.appendChild(modalContainer);
+
+    // Automatically close the modal after 3 seconds
+    setTimeout(() => {
+        if (document.getElementById("customModal")) {
+            document.body.removeChild(modalContainer);
+        }
+    }, 3000);
 }
