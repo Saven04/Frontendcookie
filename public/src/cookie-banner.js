@@ -23,6 +23,16 @@ function showCustomPopup(message) {
     };
 }
 
+
+    function getOrCreateConsentID() {
+    let consentId = localStorage.getItem("consentId");
+    if (!consentId) {
+        consentId = generateShortUUID();
+        localStorage.setItem("consentId", consentId);
+    }
+    return consentId;
+}
+
 // Restrict cookie interactions for non-logged-in users
 function restrictCookieInteraction(event) {
     if (!isUserLoggedIn()) {
