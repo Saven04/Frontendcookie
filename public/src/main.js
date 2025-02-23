@@ -48,24 +48,23 @@ async function loginUser(email, password) {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password }),
         });
-
-        const data = await response.json();
+    
+        // Debug: Log the raw response
+        const textResponse = await response.text();
+        console.log("Raw Response:", textResponse);
+    
+        // Parse the response as JSON
+        const data = JSON.parse(textResponse);
+    
         if (!response.ok) {
-            throw new Error(data.message || "Invalid credentials");
+            throw new Error(data.message || "Login failed.");
         }
-
-        // Store JWT token and user info
-        localStorage.setItem("token", data.token); // Store JWT token
-        localStorage.setItem("user", JSON.stringify(data.user)); // Store user info
-
-        // Show success message and redirect
-        showModal("✅ Login successful!", "success");
-        setTimeout(() => {
-            window.location.href = "/userDashboard.html"; // Redirect to dashboard
-        }, 1500);
+    
+        alert("✅ Login successful!");
+        window.location.href = "/userDashboard.html";
     } catch (error) {
-        console.error("Login error:", error);
-        showModal(`❌ Login failed: ${error.message}`, "error");
+        console.error("❌ Login error:", error);
+        alert(`❌ Login failed: ${error.message}`);
     }
 }
 
