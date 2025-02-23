@@ -1,5 +1,14 @@
+import { setCookie, getCookie } from './cookieSettings.js';
+
+
+setCookie("example", "value", 7);
+console.log(getCookie("example"));
+
+
 document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("loginForm");
+
+    
 
     // Handle form submission
     if (loginForm) {
