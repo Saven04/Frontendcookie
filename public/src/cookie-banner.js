@@ -18,6 +18,32 @@ function getOrCreateConsentID() {
     return consentId;
 }
 
+// Function to hide the cookie banner and remove event listeners
+function hideBanner() {
+    const cookieBanner = document.getElementById("cookieConsent");
+
+    // Remove event listeners from the buttons
+    const acceptCookiesButton = document.getElementById("acceptCookies");
+    const rejectCookiesButton = document.getElementById("rejectCookies");
+    const customizeCookiesButton = document.getElementById("customizeCookies");
+
+    if (acceptCookiesButton) {
+        acceptCookiesButton.removeEventListener("click", handleAcceptCookies);
+    }
+    if (rejectCookiesButton) {
+        rejectCookiesButton.removeEventListener("click", handleRejectCookies);
+    }
+    if (customizeCookiesButton) {
+        customizeCookiesButton.removeEventListener("click", restrictCookieInteraction);
+    }
+
+    // Hide the banner
+    cookieBanner.classList.add("hide");
+    setTimeout(() => {
+        cookieBanner.classList.remove("show", "hide");
+    }, 500);
+}
+
 // Document Ready Event
 document.addEventListener("DOMContentLoaded", async () => {
     const cookieBanner = document.getElementById("cookieConsent");
@@ -204,8 +230,25 @@ document.addEventListener("DOMContentLoaded", async () => {
         setTimeout(() => cookieBanner.classList.add("show"), 500);
     }
 
-    acceptCookiesButton.addEventListener("click", () => handleCookieConsent(true));
-    rejectCookiesButton.addEventListener("click", () => handleCookieConsent(false));
+    // Define handlers for accept and reject cookies
+    function handleAcceptCookies() {
+        handleCookieConsent(true);
+    }
+
+    function handleRejectCookies() {
+        handleCookieConsent(false);
+    }
+
+    // Attach event listeners to the buttons
+    if (acceptCookiesButton) {
+        acceptCookiesButton.addEventListener("click", handleAcceptCookies);
+    }
+    if (rejectCookiesButton) {
+        rejectCookiesButton.addEventListener("click", handleRejectCookies);
+    }
+    if (customizeCookiesButton) {
+        customizeCookiesButton.addEventListener("click", restrictCookieInteraction);
+    }
 
     function handleCookieConsent(accepted) {
         if (!consentId) {
@@ -266,13 +309,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     cancelPreferencesButton.addEventListener("click", () => {
         cookiePreferencesModal.classList.remove("show");
     });
-
-    function hideBanner() {
-        cookieBanner.classList.add("hide");
-        setTimeout(() => {
-            cookieBanner.classList.remove("show", "hide");
-        }, 500);
-    }
 
     async function sendPreferencesToDB(consentId, preferences) {
         try {
