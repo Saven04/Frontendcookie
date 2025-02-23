@@ -112,3 +112,8 @@
     width: 20px;
     margin-right: 10px;
 }
+
+@media (max-width: 768px) {
+    .login-container {
+        width: 90%;
+    }
