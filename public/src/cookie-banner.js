@@ -8,6 +8,10 @@ function isUserLoggedIn() {
     return localStorage.getItem("token") !== null;
 }
 
+function handleAcceptCookies() {
+    handleCookieConsent(true);
+}
+
 // Get or create Consent ID
 function getOrCreateConsentID() {
     let consentId = localStorage.getItem("consentId");
