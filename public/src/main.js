@@ -43,7 +43,7 @@ function isUserLoggedIn() {
 // Function to handle user login
 async function loginUser(email, password) {
     try {
-        const response = await fetch("https://backendcookie-8qc1.onrender.com/api/auth/login", {
+        const response = await fetch("https://backendcookie-8qc1.onrender.com/api/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password }),
