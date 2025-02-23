@@ -4,17 +4,22 @@ document.addEventListener("DOMContentLoaded", () => {
     if (loginForm) {
         loginForm.addEventListener("submit", async (event) => {
             event.preventDefault();
-            const username = document.getElementById("username").value;
+            const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
 
-            console.log(`Username: ${username}, Password: ${password}`);
+            console.log(`Email: ${email}, Password: ${password}`);
 
-            await loginUser(username, password);
+            await loginUser(email, password);
         });
     }
 
     // Restrict cookie interactions for non-logged-in users
     document.body.addEventListener("click", restrictCookieInteraction);
+
+    // Redirect logged-in users away from the login page
+    if (isUserLoggedIn() && window.location.pathname.includes("index.html")) {
+        window.location.href = "/dashboard.html";
+    }
 });
 
 // Function to check if the user is logged in
@@ -31,20 +36,22 @@ function restrictCookieInteraction(event) {
 }
 
 // Function to handle user login
-async function loginUser(username, password) {
+async function loginUser(email, password) {
     try {
         const response = await fetch("https://backendcookie-8qc1.onrender.com/api/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, password }),
+            body: JSON.stringify({ email, password }),
         });
 
+        const data = await response.json();
+
         if (!response.ok) {
-            throw new Error("Invalid credentials");
+            throw new Error(data.message || "Invalid credentials");
         }
 
-        const data = await response.json();
         localStorage.setItem("token", data.token); // Store JWT token
+        localStorage.setItem("user", JSON.stringify(data.user)); // Store user info
 
         alert("Login successful!");
         window.location.href = "/dashboard.html"; // Redirect to dashboard
