@@ -3,101 +3,6 @@ function generateShortUUID() {
     return Math.random().toString(36).substring(2, 10);
 }
 
-// Function to check if user is logged in
-function isUserLoggedIn() {
-    return localStorage.getItem("token") !== null;
-}
-
-// Get or create Consent ID
-function getOrCreateConsentID() {
-    let consentId = localStorage.getItem("consentId");
-    if (!consentId) {
-        consentId = generateShortUUID();
-        localStorage.setItem("consentId", consentId);
-    }
-    return consentId;
-}
-
-// Function to set a cookie
-function setCookie(name, value, days) {
-    const date = new Date();
-    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-    document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/;secure;samesite=strict`;
-}
-
-// Function to get a cookie
-function getCookie(name) {
-    const nameEq = `${name}=`;
-    return document.cookie.split("; ").find((c) => c.startsWith(nameEq))?.split("=")[1] || null;
-}
-
-// Function to delete a cookie
-function deleteCookie(name) {
-    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;secure;samesite=strict`;
-}
-
-// Function to show the custom popup
-function showCustomPopup(message) {
-    const customPopup = document.getElementById("customPopup");
-    const popupMessage = document.getElementById("popupMessage");
-
-    // Set the message
-    popupMessage.textContent = message;
-
-    // Show the popup
-    customPopup.style.display = "flex";
-
-    // Close the popup when the close button is clicked
-    const closePopupButton = document.getElementById("closePopupButton");
-    closePopupButton.onclick = () => {
-        customPopup.style.display = "none";
-    };
-
-    // Close the popup when clicking outside the popup content
-    customPopup.onclick = (event) => {
-        if (event.target === customPopup) {
-            customPopup.style.display = "none";
-        }
-    };
-}
-
-// Function to hide the cookie banner and remove event listeners
-function hideBanner() {
-    const cookieBanner = document.getElementById("cookieConsent");
-
-    // Remove event listeners from the buttons
-    const acceptCookiesButton = document.getElementById("acceptCookies");
-    const rejectCookiesButton = document.getElementById("rejectCookies");
-    const customizeCookiesButton = document.getElementById("customizeCookies");
-
-    if (acceptCookiesButton) {
-        acceptCookiesButton.removeEventListener("click", handleAcceptCookies);
-    }
-    if (rejectCookiesButton) {
-        rejectCookiesButton.removeEventListener("click", handleRejectCookies);
-    }
-    if (customizeCookiesButton) {
-        customizeCookiesButton.removeEventListener("click", restrictCookieInteraction);
-    }
-
-    // Hide the banner
-    cookieBanner.classList.add("hide");
-    setTimeout(() => {
-        cookieBanner.classList.remove("show", "hide");
-        cookieBanner.style.display = "none"; // Ensure the banner is completely hidden
-    }, 500); // Match this timeout with the CSS transition duration
-}
-
-// Restrict cookie interactions for non-logged-in users
-function restrictCookieInteraction(event) {
-    if (!isUserLoggedIn()) {
-        event.preventDefault(); // Prevent default button behavior
-        showCustomPopup("Please log in or register to manage cookie preferences.");
-        return false;
-    }
-    return true; // Allow interaction if logged in
-}
-
 // Document Ready Event
 document.addEventListener("DOMContentLoaded", async () => {
     const cookieBanner = document.getElementById("cookieConsent");
@@ -154,7 +59,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     const policiesOption = document.createElement("div");
-    policiesOption.innerText = "Read the Policies and Guidelines";
+    policiesOption.innerText = "Read the policies and Guidelines";
     policiesOption.style.padding = "10px";
     policiesOption.style.cursor = "pointer";
 
@@ -202,14 +107,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     deleteDataOption.style.padding = "10px";
     deleteDataOption.style.cursor = "pointer";
     deleteDataOption.addEventListener("click", async () => {
-        if (!isUserLoggedIn()) {
-            showCustomPopup("Please log in to delete your data.");
-            return;
-        }
-
-        const consentId = getOrCreateConsentID();
         if (!consentId) {
-            showCustomPopup("No data found to delete.");
+            alert("No data found to delete.");
             return;
         }
 
@@ -225,11 +124,11 @@ document.addEventListener("DOMContentLoaded", async () => {
             // Delete all related cookies
             ["consentId", "cookiesAccepted", "cookiePreferences"].forEach(deleteCookie);
 
-            showCustomPopup("Your data has been deleted.");
+            alert("Your data has been deleted.");
             settingsDropdown.style.display = "none";
         } catch (error) {
             console.error("❌ Error deleting data:", error);
-            showCustomPopup("Failed to delete data. Please try again later.");
+            alert("Failed to delete data. Please try again later.");
         }
     });
 
@@ -243,37 +142,35 @@ document.addEventListener("DOMContentLoaded", async () => {
         settingsDropdown.style.display = settingsDropdown.style.display === "none" ? "block" : "none";
     });
 
-    // Hide Cookie Settings button for non-logged-in users
-    if (cookieSettingsButton) {
-        cookieSettingsButton.style.display = isUserLoggedIn() ? "block" : "none";
+    function setCookie(name, value, days) {
+        const date = new Date();
+        date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+        document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/;secure;samesite=strict`;
     }
 
-    // Apply restriction to Accept, Reject, and Customize buttons
-    document.querySelectorAll("#acceptCookies, #rejectCookies, #customizeCookies").forEach(button => {
-        button.addEventListener("click", restrictCookieInteraction);
-    });
-
-    function handleAcceptCookies() {
-        handleCookieConsent(true);
+    function getCookie(name) {
+        const nameEq = `${name}=`;
+        return document.cookie.split("; ").find((c) => c.startsWith(nameEq))?.split("=")[1] || null;
     }
 
-    function handleRejectCookies() {
-        handleCookieConsent(false);
+    function deleteCookie(name) {
+        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;secure;samesite=strict`;
     }
 
-    // Attach event listeners to the buttons
-    if (acceptCookiesButton) {
-        acceptCookiesButton.addEventListener("click", handleAcceptCookies);
+    let consentId = getCookie("consentId");
+
+    if (!getCookie("cookiesAccepted")) {
+        setTimeout(() => cookieBanner.classList.add("show"), 500);
     }
-    if (rejectCookiesButton) {
-        rejectCookiesButton.addEventListener("click", handleRejectCookies);
-    }
-    if (customizeCookiesButton) {
-        customizeCookiesButton.addEventListener("click", restrictCookieInteraction);
-    }
+
+    acceptCookiesButton.addEventListener("click", () => handleCookieConsent(true));
+    rejectCookiesButton.addEventListener("click", () => handleCookieConsent(false));
 
     function handleCookieConsent(accepted) {
-        let consentId = getOrCreateConsentID();
+        if (!consentId) {
+            consentId = generateShortUUID();
+            setCookie("consentId", consentId, 365);
+        }
 
         console.log("📌 Using Consent ID:", consentId);
 
@@ -301,7 +198,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     savePreferencesButton.addEventListener("click", () => {
-        let consentId = getOrCreateConsentID();
+        if (!consentId) {
+            consentId = generateShortUUID();
+            setCookie("consentId", consentId, 365);
+        }
 
         console.log("📌 Using Consent ID:", consentId);
 
@@ -325,6 +225,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     cancelPreferencesButton.addEventListener("click", () => {
         cookiePreferencesModal.classList.remove("show");
     });
+
+    function hideBanner() {
+        cookieBanner.classList.add("hide");
+        setTimeout(() => {
+            cookieBanner.classList.remove("show", "hide");
+        }, 500);
+    }
 
     async function sendPreferencesToDB(consentId, preferences) {
         try {
