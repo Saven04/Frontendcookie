@@ -215,7 +215,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const data = await response.json();
                 if (response.ok) {
                     alert("Registration successful!");
-                    window.location.href = "/login.html"; // Redirect to login page
+                    window.location.href = "index.html"; // Redirect to login page
                 } else {
                     alert(data.message || "Registration failed. Please try again.");
                 }
