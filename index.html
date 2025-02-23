@@ -101,43 +101,53 @@
 
     <!-- Cookie Policy Modal -->
     <div id="cookiePolicyModal" class="cookie-policy-modal">
-    <div class="modal-content">
-        <h1>Cookie Policy</h1>
-        <br>
-        <p>
-            Our website uses cookies to improve your experience. Cookies are small text files stored on your
-            device that help us analyze web traffic, personalize content, and provide relevant ads. By using our
-            website, you consent to the use of cookies in accordance with this policy.
-        </p>
-        <br><br>
-        <h2>Types of Cookies We Use</h2>
-        <br>
-        <ul>
-            <li><strong>Strictly Necessary Cookies:</strong> These are essential for the website to function
-                properly.</li><br>
-            <li><strong>Performance Cookies:</strong> These help us understand how visitors interact with our
-                website.</li><br>
-            <li><strong>Functional Cookies:</strong> These allow the website to remember your preferences.</li><br>
-            <li><strong>Advertising Cookies:</strong> These help us deliver personalized ads based on your
-                interests.</li><br>
-            <li><strong>Social Media Cookies:</strong> These enable you to share content on social media
-                platforms.</li>
-        </ul>
-        <br><br>
-        <p>
-            For more details, please read our full <a href="cookie-policy.html" target="_blank">Cookie Policy</a>
-        </p>
-        <br><br>
-        <button id="closeCookiePolicyModal" class="close-modal-button">Close</button>
+        <div class="modal-content">
+            <h1>Cookie Policy</h1>
+            <br>
+            <p>
+                Our website uses cookies to improve your experience. Cookies are small text files stored on your
+                device that help us analyze web traffic, personalize content, and provide relevant ads. By using our
+                website, you consent to the use of cookies in accordance with this policy.
+            </p>
+            <br><br>
+            <h2>Types of Cookies We Use</h2>
+            <br>
+            <ul>
+                <li><strong>Strictly Necessary Cookies:</strong> These are essential for the website to function
+                    properly.</li><br>
+                <li><strong>Performance Cookies:</strong> These help us understand how visitors interact with our
+                    website.</li><br>
+                <li><strong>Functional Cookies:</strong> These allow the website to remember your preferences.</li><br>
+                <li><strong>Advertising Cookies:</strong> These help us deliver personalized ads based on your
+                    interests.</li><br>
+                <li><strong>Social Media Cookies:</strong> These enable you to share content on social media
+                    platforms.</li>
+            </ul>
+            <br><br>
+            <p>
+                For more details, please read our full <a href="cookie-policy.html" target="_blank">Cookie Policy</a>
+            </p>
+            <br><br>
+            <button id="closeCookiePolicyModal" class="close-modal-button">Close</button>
+        </div>
     </div>
-</div>
 
-   <!-- Login Page Content -->
-   ... <!-- Your existing login page content goes here -->
+    <!-- Login Page Content -->
+    <div class="login-container">
+        <h1>Login</h1>
+        <form id="loginForm">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit">Login</button>
+        </form>
+        <p>Don't have an account? <a href="register.html">Register here</a></p>
+    </div>
 
     <!-- Include JavaScript -->
     <script src="/public/src/main.js"></script>
-    <script type='module' src='/public/src/cookie-banner.js'></script>
+    <script type="module" src="/public/src/cookie-banner.js"></script>
 
     <!-- Popup message handling script -->
     <script>
@@ -155,39 +165,36 @@
                 }, 3000); // Hide after 3 seconds
             }
 
-           // Attach event listeners for cookie buttons
-           document.getElementById('acceptCookies').addEventListener('click', () => {
-               handleAcceptCookies();
-               showPopupMessage();
-           });
+            // Attach event listeners for cookie buttons
+            document.getElementById('acceptCookies').addEventListener('click', () => {
+                handleAcceptCookies();
+                showPopupMessage();
+            });
 
-           document.getElementById('rejectCookies').addEventListener('click', () => {
-               handleRejectCookies();
-               showPopupMessage();
-           });
+            document.getElementById('rejectCookies').addEventListener('click', () => {
+                handleRejectCookies();
+                showPopupMessage();
+            });
 
-           document.getElementById('savePreferences').addEventListener('click', () => {
-               // Save preferences logic...
-               showPopupMessage();
-           });
+            document.getElementById('savePreferences').addEventListener('click', () => {
+                // Save preferences logic...
+                showPopupMessage();
+            });
         });
-        
+
         // Other existing JavaScript functions...
-        
         function openCookieInfoModal(cookieType) {
-           // get info from label based on cookie type
-           const label = document.querySelector(`label[data-cookie-type="${cookieType}"]`);
-           const infoText = label.getAttribute('data-info');
+            // Get info from label based on cookie type
+            const label = document.querySelector(`label[data-cookie-type="${cookieType}"]`);
+            const infoText = label.getAttribute('data-info');
 
-           // set info text in modal
-           document.getElementById('cookieInfoText').innerHTML = infoText;
+            // Set info text in modal
+            document.getElementById('cookieInfoText').innerHTML = infoText;
 
-           // show modal
-           document.getElementById('cookieInfoModal').classList.add('show');
-       }
-   </script>
-
+            // Show modal
+            document.getElementById('cookieInfoModal').classList.add('show');
+        }
+    </script>
 </body>
 
 </html>
-
