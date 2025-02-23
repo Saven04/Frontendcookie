@@ -49,12 +49,15 @@ async function loginUser(email, password) {
             body: JSON.stringify({ email, password }),
         });
     
-        // Debug: Log the raw response
-        const textResponse = await response.text();
-        console.log("Raw Response:", textResponse);
+        // Check if the response is JSON
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            const textResponse = await response.text();
+            console.error("❌ Unexpected response:", textResponse);
+            throw new Error("Invalid response from server.");
+        }
     
-        // Parse the response as JSON
-        const data = JSON.parse(textResponse);
+        const data = await response.json();
     
         if (!response.ok) {
             throw new Error(data.message || "Login failed.");
