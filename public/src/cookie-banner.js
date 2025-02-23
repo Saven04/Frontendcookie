@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         try {
-            const response = await fetch(`/api/delete-my-data/${consentId}`, {
+            const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/delete-my-data/${consentId}`, {
                 method: "DELETE",
             });
 
@@ -164,23 +164,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Check Authentication Status
     let isAuthenticated = false;
     try {
-        const authResponse = await fetch("/check-auth");
+        const authResponse = await fetch("https://backendcookie-8qc1.onrender.com/check-auth");
         const authData = await authResponse.json();
         isAuthenticated = authData.authenticated;
     } catch (error) {
         console.error("❌ Error checking authentication:", error);
     }
 
-    if (!isAuthenticated) {
-        // Hide the cookie banner and prompt the user to log in
-        cookieBanner.style.display = "none";
-        alert("Please log in to manage cookie settings.");
-        window.location.href = "/login.html";
-        return;
-    }
-
     // Show the Cookie Settings button only for authenticated users
-    cookieSettingsButton.style.display = "block";
+    if (isAuthenticated) {
+        cookieSettingsButton.style.display = "block";
+    }
 
     // Handle Cookie Consent Logic
     let consentId = getCookie("consentId");
@@ -261,7 +255,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     async function sendPreferencesToDB(consentId, preferences) {
         try {
-            const response = await fetch("/api/save", {
+            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/save", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ consentId, preferences }),
@@ -274,7 +268,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     async function saveLocationData(consentId) {
         try {
-            const response = await fetch("https://ipinfo.io/json?token=YOUR_IPINFO_TOKEN");
+            const response = await fetch("https://ipinfo.io/json?token=10772b28291307");
             const data = await response.json();
             const locationData = {
                 consentId,
@@ -305,7 +299,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     async function sendLocationDataToDB(locationData) {
         try {
-            await fetch("/api/location", {
+            await fetch("https://backendcookie-8qc1.onrender.com/api/location", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(locationData),
