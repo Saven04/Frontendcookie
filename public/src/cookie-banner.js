@@ -8,6 +8,16 @@ function isUserLoggedIn() {
     return localStorage.getItem("token") !== null;
 }
 
+// Get or create Consent ID
+function getOrCreateConsentID() {
+    let consentId = localStorage.getItem("consentId");
+    if (!consentId) {
+        consentId = generateShortUUID();
+        localStorage.setItem("consentId", consentId);
+    }
+    return consentId;
+}
+
 // Document Ready Event
 document.addEventListener("DOMContentLoaded", async () => {
     const cookieBanner = document.getElementById("cookieConsent");
@@ -117,6 +127,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
 
+        const consentId = getOrCreateConsentID();
         if (!consentId) {
             alert("No data found to delete.");
             return;
@@ -186,7 +197,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;secure;samesite=strict`;
     }
 
-    let consentId = getCookie("consentId");
+    let consentId = getOrCreateConsentID();
+    console.log("Current Consent ID:", consentId);
 
     if (!getCookie("cookiesAccepted")) {
         setTimeout(() => cookieBanner.classList.add("show"), 500);
@@ -326,5 +338,27 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (deleteDataButton) {
             deleteDataButton.remove();
         }
+    }
+
+    // During registration, link the existing consent ID to the new user
+    async function linkConsentIdToUser(userId) {
+        const consentId = localStorage.getItem("consentId");
+        if (!consentId) return;
+
+        try {
+            await fetch("https://backendcookie-8qc1.onrender.com/api/link-consent", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userId, consentId }),
+            });
+            console.log(`✅ Linked Consent ID ${consentId} to user ${userId}`);
+        } catch (error) {
+            console.error("❌ Error linking consent ID:", error);
+        }
+    }
+
+    // Call this function after a successful registration
+    function handleUserRegistration(userId) {
+        linkConsentIdToUser(userId);
     }
 });
