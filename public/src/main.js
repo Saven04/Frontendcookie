@@ -25,13 +25,6 @@ function isUserLoggedIn() {
     return localStorage.getItem("token") !== null;
 }
 
-// Function to prevent unauthorized cookie interactions
-function restrictCookieInteraction(event) {
-    if (!isUserLoggedIn() && !event.target.closest("#loginButton")) {
-        event.preventDefault();
-        alert("Please log in or register to manage cookie preferences.");
-    }
-}
 
 // Function to handle user login
 async function loginUser(email, password) {
