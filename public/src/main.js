@@ -43,32 +43,35 @@ function isUserLoggedIn() {
 // ✅ Updated loginUser function to handle both JWT and session-based logins
 async function loginUser(email, password) {
     try {
-        const response = await fetch("https://backendcookie-8qc1.onrender.com/api/login", {
+        const apiUrl = "https://backendcookie-8qc1.onrender.com/api/login";
+        console.log("📡 Sending request to:", apiUrl);
+
+        const response = await fetch(apiUrl, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password }),
         });
 
-        const data = await response.json(); // Parse JSON response
-        console.log("🚀 Server Response:", data); // Debugging response
+        const data = await response.json();
+        console.log("🚀 Server Response:", data); 
 
         if (!response.ok) {
-            throw new Error(data.message || "Invalid credentials"); // This only runs for error cases
+            throw new Error(data.message || "Invalid credentials");
         }
 
-        // ✅ Store JWT token and user info if login is successful
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
 
         showModal("✅ Login successful!", "success");
         setTimeout(() => {
-            window.location.href = "/userDashboard.html"; // Redirect to dashboard
+            window.location.href = "/userDashboard.html";
         }, 1500);
     } catch (error) {
         console.error("Login error:", error);
         showModal(`❌ Login failed: ${error.message}`, "error");
     }
 }
+
 
 
 // ✅ Function to attach JWT token to API requests
