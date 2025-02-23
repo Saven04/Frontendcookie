@@ -182,39 +182,6 @@ body {
     transform: scale(1.02); /* Slight zoom effect on hover */
 }
 
-/* Cookie Banner Styles */
-.cookie-banner {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    max-width: 400px;
-    margin: 0 auto;
-    background-color: rgba(0, 0, 0, 0.9);
-    color: #fff;
-    padding: 20px;
-    border-radius: 8px 8px 0 0;
-    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.3);
-    z-index: 1000;
-    text-align: center;
-    animation: fadeIn 0.6s ease-in-out;
-}
-
-.cookie-banner button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin: 10px 5px;
-    transition: background-color 0.3s;
-}
-
-.cookie-banner button:hover {
-    background-color: #6605f7;
-}
-
 /* Modal Styles */
 .modal {
     position: fixed;
@@ -266,10 +233,5 @@ body {
     .login-container {
         width: 90%;
         padding: 20px;
-    }
-
-    .cookie-banner {
-        width: 90%;
-        max-width: none;
     }
 }
