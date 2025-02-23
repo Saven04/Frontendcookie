@@ -1,139 +1,176 @@
-/* Cookie Consent Banner */
-.cookie-banner {
-    position: fixed;
-    top: -100px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80%;
-    max-width: 700px;
-    background: rgba(0, 0, 0, 0.7);
-    color: #fff;
-    padding: 15px 20px;
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-image: url('../image/Background.jpg'); /* Ensure this path is correct */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 0.9rem;
-    z-index: 1000;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-    flex-direction: column;
-    text-align: center;
-    opacity: 0;
-    transition: opacity 0.5s ease, top 0.5s ease;
+    color: #fff;
 }
 
-.cookie-banner.show {
-    opacity: 1;
-    top: 20px;
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        top: -50px;
+    }
+    100% {
+        opacity: 1;
+        top: 0;
+    }
 }
 
-.cookie-banner-content p {
-    margin: 0;
-    line-height: 1.5;
-    font-size: 1rem;
-}
-
-.cookie-banner a {
-    color: #6a11cb;
-    text-decoration: underline;
-}
-
-.cookie-buttons {
+/* Login Page Styles */
+.login-container {
     display: flex;
     justify-content: center;
-    gap: 15px;
-    margin-top: 10px;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    max-width: 400px;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
-.cookie-buttons button {
-    padding: 8px 15px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    border-radius: 5px;
+.login-card {
+    width: 100%;
+}
+
+.card-header h2 {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #fff;
+}
+
+.input-group {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group label {
+    font-size: 14px;
+    color: #ccc;
+    margin-bottom: 5px;
+}
+
+.input-group input {
+    padding: 12px;
+    font-size: 16px;
     border: none;
-    transition: background-color 0.3s ease, transform 0.3s ease;
+    border-radius: 5px;
+    background-color: #333;
+    color: white;
+    outline: none;
 }
 
-.accept-button {
+.input-group input::placeholder {
+    color: #bbb;
+}
+
+.login-button {
     background-color: #4CAF50;
     color: white;
-}
-
-.reject-button {
-    background-color: #f44336;
-    color: white;
-}
-
-.customize-button {
-    background-color: #2196F3;
-    color: white;
-}
-
-.cookie-buttons button:hover {
-    opacity: 0.8;
-    transform: scale(1.05);
-}
-
-/* Cookie Preferences Modal */
-.cookie-preferences-modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
-    justify-content: center;
-    align-items: center;
-    z-index: 2000;
-}
-
-.cookie-preferences-modal.show {
-    display: flex;
-}
-
-.modal-content {
-    background: rgba(0, 0, 0, 0.8);
-    color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    max-width: 500px;
+    padding: 12px;
     width: 100%;
-    text-align: left;
-}
-
-.cookie-category {
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
     margin-bottom: 10px;
+    transition: background-color 0.3s;
 }
 
-.modal-buttons {
-    display: flex;
-    justify-content: space-between;
+.login-button:hover {
+    background-color: #6605f7;
+}
+
+.forgot-password {
+    color: #bbb;
+    text-align: center;
+    display: block;
+    margin-top: 10px;
+    text-decoration: none;
+}
+
+.forgot-password:hover {
+    color: #fff;
+}
+
+.social-login {
+    text-align: center;
     margin-top: 20px;
 }
 
-.save-button, .cancel-button {
-    padding: 8px 15px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    border-radius: 5px;
-    border: none;
-    transition: background-color 0.3s ease, transform 0.3s ease;
+.social-login p {
+    font-size: 14px;
+    color: #ccc;
+    margin-bottom: 15px;
 }
 
-.save-button {
+.social-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 20px;
+    font-size: 16px;
+    background-color: transparent;
+    border: 1px solid #ccc;
+    color: #ccc;
+    cursor: pointer;
+    width: 100%;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    transition: background-color 0.3s;
+}
+
+.social-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.social-button img {
+    width: 20px;
+    margin-right: 10px;
+}
+
+/* Register Button Styles */
+.register-button {
     background-color: #4CAF50;
     color: white;
+    padding: 12px;
+    width: 100%;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+    margin-top: 10px;
+    transition: background-color 0.3s;
 }
 
-.cancel-button {
-    background-color: #f44336;
-    color: white;
+.register-button:hover {
+    background-color: #6605f7;
 }
 
-.save-button:hover, .cancel-button:hover {
-    opacity: 0.8;
-    transform: scale(1.05);
-}
+/* Responsive Design */
+@media (max-width: 768px) {
+    .login-container {
+        width: 90%;
+    }
 
-/* Cookie Info Popup (Updated) */
+    .cookie-banner {
+        width: 90%;
+    }
+}
