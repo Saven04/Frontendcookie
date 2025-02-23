@@ -63,22 +63,26 @@ async function loginUser(email, password) {
 
         const data = await response.json();
 
-        // ✅ Store JWT token if provided
-        if (data.token) {
-            localStorage.setItem("token", data.token);
+        // ✅ Fix: Check for userId instead of treating message as an error
+        if (data.userId) {
+            if (data.token) {
+                localStorage.setItem("token", data.token); // Store JWT if available
+            }
+
+            alert("✅ Login successful!");
+            window.location.href = "userDashboard.html"; 
+            return; // Exit function to prevent unnecessary errors
         }
 
-        if (data.userId) {
-            alert("✅ Login successful!");
-            window.location.href = "userDashboard.html";
-        } else {
-            throw new Error(data.message || "Login failed.");
-        }
+        // If neither token nor userId is present, treat it as an error
+        throw new Error(data.message || "Login failed.");
+        
     } catch (error) {
         console.error("❌ Login error:", error);
         showModal(`❌ Login failed: ${error.message}`, "error");
     }
 }
+
 
 // ✅ Function to attach JWT token to API requests
 function getAuthHeaders() {
