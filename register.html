@@ -5,8 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
     <link rel="stylesheet" href="public/styles/styles.css">
+    <link rel="stylesheet" href="public/styles/cookie-banner.css">
 </head>
 <body>
+    <!-- Consent Banner -->
+    <div id="cookieConsent" class="hidden">
+        <p>We value your privacy! We use cookies to enhance your experience, analyze site traffic, and serve personalized content.</p>
+        <button id="acceptCookies">Accept All</button>
+        <button id="rejectCookies">Reject All</button>
+        <button id="customizeCookies">Customize</button>
+    </div>
+
+    <!-- Cookie Preferences Modal -->
+    <div id="cookiePreferencesModal" class="hidden">
+        <h3>Customize Your Preferences</h3>
+        <label>
+            <input type="checkbox" id="strictlyNecessary" checked disabled />
+            Strictly Necessary Cookies (Required for website functionality)
+        </label>
+        <label>
+            <input type="checkbox" id="performance" />
+            Performance (Analytical) Cookies
+        </label>
+        <label>
+            <input type="checkbox" id="functional" />
+            Functional Cookies (Preferences)
+        </label>
+        <label>
+            <input type="checkbox" id="advertising" />
+            Advertising (Targeting) Cookies
+        </label>
+        <label>
+            <input type="checkbox" id="socialMedia" />
+            Social Media Cookies
+        </label>
+        <button id="savePreferences">Save Preferences</button>
+        <button id="cancelPreferences">Cancel</button>
+    </div>
+
+    <!-- Registration Form -->
     <div class="login-container">
         <div class="login-card">
             <div class="card-header">
@@ -35,6 +72,8 @@
         </div>
     </div>
 
+    <!-- Include Scripts -->
+    <script src="public/src/cookie-banner.js"></script>
     <script src="public/src/register.js"></script>
 </body>
 </html>
