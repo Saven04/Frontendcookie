@@ -164,7 +164,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Check Authentication Status
     let isAuthenticated = false;
     try {
-        const authResponse = await fetch("https://backendcookie-8qc1.onrender.com/api/check-auth");
+        const authResponse = await fetch("https://backendcookie-8qc1.onrender.com/check-auth");
         const authData = await authResponse.json();
         isAuthenticated = authData.authenticated;
     } catch (error) {
