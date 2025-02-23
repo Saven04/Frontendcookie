@@ -68,6 +68,7 @@ async function loginUser(email, password) {
         console.error("Login error:", error);
         showModal(`❌ Login failed: ${error.message}`, "error");
     }
+}
 
 
 // ✅ Function to attach JWT token to API requests
