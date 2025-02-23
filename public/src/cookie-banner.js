@@ -45,13 +45,17 @@ function hideBanner() {
         customizeCookiesButton.removeEventListener("click", restrictCookieInteraction);
     }
 
-
-    // Hide the banner
+    // Add the "hide" class to trigger the CSS transition
     cookieBanner.classList.add("hide");
+
+    // Wait for the transition to complete before removing the "show" and "hide" classes
     setTimeout(() => {
         cookieBanner.classList.remove("show", "hide");
-    }, 500);
+        cookieBanner.style.display = "none"; // Ensure the banner is completely hidden
+    }, 500); // Match this timeout with the CSS transition duration
 }
+
+
 
 // Document Ready Event
 document.addEventListener("DOMContentLoaded", async () => {
