@@ -7,26 +7,35 @@
     <link rel="stylesheet" href="/styles/styles.css">
 </head>
 <body>
-    <div class="login-container">
-        <h1>Login to Your Account</h1>
-        <form id="login-form">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required><br>
-            
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required><br>
-            
-            <button type="submit">Login</button>
-            <a href="/forgot-password.html">Forgot Password?</a>
-        </form>
-        <p>Don't have an account? <a href="/register.html">Register here</a>.</p>
-        <div class="social-login">
-            <p>Or login with:</p>
-            <button class="google-login">Google</button>
-            <button class="facebook-login">Facebook</button>
+<div class="login-container">
+        <div class="login-card">
+            <div class="card-header">
+                <h2>Login to Your Account</h2>
+            </div>
+            <form id="loginForm">
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Enter your username">
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter your password">
+                </div>
+                <button type="submit" class="login-button">Login</button>
+                <a href="#" class="forgot-password">Forgot Password?</a>
+               
+                <button type="button" class="register-button" onclick="window.location.href='register.html'">Register</button>
+            </form>
+            <div class="social-login">
+                <p>Or login with</p>
+                <button class="social-button google-button">
+                    <img src="public/image/google-logo.png" alt="Google Logo"> Google
+                </button>
+                <button class="social-button facebook-button">
+                    <img src="public/image/facebook-logo.png" alt="Facebook Logo"> Facebook
+                </button>
+            </div>
         </div>
-    </div>
-
     <!-- Scripts -->
     <script src="/src/login.js"></script>
 </body>
