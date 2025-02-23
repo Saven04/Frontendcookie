@@ -18,6 +18,14 @@ function getOrCreateConsentID() {
     return consentId;
 }
 
+function handleAcceptCookies() {
+    handleCookieConsent(true);
+}
+
+function handleRejectCookies() {
+    handleCookieConsent(false);
+}
+
 // Function to hide the cookie banner and remove event listeners
 function hideBanner() {
     const cookieBanner = document.getElementById("cookieConsent");
@@ -36,6 +44,7 @@ function hideBanner() {
     if (customizeCookiesButton) {
         customizeCookiesButton.removeEventListener("click", restrictCookieInteraction);
     }
+
 
     // Hide the banner
     cookieBanner.classList.add("hide");
