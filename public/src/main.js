@@ -54,7 +54,7 @@ async function loginUser(email, password) {
         localStorage.setItem("user", JSON.stringify(data.user)); // Store user info
 
         alert("Login successful!");
-        window.location.href = "/dashboard.html"; // Redirect to dashboard
+        window.location.href = "/userDashboard.html"; // Redirect to dashboard
     } catch (error) {
         console.error("Login error:", error);
         alert("Login failed. Please check your credentials.");
