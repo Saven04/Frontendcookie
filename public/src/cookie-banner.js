@@ -18,12 +18,22 @@ function getOrCreateConsentID() {
     return consentId;
 }
 
-function handleAcceptCookies() {
-    handleCookieConsent(true);
+// Function to set a cookie
+function setCookie(name, value, days) {
+    const date = new Date();
+    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+    document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/;secure;samesite=strict`;
 }
 
-function handleRejectCookies() {
-    handleCookieConsent(false);
+// Function to get a cookie
+function getCookie(name) {
+    const nameEq = `${name}=`;
+    return document.cookie.split("; ").find((c) => c.startsWith(nameEq))?.split("=")[1] || null;
+}
+
+// Function to delete a cookie
+function deleteCookie(name) {
+    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;secure;samesite=strict`;
 }
 
 // Function to hide the cookie banner and remove event listeners
@@ -55,7 +65,40 @@ function hideBanner() {
     }, 500); // Match this timeout with the CSS transition duration
 }
 
+// Function to show the custom popup
+function showCustomPopup(message) {
+    const customPopup = document.getElementById("customPopup");
+    const popupMessage = document.getElementById("popupMessage");
 
+    // Set the message
+    popupMessage.textContent = message;
+
+    // Show the popup
+    customPopup.style.display = "flex";
+
+    // Close the popup when the close button is clicked
+    const closePopupButton = document.getElementById("closePopupButton");
+    closePopupButton.onclick = () => {
+        customPopup.style.display = "none";
+    };
+
+    // Close the popup when clicking outside the popup content
+    customPopup.onclick = (event) => {
+        if (event.target === customPopup) {
+            customPopup.style.display = "none";
+        }
+    };
+}
+
+// Restrict cookie interactions for non-logged-in users
+function restrictCookieInteraction(event) {
+    if (!isUserLoggedIn()) {
+        event.preventDefault(); // Prevent default button behavior
+        showCustomPopup("Please log in or register to manage cookie preferences.");
+        return false;
+    }
+    return true; // Allow interaction if logged in
+}
 
 // Document Ready Event
 document.addEventListener("DOMContentLoaded", async () => {
@@ -162,13 +205,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     deleteDataOption.style.cursor = "pointer";
     deleteDataOption.addEventListener("click", async () => {
         if (!isUserLoggedIn()) {
-            alert("Please log in to delete your data.");
+            showCustomPopup("Please log in to delete your data.");
             return;
         }
 
         const consentId = getOrCreateConsentID();
         if (!consentId) {
-            alert("No data found to delete.");
+            showCustomPopup("No data found to delete.");
             return;
         }
 
@@ -184,11 +227,11 @@ document.addEventListener("DOMContentLoaded", async () => {
             // Delete all related cookies
             ["consentId", "cookiesAccepted", "cookiePreferences"].forEach(deleteCookie);
 
-            alert("Your data has been deleted.");
+            showCustomPopup("Your data has been deleted.");
             settingsDropdown.style.display = "none";
         } catch (error) {
             console.error("❌ Error deleting data:", error);
-            alert("Failed to delete data. Please try again later.");
+            showCustomPopup("Failed to delete data. Please try again later.");
         }
     });
 
@@ -207,34 +250,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         cookieSettingsButton.style.display = isUserLoggedIn() ? "block" : "none";
     }
 
-    // Restrict cookie interactions for non-logged-in users
-    function restrictCookieInteraction(event) {
-        if (!isUserLoggedIn()) {
-            event.preventDefault();
-            alert("Please log in or register to manage cookie preferences.");
-            return false;
-        }
-    }
-
     // Apply restriction to Accept, Reject, and Customize buttons
     document.querySelectorAll("#acceptCookies, #rejectCookies, #customizeCookies").forEach(button => {
         button.addEventListener("click", restrictCookieInteraction);
     });
-
-    function setCookie(name, value, days) {
-        const date = new Date();
-        date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-        document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/;secure;samesite=strict`;
-    }
-
-    function getCookie(name) {
-        const nameEq = `${name}=`;
-        return document.cookie.split("; ").find((c) => c.startsWith(nameEq))?.split("=")[1] || null;
-    }
-
-    function deleteCookie(name) {
-        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;secure;samesite=strict`;
-    }
 
     let consentId = getOrCreateConsentID();
     console.log("Current Consent ID:", consentId);
@@ -377,15 +396,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.log("✅ Location data saved successfully.");
         } catch (error) {
             console.error("❌ Error saving location data:", error);
-        }
-    }
-
-    // Ensure modal exists before trying to modify it
-    if (cookiePreferencesModal) {
-        // Remove the deleteDataButton if it exists
-        const deleteDataButton = document.getElementById("deleteDataButton");
-        if (deleteDataButton) {
-            deleteDataButton.remove();
         }
     }
 
