@@ -157,6 +157,50 @@
     transform: scale(1.05);
 }
 
+/* Custom Popup Styles */
+.custom-popup {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+    justify-content: center;
+    align-items: center;
+    z-index: 3000; /* Above other elements */
+}
+
+.popup-content {
+    background-color: #fff;
+    color: #333;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
+    width: 90%;
+}
+
+#popupMessage {
+    margin-bottom: 15px;
+    font-size: 1rem;
+}
+
+#closePopupButton {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+#closePopupButton:hover {
+    background-color: #45a049;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .cookie-banner {
