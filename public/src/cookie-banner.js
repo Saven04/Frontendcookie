@@ -18,7 +18,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const advertisingCheckbox = document.getElementById("advertising");
     const socialMediaCheckbox = document.getElementById("socialMedia");
 
-    // Create Cookie Settings Button
     const cookieSettingsButton = document.createElement("button");
     cookieSettingsButton.id = "cookieSettingsButton";
     cookieSettingsButton.innerHTML = "⚙️"; // Gear icon
@@ -31,19 +30,18 @@ document.addEventListener("DOMContentLoaded", async () => {
         fontSize: "24px",
         cursor: "pointer",
         zIndex: "1000",
-        display: "none", // Initially hidden
     });
     document.body.appendChild(cookieSettingsButton);
 
-    // Dropdown Menu for Cookie Settings
+    // Create dropdown menu
     const settingsDropdown = document.createElement("div");
     settingsDropdown.id = "settingsDropdown";
     Object.assign(settingsDropdown.style, {
         position: "fixed",
         top: "50px",
         right: "10px",
-        backgroundColor: "rgba(0, 0, 0, 0.8)",
-        color: "#fff",
+        backgroundColor: "rgba(0, 0, 0, 0.8)", // Transparent black background
+        color: "#fff", // White text color for visibility
         border: "1px solid #ccc",
         borderRadius: "5px",
         boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
@@ -51,9 +49,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         zIndex: "1000",
     });
 
-    // Add options to the dropdown menu
     const customizePreferenceOption = document.createElement("div");
-    customizePreferenceOption.innerText = "Customize Preferences";
+    customizePreferenceOption.innerText = "Customize Preference";
     customizePreferenceOption.style.padding = "10px";
     customizePreferenceOption.style.cursor = "pointer";
     customizePreferenceOption.addEventListener("click", () => {
@@ -62,7 +59,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     const policiesOption = document.createElement("div");
-    policiesOption.innerText = "Read the Policies and Guidelines";
+    policiesOption.innerText = "Read the policies and Guidelines";
     policiesOption.style.padding = "10px";
     policiesOption.style.cursor = "pointer";
 
@@ -75,7 +72,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     cookiePolicyOption.style.padding = "5px";
     cookiePolicyOption.style.cursor = "pointer";
     cookiePolicyOption.addEventListener("click", () => {
-        window.open("/cookie-policy.html", "_blank");
+        window.open("/cookie-policy", "_blank");
         settingsDropdown.style.display = "none";
     });
 
@@ -84,7 +81,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     privacyPolicyOption.style.padding = "5px";
     privacyPolicyOption.style.cursor = "pointer";
     privacyPolicyOption.addEventListener("click", () => {
-        window.open("/privacy-policy.html", "_blank");
+        window.open("/privacy-policy", "_blank");
         settingsDropdown.style.display = "none";
     });
 
@@ -93,7 +90,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     tosOption.style.padding = "5px";
     tosOption.style.cursor = "pointer";
     tosOption.addEventListener("click", () => {
-        window.open("/terms-of-service.html", "_blank");
+        window.open("/terms-of-service", "_blank");
         settingsDropdown.style.display = "none";
     });
 
@@ -110,14 +107,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     deleteDataOption.style.padding = "10px";
     deleteDataOption.style.cursor = "pointer";
     deleteDataOption.addEventListener("click", async () => {
-        const consentId = getCookie("consentId");
         if (!consentId) {
             alert("No data found to delete.");
             return;
         }
 
         try {
-            const response = await fetch(`/api/delete-my-data/${consentId}`, {
+            const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/delete-my-data/${consentId}`, {
                 method: "DELETE",
             });
 
@@ -125,7 +121,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                 throw new Error(`Failed to delete data: ${response.statusText}`);
             }
 
+            // Delete all related cookies
             ["consentId", "cookiesAccepted", "cookiePreferences"].forEach(deleteCookie);
+
             alert("Your data has been deleted.");
             settingsDropdown.style.display = "none";
         } catch (error) {
@@ -140,12 +138,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     settingsDropdown.appendChild(deleteDataOption);
     document.body.appendChild(settingsDropdown);
 
-    // Toggle dropdown visibility
     cookieSettingsButton.addEventListener("click", () => {
         settingsDropdown.style.display = settingsDropdown.style.display === "none" ? "block" : "none";
     });
 
-    // Cookie Utility Functions
     function setCookie(name, value, days) {
         const date = new Date();
         date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
@@ -161,28 +157,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;secure;samesite=strict`;
     }
 
-    // Check Authentication Status
-    let isAuthenticated = false;
-    try {
-        const authResponse = await fetch("/check-auth");
-        const authData = await authResponse.json();
-        isAuthenticated = authData.authenticated;
-    } catch (error) {
-        console.error("❌ Error checking authentication:", error);
-    }
-
-    if (!isAuthenticated) {
-        // Hide the cookie banner and prompt the user to log in
-        cookieBanner.style.display = "none";
-        alert("Please log in to manage cookie settings.");
-        window.location.href = "/login.html";
-        return;
-    }
-
-    // Show the Cookie Settings button only for authenticated users
-    cookieSettingsButton.style.display = "block";
-
-    // Handle Cookie Consent Logic
     let consentId = getCookie("consentId");
 
     if (!getCookie("cookiesAccepted")) {
@@ -261,7 +235,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     async function sendPreferencesToDB(consentId, preferences) {
         try {
-            const response = await fetch("/api/save", {
+            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/save", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ consentId, preferences }),
@@ -274,7 +248,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     async function saveLocationData(consentId) {
         try {
-            const response = await fetch("https://ipinfo.io/json?token=YOUR_IPINFO_TOKEN");
+            const response = await fetch("https://ipinfo.io/json?token=10772b28291307");
             const data = await response.json();
             const locationData = {
                 consentId,
@@ -305,7 +279,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     async function sendLocationDataToDB(locationData) {
         try {
-            await fetch("/api/location", {
+            await fetch("https://backendcookie-8qc1.onrender.com/api/location", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(locationData),
@@ -313,6 +287,15 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.log("✅ Location data saved successfully.");
         } catch (error) {
             console.error("❌ Error saving location data:", error);
+        }
+    }
+
+    // Ensure modal exists before trying to modify it
+    if (cookiePreferencesModal) {
+        // Remove the deleteDataButton if it exists
+        const deleteDataButton = document.getElementById("deleteDataButton");
+        if (deleteDataButton) {
+            deleteDataButton.remove();
         }
     }
 });
