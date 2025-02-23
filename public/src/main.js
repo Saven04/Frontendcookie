@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Redirect logged-in users away from the login page
     if (isUserLoggedIn() && window.location.pathname.includes("index.html")) {
-        window.location.href = "userDashboard.html";  // Fixed relative path
+        window.location.href = "userDashboard.html";
     }
 });
 
@@ -40,17 +40,18 @@ function isUserLoggedIn() {
     return localStorage.getItem("token") !== null;
 }
 
+// ✅ Updated loginUser function to handle both JWT and session-based logins
 async function loginUser(email, password) {
     try {
         const response = await fetch("https://backendcookie-8qc1.onrender.com/api/auth/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password }),
-            credentials: "include", // Allows session cookies if used
+            credentials: "include", // Allows session cookies for session-based auth
         });
 
         if (!response.ok) {
-            const errorText = await response.text(); // Read response text
+            const errorText = await response.text();
             console.error("❌ Server error:", errorText);
             throw new Error(`Server error: ${response.status} ${response.statusText}`);
         }
@@ -62,10 +63,14 @@ async function loginUser(email, password) {
 
         const data = await response.json();
 
+        // ✅ Store JWT token if provided
         if (data.token) {
             localStorage.setItem("token", data.token);
+        }
+
+        if (data.userId) {
             alert("✅ Login successful!");
-            window.location.href = "userDashboard.html"; // Ensure correct path
+            window.location.href = "userDashboard.html";
         } else {
             throw new Error(data.message || "Login failed.");
         }
@@ -75,8 +80,43 @@ async function loginUser(email, password) {
     }
 }
 
+// ✅ Function to attach JWT token to API requests
+function getAuthHeaders() {
+    const token = localStorage.getItem("token");
+    return token ? { Authorization: `Bearer ${token}` } : {};
+}
 
-// Function to show a custom modal
+// ✅ Example function to fetch user data using JWT
+async function fetchUserData() {
+    try {
+        const response = await fetch("https://backendcookie-8qc1.onrender.com/api/user", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                ...getAuthHeaders(), // Attach token to request
+            },
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch user data: ${response.status}`);
+        }
+
+        const userData = await response.json();
+        console.log("✅ User data:", userData);
+    } catch (error) {
+        console.error("❌ Error fetching user data:", error);
+    }
+}
+
+// ✅ Logout function
+function logoutUser() {
+    localStorage.removeItem("token");
+    alert("✅ Logged out successfully!");
+    window.location.href = "login.html";
+}
+
+// ✅ Function to show a custom modal
 function showModal(message, type) {
     const existingModal = document.getElementById("customModal");
     if (existingModal) {
