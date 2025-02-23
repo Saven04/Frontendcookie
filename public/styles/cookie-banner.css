@@ -1,143 +1,124 @@
 /* Cookie Consent Banner */
 .cookie-banner {
     position: fixed;
-    top: 20px; /* Default position */
+    top: -100px;
     left: 50%;
-    transform: translateX(-50%) translateY(-120%); /* Start off-screen */
-    width: 90%;
+    transform: translateX(-50%);
+    width: 80%;
     max-width: 700px;
-    background: rgba(20, 20, 20, 0.9);
+    background: rgba(0, 0, 0, 0.7);
     color: #fff;
-    padding: 20px;
+    padding: 15px 20px;
     display: flex;
     justify-content: center;
     align-items: center;
+    font-size: 0.9rem;
+    z-index: 1000;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     flex-direction: column;
     text-align: center;
-    font-size: 1rem;
-    z-index: 1000;
-    border-radius: 12px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
     opacity: 0;
-    transition: opacity 0.5s ease, transform 0.5s ease; /* Smooth transition */
+    transition: opacity 0.5s ease, top 0.5s ease;
 }
 
 .cookie-banner.show {
     opacity: 1;
-    transform: translateX(-50%) translateY(0); /* Bring into view */
-}
-
-.cookie-banner.hide {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-120%); /* Move out of view */
-    pointer-events: none; /* Disable interactions while hiding */
+    top: 20px;
 }
 
 .cookie-banner-content p {
     margin: 0;
-    line-height: 1.6;
+    line-height: 1.5;
+    font-size: 1rem;
 }
 
-/* Link Styles */
 .cookie-banner a {
-    color: #8a2be2; /* Link color */
-    text-decoration: underline; /* Underline links */
-    transition: color 0.3s ease-in-out; /* Smooth transition for hover */
+    color: #6a11cb;
+    text-decoration: underline;
 }
 
-.cookie-banner a:hover {
-    color: #bb86fc; /* Hover color */
-}
-
-/* Cookie Buttons */
 .cookie-buttons {
     display: flex;
     justify-content: center;
-    gap: 15px; /* Space between buttons */
-    margin-top: 15px;
+    gap: 15px;
+    margin-top: 10px;
 }
 
 .cookie-buttons button {
-    padding: 10px 18px; /* Fixed spacing issue here */
-    font-size: 1rem; /* Font size for buttons */
-    font-weight: bold; /* Bold text */
-    cursor: pointer; /* Pointer cursor on hover */
-    border-radius: 6px; /* Rounded corners */
-    border: none; /* No border */
-    transition: all 0.3s ease-in-out; /* Transition effects */
-    min-width: 120px; /* Minimum width for buttons */
+    padding: 8px 15px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border-radius: 5px;
+    border: none;
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-/* Button Colors */
 .accept-button {
-    background-color: #4CAF50; /* Green background for accept button */
+    background-color: #4CAF50;
+    color: white;
 }
 
 .reject-button {
-    background-color: #f44336; /* Red background for reject button */
+    background-color: #f44336;
+    color: white;
 }
 
 .customize-button {
-    background-color: #2196F3; /* Blue background for customize button */
+    background-color: #2196F3;
+    color: white;
 }
 
-/* Button Hover Effects */
 .cookie-buttons button:hover {
-    opacity: 0.85; /* Slightly transparent on hover */
-    transform: scale(1.05); /* Slightly enlarge on hover */
+    opacity: 0.8;
+    transform: scale(1.05);
 }
 
 /* Cookie Preferences Modal */
 .cookie-preferences-modal {
-    display: none; /* Hidden by default */
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
     justify-content: center;
     align-items: center;
     z-index: 2000;
 }
 
 .cookie-preferences-modal.show {
-    display: flex; /* Show modal when active */
+    display: flex;
 }
 
 .modal-content {
-    background-color: rgba(30, 30, 30, 0.95);
+    background: rgba(0, 0, 0, 0.8);
     color: #fff;
-    padding: 25px;
-    border-radius: 12px;
+    padding: 20px;
+    border-radius: 10px;
     max-width: 500px;
-    width: 90%;
+    width: 100%;
     text-align: left;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
 }
 
-/* Cookie Category Styles */
 .cookie-category {
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
-/* Modal Button Styles */
 .modal-buttons {
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
 }
 
-.save-button,
-.cancel-button {
-    padding: 10px 18px; /* Fixed spacing issue here */
-    font-size: 1rem;
-    font-weight: bold;
+.save-button, .cancel-button {
+    padding: 8px 15px;
+    font-size: 0.9rem;
     cursor: pointer;
-    border-radius: 6px;
+    border-radius: 5px;
     border: none;
-    transition: all 0.3s ease-in-out;
-    min-width: 120px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 .save-button {
@@ -150,73 +131,9 @@
     color: white;
 }
 
-/* Button Hover Effects in Modal */
-.save-button:hover,
-.cancel-button:hover {
-    opacity: 0.85;
+.save-button:hover, .cancel-button:hover {
+    opacity: 0.8;
     transform: scale(1.05);
 }
 
-/* Custom Popup Styles */
-.custom-popup {
-    display: none; /* Hidden by default */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
-    justify-content: center;
-    align-items: center;
-    z-index: 3000; /* Above other elements */
-}
-
-.popup-content {
-    background-color: #fff;
-    color: #333;
-    padding: 20px;
-    border-radius: 8px;
-    text-align: center;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    max-width: 400px;
-    width: 90%;
-}
-
-#popupMessage {
-    margin-bottom: 15px;
-    font-size: 1rem;
-}
-
-#closePopupButton {
-    padding: 10px 20px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
-}
-
-#closePopupButton:hover {
-    background-color: #45a049;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .cookie-banner {
-        width: 95%;
-    }
-
-    .cookie-buttons {
-        flex-direction: column;
-        width: 100%;
-    }
-
-    .cookie-buttons button {
-        width: 100%;
-    }
-
-    .modal-content {
-        width: 95%;
-    }
-}
+/* Cookie Info Popup (Updated) */
