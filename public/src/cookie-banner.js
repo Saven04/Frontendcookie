@@ -1,3 +1,41 @@
+// Function to generate a short unique consent ID
+function generateShortUUID() {
+    return Math.random().toString(36).substring(2, 10);
+}
+
+// Function to check if user is logged in
+function isUserLoggedIn() {
+    return localStorage.getItem("token") !== null;
+}
+
+// Get or create Consent ID
+function getOrCreateConsentID() {
+    let consentId = localStorage.getItem("consentId");
+    if (!consentId) {
+        consentId = generateShortUUID();
+        localStorage.setItem("consentId", consentId);
+    }
+    return consentId;
+}
+
+// Function to set a cookie
+function setCookie(name, value, days) {
+    const date = new Date();
+    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+    document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/;secure;samesite=strict`;
+}
+
+// Function to get a cookie
+function getCookie(name) {
+    const nameEq = `${name}=`;
+    return document.cookie.split("; ").find((c) => c.startsWith(nameEq))?.split("=")[1] || null;
+}
+
+// Function to delete a cookie
+function deleteCookie(name) {
+    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;secure;samesite=strict`;
+}
+
 // Function to show the custom popup
 function showCustomPopup(message) {
     const customPopup = document.getElementById("customPopup");
@@ -23,14 +61,31 @@ function showCustomPopup(message) {
     };
 }
 
+// Function to hide the cookie banner and remove event listeners
+function hideBanner() {
+    const cookieBanner = document.getElementById("cookieConsent");
 
-    function getOrCreateConsentID() {
-    let consentId = localStorage.getItem("consentId");
-    if (!consentId) {
-        consentId = generateShortUUID();
-        localStorage.setItem("consentId", consentId);
+    // Remove event listeners from the buttons
+    const acceptCookiesButton = document.getElementById("acceptCookies");
+    const rejectCookiesButton = document.getElementById("rejectCookies");
+    const customizeCookiesButton = document.getElementById("customizeCookies");
+
+    if (acceptCookiesButton) {
+        acceptCookiesButton.removeEventListener("click", handleAcceptCookies);
     }
-    return consentId;
+    if (rejectCookiesButton) {
+        rejectCookiesButton.removeEventListener("click", handleRejectCookies);
+    }
+    if (customizeCookiesButton) {
+        customizeCookiesButton.removeEventListener("click", restrictCookieInteraction);
+    }
+
+    // Hide the banner
+    cookieBanner.classList.add("hide");
+    setTimeout(() => {
+        cookieBanner.classList.remove("show", "hide");
+        cookieBanner.style.display = "none"; // Ensure the banner is completely hidden
+    }, 500); // Match this timeout with the CSS transition duration
 }
 
 // Restrict cookie interactions for non-logged-in users
@@ -198,14 +253,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         button.addEventListener("click", restrictCookieInteraction);
     });
 
-    let consentId = getOrCreateConsentID();
-    console.log("Current Consent ID:", consentId);
-
-    if (!getCookie("cookiesAccepted")) {
-        setTimeout(() => cookieBanner.classList.add("show"), 500);
-    }
-
-    // Define handlers for accept and reject cookies
     function handleAcceptCookies() {
         handleCookieConsent(true);
     }
@@ -226,10 +273,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     function handleCookieConsent(accepted) {
-        if (!consentId) {
-            consentId = generateShortUUID();
-            setCookie("consentId", consentId, 365);
-        }
+        let consentId = getOrCreateConsentID();
 
         console.log("📌 Using Consent ID:", consentId);
 
@@ -257,10 +301,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     savePreferencesButton.addEventListener("click", () => {
-        if (!consentId) {
-            consentId = generateShortUUID();
-            setCookie("consentId", consentId, 365);
-        }
+        let consentId = getOrCreateConsentID();
 
         console.log("📌 Using Consent ID:", consentId);
 
@@ -342,25 +383,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    // During registration, link the existing consent ID to the new user
-    async function linkConsentIdToUser(userId) {
-        const consentId = localStorage.getItem("consentId");
-        if (!consentId) return;
-
-        try {
-            await fetch("https://backendcookie-8qc1.onrender.com/api/link-consent", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ userId, consentId }),
-            });
-            console.log(`✅ Linked Consent ID ${consentId} to user ${userId}`);
-        } catch (error) {
-            console.error("❌ Error linking consent ID:", error);
+    // Ensure modal exists before trying to modify it
+    if (cookiePreferencesModal) {
+        // Remove the deleteDataButton if it exists
+        const deleteDataButton = document.getElementById("deleteDataButton");
+        if (deleteDataButton) {
+            deleteDataButton.remove();
         }
-    }
-
-    // Call this function after a successful registration
-    function handleUserRegistration(userId) {
-        linkConsentIdToUser(userId);
     }
 });
