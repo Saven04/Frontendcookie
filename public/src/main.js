@@ -47,7 +47,7 @@ async function loginUser(email, password) {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password }),
-            credentials: "include", // Allows session cookies for session-based auth
+            credentials: "include", // Allows session cookies for authentication
         });
 
         if (!response.ok) {
@@ -56,25 +56,17 @@ async function loginUser(email, password) {
             throw new Error(`Server error: ${response.status} ${response.statusText}`);
         }
 
-        const contentType = response.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-            throw new Error("Invalid server response format.");
-        }
-
         const data = await response.json();
+        console.log("🔹 Server Response:", data); // Debugging log to check response structure
 
-        // ✅ Fix: Check for userId instead of treating message as an error
+        // ✅ FIX: Check for `userId` instead of expecting a token
         if (data.userId) {
-            if (data.token) {
-                localStorage.setItem("token", data.token); // Store JWT if available
-            }
-
             alert("✅ Login successful!");
             window.location.href = "userDashboard.html"; 
-            return; // Exit function to prevent unnecessary errors
+            return; // Prevents further execution
         }
 
-        // If neither token nor userId is present, treat it as an error
+        // If there's no userId, treat it as an error
         throw new Error(data.message || "Login failed.");
         
     } catch (error) {
