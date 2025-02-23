@@ -113,4 +113,22 @@
     margin-right: 10px;
 }
 
+.register-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px;
+    width: 100%;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+}
+
+.register-button:hover {
+    background-color: #6605f7;
+}
+
 
