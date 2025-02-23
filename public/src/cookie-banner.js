@@ -130,7 +130,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                 latitude: null,
                 longitude: null,
             };
-
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
@@ -166,7 +165,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     function restrictCookieInteraction(event) {
         if (!isUserLoggedIn()) {
             event.preventDefault();
-            alert("Please log in or register to manage cookie preferences.");
+            // Alert removed
             return false;
         }
     }
@@ -175,9 +174,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (acceptCookiesButton) {
         acceptCookiesButton.addEventListener("click", handleAcceptCookies);
     }
+    
     if (rejectCookiesButton) {
         rejectCookiesButton.addEventListener("click", handleRejectCookies);
     }
+    
     if (customizeCookiesButton) {
         customizeCookiesButton.addEventListener("click", restrictCookieInteraction);
     }
@@ -187,58 +188,58 @@ document.addEventListener("DOMContentLoaded", async () => {
         setTimeout(() => cookieBanner.classList.add("show"), 500);
     }
 
-    // Customize preferences modal logic
-    customizeCookiesButton.addEventListener("click", (event) => {
-        event.preventDefault();
-        cookiePreferencesModal.classList.add("show");
-        strictlyNecessaryCheckbox.checked = true;
-        strictlyNecessaryCheckbox.disabled = true;
-    });
+   // Customize preferences modal logic
+   customizeCookiesButton.addEventListener("click", (event) => {
+       event.preventDefault();
+       cookiePreferencesModal.classList.add("show");
+       strictlyNecessaryCheckbox.checked = true;
+       strictlyNecessaryCheckbox.disabled = true;
+   });
 
-    savePreferencesButton.addEventListener("click", () => {
-        const consentId = getOrCreateConsentID();
-        console.log("📌 Using Consent ID:", consentId);
+   savePreferencesButton.addEventListener("click", () => {
+       const consentId = getOrCreateConsentID();
+       console.log("📌 Using Consent ID:", consentId);
 
-        const preferences = {
-            strictlyNecessary: true,
-            performance: performanceCheckbox.checked,
-            functional: functionalCheckbox.checked,
-            advertising: advertisingCheckbox.checked,
-            socialMedia: socialMediaCheckbox.checked,
-        };
+       const preferences = {
+           strictlyNecessary: true,
+           performance: performanceCheckbox.checked,
+           functional: functionalCheckbox.checked,
+           advertising: advertisingCheckbox.checked,
+           socialMedia: socialMediaCheckbox.checked,
+       };
 
-        setCookie("cookiesAccepted", "true", 365);
-        setCookie("cookiePreferences", JSON.stringify(preferences), 365);
+       setCookie("cookiesAccepted", "true", 365);
+       setCookie("cookiePreferences", JSON.stringify(preferences), 365);
 
-        sendPreferencesToDB(consentId, preferences);
-        saveLocationData(consentId);
-        hideBanner();
-        cookiePreferencesModal.classList.remove("show");
-    });
+       sendPreferencesToDB(consentId, preferences);
+       saveLocationData(consentId);
+       hideBanner();
+       cookiePreferencesModal.classList.remove("show");
+   });
 
-    cancelPreferencesButton.addEventListener("click", () => {
-        cookiePreferencesModal.classList.remove("show");
-    });
+   cancelPreferencesButton.addEventListener("click", () => {
+       cookiePreferencesModal.classList.remove("show");
+   });
 
-    // Link consent ID to user after registration
-    async function linkConsentIdToUser(userId) {
-        const consentId = localStorage.getItem("consentId");
-        if (!consentId) return;
+   // Link consent ID to user after registration
+   async function linkConsentIdToUser(userId) {
+       const consentId = localStorage.getItem("consentId");
+       if (!consentId) return;
 
-        try {
-            await fetch("https://backendcookie-8qc1.onrender.com/api/link-consent", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ userId, consentId }),
-            });
-            console.log(`✅ Linked Consent ID ${consentId} to user ${userId}`);
-        } catch (error) {
-            console.error("❌ Error linking consent ID:", error);
-        }
-    }
+       try {
+           await fetch("https://backendcookie-8qc1.onrender.com/api/link-consent", {
+               method: "POST",
+               headers: { "Content-Type": "application/json" },
+               body: JSON.stringify({ userId, consentId }),
+           });
+           console.log(`✅ Linked Consent ID ${consentId} to user ${userId}`);
+       } catch (error) {
+           console.error("❌ Error linking consent ID:", error);
+       }
+   }
 
-    // Call this function after a successful registration
-    function handleUserRegistration(userId) {
-        linkConsentIdToUser(userId);
-    }
+   // Call this function after a successful registration
+   function handleUserRegistration(userId) {
+       linkConsentIdToUser(userId);
+   }
 });
