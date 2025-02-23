@@ -10,6 +10,10 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     const password = document.getElementById("password").value.trim();
     const confirmPassword = document.getElementById("confirmPassword").value.trim();
 
+    // Retrieve the consentId from cookies
+    const consentId = getCookie("consentId") || generateShortUUID(); // Generate one if it doesn't exist
+    setCookie("consentId", consentId, 365); // Ensure the consentId is stored in cookies
+
     // Validate inputs
     if (!username || !email || !password || !confirmPassword) {
         showModal("All fields are required!", "error");
@@ -31,7 +35,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         const response = await fetch("https://backendcookie-8qc1.onrender.com/api/auth/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, email, password }),
+            body: JSON.stringify({ username, email, password, consentId }), // Include consentId in the request body
         });
 
         const data = await response.json();
@@ -90,4 +94,20 @@ function showModal(message, type) {
             document.body.removeChild(modalContainer);
         }
     }, 3000);
+}
+
+// Utility functions for handling cookies
+function generateShortUUID() {
+    return Math.random().toString(36).substring(2, 10); // Generates a short unique ID
+}
+
+function setCookie(name, value, days) {
+    const date = new Date();
+    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+    document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/;secure;samesite=strict`;
+}
+
+function getCookie(name) {
+    const nameEq = `${name}=`;
+    return document.cookie.split("; ").find((c) => c.startsWith(nameEq))?.split("=")[1] || null;
 }
