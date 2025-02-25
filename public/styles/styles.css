@@ -352,3 +352,153 @@ button {
         justify-content: center;
     }
 }
+
+
+
+/* Customize Preferences Pop-up */
+.customize-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(30, 30, 30, 0.95);
+    color: #fff;
+    width: 90%;
+    max-width: 450px;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    display: none;
+    z-index: 1100;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.customize-popup.show {
+    display: block;
+}
+
+.customize-popup h2 {
+    font-size: 20px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.customize-popup .preferences-list {
+    list-style: none;
+    padding: 0;
+}
+
+.preferences-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+}
+
+.preferences-list li span {
+    font-size: 16px;
+}
+
+.preferences-list input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.preferences-list input[type="checkbox"]:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* Buttons */
+.customize-popup .popup-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    gap: 10px;
+}
+
+.popup-buttons button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.popup-buttons .save {
+    background-color: #28a745;
+    color: white;
+}
+
+.popup-buttons .save:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+}
+
+.popup-buttons .cancel {
+    background-color: #dc3545;
+    color: white;
+}
+
+.popup-buttons .cancel:hover {
+    background-color: #c82333;
+    transform: scale(1.05);
+}
+
+/* Responsive Design */
+@media (max-width: 500px) {
+    .customize-popup {
+        width: 95%;
+        padding: 20px;
+    }
+
+    .preferences-list li {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    .popup-buttons {
+        flex-direction: column;
+    }
+}
+
+.modal-content {
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    background-color: #1a1a1a;
+    color: white;
+    border-bottom: 2px solid #444;
+    border-radius: 12px 12px 0 0;
+}
+
+.modal-body {
+    font-size: 14px;
+    color: #333;
+    padding: 20px;
+}
+
+.modal-footer {
+    border-top: 2px solid #444;
+    border-radius: 0 0 12px 12px;
+    background-color: #f8f9fa;
+}
+
+.modal-footer .btn-dark {
+    background-color: #222;
+    border: none;
+}
+
+.modal-footer .btn-dark:hover {
+    background-color: #333;
+}
