@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!savePreferencesButton) console.warn("⚠️ Missing: #savePreferences");
     if (!cancelPreferencesButton) console.warn("⚠️ Missing: #cancelPreferences");
     if (!cookiePreferencesModal) console.warn("⚠️ Missing: #cookiePreferencesModal");
-    if (!openCookiePolicyButton) console.warn("⚠️ Missing: #openCookiePolicy");
+  
 
     if (!cookieBanner || !acceptCookiesButton || !rejectCookiesButton || !customizeCookiesButton || !savePreferencesButton || !cancelPreferencesButton || !cookiePreferencesModal) {
         console.error("❌ One or more required elements are missing.");
