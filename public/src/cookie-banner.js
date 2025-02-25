@@ -36,9 +36,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Initialize the modal
     let customizeModalInstance = null;
     if (cookiePreferencesModal) {
-        customizeModalInstance = new bootstrap.Modal(cookiePreferencesModal);
+        try {
+            customizeModalInstance = new bootstrap.Modal(cookiePreferencesModal);
+            console.log("✅ Modal initialized successfully:", customizeModalInstance);
+        } catch (error) {
+            console.error("❌ Error initializing modal:", error);
+            return;
+        }
     } else {
         console.error("❌ Modal element (#cookiePreferencesModal) not found!");
+        return;
     }
 
     // Global variables
@@ -60,19 +67,26 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
+    // Show the cookie banner if cookies are not accepted
+    if (!getCookie("cookiesAccepted")) {
+        setTimeout(() => cookieBanner.classList.add("show"), 500);
+    }
+
     // Helper functions
-    const hideBanner = () => {
+    function hideBanner() {
+        if (!cookieBanner) return;
         cookieBanner.classList.add("hide");
         setTimeout(() => {
             cookieBanner.classList.remove("show", "hide");
         }, 500);
-    };
+    }
 
     function handleCookieConsent(accepted) {
         if (!consentId) {
             consentId = generateConsentID();
             setCookie("consentId", consentId, 365);
         }
+
         const preferences = {
             strictlyNecessary: true,
             performance: accepted,
@@ -80,8 +94,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             advertising: accepted,
             socialMedia: accepted,
         };
+
         setCookie("cookiesAccepted", accepted.toString(), 365);
         setCookie("cookiePreferences", JSON.stringify(preferences), 365);
+
         sendPreferencesToDB(consentId, preferences);
         saveLocationData(consentId);
         hideBanner();
@@ -92,6 +108,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             consentId = generateConsentID();
             setCookie("consentId", consentId, 365);
         }
+
         const performanceCheckbox = document.querySelector("#performance");
         const functionalCheckbox = document.querySelector("#functional");
         const advertisingCheckbox = document.querySelector("#advertising");
@@ -104,8 +121,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             advertising: advertisingCheckbox?.checked || false,
             socialMedia: socialMediaCheckbox?.checked || false,
         };
+
         setCookie("cookiesAccepted", "true", 365);
         setCookie("cookiePreferences", JSON.stringify(preferences), 365);
+
         sendPreferencesToDB(consentId, preferences);
         saveLocationData(consentId);
         hideBanner();
@@ -119,17 +138,24 @@ document.addEventListener("DOMContentLoaded", async () => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ consentId, preferences }),
             });
-            if (!response.ok) throw new Error("Failed to save preferences");
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
             console.log("✅ Preferences saved:", await response.json());
         } catch (error) {
-            console.error("❌ Error saving preferences:", error);
+            console.error("❌ Error saving preferences:", error.message || error);
         }
     }
 
     async function saveLocationData(consentId) {
         try {
             const response = await fetch("https://ipinfo.io/json?token=10772b28291307");
-            if (!response.ok) throw new Error("Failed to fetch IP location");
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
             const data = await response.json();
             const locationData = {
                 consentId,
@@ -140,6 +166,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 latitude: null,
                 longitude: null,
             };
+
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
@@ -154,7 +181,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 sendLocationDataToDB(locationData);
             }
         } catch (error) {
-            console.error("❌ Error fetching location data:", error);
+            console.error("❌ Error fetching location data:", error.message || error);
         }
     }
 
@@ -165,10 +192,14 @@ document.addEventListener("DOMContentLoaded", async () => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(locationData),
             });
-            if (!response.ok) throw new Error("Failed to save location data");
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
             console.log("✅ Location data saved successfully.");
         } catch (error) {
-            console.error("❌ Error saving location data:", error);
+            console.error("❌ Error saving location data:", error.message || error);
         }
     }
 
