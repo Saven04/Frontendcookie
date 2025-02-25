@@ -90,26 +90,31 @@
         </div>
     </div>
 
-    <!-- Cookie Policy Modal -->
-    <div id="cookiePolicyModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="cookiePolicyTitle" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content p-4">
-                <h1 id="cookiePolicyTitle">Cookie Policy</h1>
-                <p>
-                    Our website uses cookies to improve your experience. Cookies are small text files stored on your device that help us analyze web traffic, personalize content, and provide relevant ads. By using our website, you consent to the use of cookies in accordance with this policy.
-                </p>
-                <h2>Types of Cookies We Use</h2>
-                <ul>
-                    <li><strong>Strictly Necessary Cookies:</strong> Essential for website functionality.</li>
-                    <li><strong>Performance Cookies:</strong> Help us understand website interactions.</li>
-                    <li><strong>Functional Cookies:</strong> Allow the site to remember preferences.</li>
-                    <li><strong>Advertising Cookies:</strong> Deliver personalized ads.</li>
-                    <li><strong>Social Media Cookies:</strong> Enable social sharing.</li>
-                </ul>
-                <button id="closeCookiePolicyModal" class="btn btn-primary mt-2">Close</button>
+  
+    <!-- Cookie Preferences Modal -->
+<div id="cookiePreferencesModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content p-4">
+            <h5>Customize Cookie Preferences</h5>
+            <p>Select which cookies you allow:</p>
+
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="functionalityCookies">
+                <label class="form-check-label" for="functionalityCookies">Functionality Cookies</label>
+            </div>
+
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="targetingCookies">
+                <label class="form-check-label" for="targetingCookies">Targeting and Advertising Cookies</label>
+            </div>
+
+            <div class="d-flex gap-2 mt-3">
+                <button id="savePreferences" class="btn btn-primary">Save Preferences</button>
+                <button id="cancelPreferences" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
         </div>
     </div>
+</div>
 
     <!-- Cookie Info Modal -->
     <div id="cookieInfoModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
