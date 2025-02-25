@@ -6,6 +6,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const savePreferencesButton = document.querySelector("#savePreferences");
     const cancelPreferencesButton = document.querySelector("#cancelPreferences");
     const cookiePreferencesModal = document.querySelector("#cookiePreferencesModal");
+    const openCookiePolicyButton = document.querySelector("#openCookiePolicy");
+    const cookiePolicyModal = document.querySelector("#cookiePolicyModal");
 
     if (!cookieBanner) console.warn("⚠️ Missing: #cookieConsent");
     if (!acceptCookiesButton) console.warn("⚠️ Missing: #acceptCookies");
@@ -14,8 +16,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!savePreferencesButton) console.warn("⚠️ Missing: #savePreferences");
     if (!cancelPreferencesButton) console.warn("⚠️ Missing: #cancelPreferences");
     if (!cookiePreferencesModal) console.warn("⚠️ Missing: #cookiePreferencesModal");
+    if (!openCookiePolicyButton) console.warn("⚠️ Missing: #openCookiePolicy");
+    if (!cookiePolicyModal) console.warn("⚠️ Missing: #cookiePolicyModal");
 
-    if (!cookieBanner || !acceptCookiesButton || !rejectCookiesButton || !customizeCookiesButton || !savePreferencesButton || !cancelPreferencesButton || !cookiePreferencesModal) {
+    if (!cookieBanner || !acceptCookiesButton || !rejectCookiesButton || !customizeCookiesButton || !savePreferencesButton || !cancelPreferencesButton || !cookiePreferencesModal || !cookiePolicyModal) {
         console.error("❌ One or more required elements are missing.");
         return;
     }
@@ -43,6 +47,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     const customizeModalInstance = new bootstrap.Modal(cookiePreferencesModal);
+    const policyModalInstance = new bootstrap.Modal(cookiePolicyModal);
 
     acceptCookiesButton?.addEventListener("click", () => handleCookieConsent(true));
     rejectCookiesButton?.addEventListener("click", () => handleCookieConsent(false));
@@ -61,6 +66,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     savePreferencesButton?.addEventListener("click", () => saveCookiePreferences());
     cancelPreferencesButton?.addEventListener("click", () => customizeModalInstance.hide());
 
+    // Open Cookie Policy Modal
+    openCookiePolicyButton?.addEventListener("click", () => {
+        policyModalInstance.show();
+    });
+
     const hideBanner = () => {
         cookieBanner.classList.add("hide");
         setTimeout(() => {
@@ -75,7 +85,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         const preferences = {
-            strictlyNecessary: true, // Always enabled
+            strictlyNecessary: true,
             performance: accepted,
             functional: accepted,
             advertising: accepted,
@@ -97,7 +107,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         const preferences = {
-            strictlyNecessary: true, // Always enabled
+            strictlyNecessary: true,
             performance: document.querySelector("#performance")?.checked || false,
             functional: document.querySelector("#functional")?.checked || false,
             advertising: document.querySelector("#advertising")?.checked || false,
@@ -177,5 +187,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         } catch (error) {
             console.error("❌ Error saving location data:", error);
         }
+    }
+
+    function generateShortUUID() {
+        return 'xxxx-xxxx'.replace(/[x]/g, () => (Math.random() * 16 | 0).toString(16));
     }
 });
