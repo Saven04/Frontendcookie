@@ -7,7 +7,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const cancelPreferencesButton = document.querySelector("#cancelPreferences");
     const cookiePreferencesModal = document.querySelector("#cookiePreferencesModal");
     const openCookiePolicyButton = document.querySelector("#openCookiePolicy");
-    const cookiePolicyModal = document.querySelector("#cookiePolicyModal");
 
     if (!cookieBanner) console.warn("⚠️ Missing: #cookieConsent");
     if (!acceptCookiesButton) console.warn("⚠️ Missing: #acceptCookies");
@@ -17,9 +16,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!cancelPreferencesButton) console.warn("⚠️ Missing: #cancelPreferences");
     if (!cookiePreferencesModal) console.warn("⚠️ Missing: #cookiePreferencesModal");
     if (!openCookiePolicyButton) console.warn("⚠️ Missing: #openCookiePolicy");
-    if (!cookiePolicyModal) console.warn("⚠️ Missing: #cookiePolicyModal");
 
-    if (!cookieBanner || !acceptCookiesButton || !rejectCookiesButton || !customizeCookiesButton || !savePreferencesButton || !cancelPreferencesButton || !cookiePreferencesModal || !cookiePolicyModal) {
+    if (!cookieBanner || !acceptCookiesButton || !rejectCookiesButton || !customizeCookiesButton || !savePreferencesButton || !cancelPreferencesButton || !cookiePreferencesModal) {
         console.error("❌ One or more required elements are missing.");
         return;
     }
@@ -47,7 +45,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     const customizeModalInstance = new bootstrap.Modal(cookiePreferencesModal);
-    const policyModalInstance = new bootstrap.Modal(cookiePolicyModal);
 
     acceptCookiesButton?.addEventListener("click", () => handleCookieConsent(true));
     rejectCookiesButton?.addEventListener("click", () => handleCookieConsent(false));
@@ -66,9 +63,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     savePreferencesButton?.addEventListener("click", () => saveCookiePreferences());
     cancelPreferencesButton?.addEventListener("click", () => customizeModalInstance.hide());
 
-    // Open Cookie Policy Modal
+    // Redirect Cookie Policy button to cookie-policy.html
     openCookiePolicyButton?.addEventListener("click", () => {
-        policyModalInstance.show();
+        window.location.href = "cookie-policy.html";
     });
 
     const hideBanner = () => {
