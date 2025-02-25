@@ -97,11 +97,19 @@
                 <h5>Customize Cookie Preferences</h5>
                 <p>Select which cookies you allow:</p>
     
+                <!-- Strictly Necessary Cookies (Always Enabled) -->
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="strictlyNecessary" checked disabled>
+                    <label class="form-check-label" for="strictlyNecessary">Strictly Necessary Cookies (Required)</label>
+                </div>
+    
+                <!-- Functionality Cookies (User Controllable) -->
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" id="functionalityCookies">
                     <label class="form-check-label" for="functionalityCookies">Functionality Cookies</label>
                 </div>
     
+                <!-- Targeting and Advertising Cookies (User Controllable) -->
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" id="targetingCookies">
                     <label class="form-check-label" for="targetingCookies">Targeting and Advertising Cookies</label>
@@ -114,6 +122,7 @@
             </div>
         </div>
     </div>
+    
     
 
     <!-- Cookie Policy Modal -->

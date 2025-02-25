@@ -6,8 +6,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const savePreferencesButton = document.querySelector("#savePreferences");
     const cancelPreferencesButton = document.querySelector("#cancelPreferences");
     const cookiePreferencesModal = document.querySelector("#cookiePreferencesModal");
-    const cookiePolicyButton = document.querySelector("#cookiePolicy");
-    const cookiePolicyModal = document.querySelector("#cookiePolicyModal");
 
     if (!cookieBanner) console.warn("⚠️ Missing: #cookieConsent");
     if (!acceptCookiesButton) console.warn("⚠️ Missing: #acceptCookies");
@@ -16,15 +14,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!savePreferencesButton) console.warn("⚠️ Missing: #savePreferences");
     if (!cancelPreferencesButton) console.warn("⚠️ Missing: #cancelPreferences");
     if (!cookiePreferencesModal) console.warn("⚠️ Missing: #cookiePreferencesModal");
-    if (!cookiePolicyButton) console.warn("⚠️ Missing: #cookiePolicy");
-    if (!cookiePolicyModal) console.warn("⚠️ Missing: #cookiePolicyModal");
 
-    if (!cookieBanner || !acceptCookiesButton || !rejectCookiesButton || !customizeCookiesButton || !savePreferencesButton || !cancelPreferencesButton || !cookiePreferencesModal || !cookiePolicyButton || !cookiePolicyModal) {
-        console.error("❌ One or more required elements are missing from the DOM.");
+    if (!cookieBanner || !acceptCookiesButton || !rejectCookiesButton || !customizeCookiesButton || !savePreferencesButton || !cancelPreferencesButton || !cookiePreferencesModal) {
+        console.error("❌ One or more required elements are missing.");
         return;
     }
 
-    // Utility Functions
     const setCookie = (name, value, days) => {
         const date = new Date();
         date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
@@ -43,16 +38,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     let consentId = getCookie("consentId");
     let cookiesAccepted = getCookie("cookiesAccepted");
 
-    // Show banner only if user hasn't made a choice
     if (!cookiesAccepted) {
         setTimeout(() => cookieBanner.classList.add("show"), 500);
     }
 
-    // Bootstrap modal instances
     const customizeModalInstance = new bootstrap.Modal(cookiePreferencesModal);
-    const policyModalInstance = new bootstrap.Modal(cookiePolicyModal);
 
-    // Handle Consent Buttons
     acceptCookiesButton?.addEventListener("click", () => handleCookieConsent(true));
     rejectCookiesButton?.addEventListener("click", () => handleCookieConsent(false));
 
@@ -70,12 +61,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     savePreferencesButton?.addEventListener("click", () => saveCookiePreferences());
     cancelPreferencesButton?.addEventListener("click", () => customizeModalInstance.hide());
 
-    // Show Cookie Policy Modal
-    cookiePolicyButton?.addEventListener("click", () => {
-        policyModalInstance.show();
-    });
-
-    // Hide Banner
     const hideBanner = () => {
         cookieBanner.classList.add("hide");
         setTimeout(() => {
@@ -83,7 +68,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         }, 500);
     };
 
-    // Handle Cookie Consent
     function handleCookieConsent(accepted) {
         if (!consentId) {
             consentId = generateShortUUID();
@@ -91,7 +75,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         const preferences = {
-            strictlyNecessary: true,
+            strictlyNecessary: true, // Always enabled
             performance: accepted,
             functional: accepted,
             advertising: accepted,
@@ -106,7 +90,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         hideBanner();
     }
 
-    // Save Preferences
     function saveCookiePreferences() {
         if (!consentId) {
             consentId = generateShortUUID();
@@ -114,7 +97,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         const preferences = {
-            strictlyNecessary: true,
+            strictlyNecessary: true, // Always enabled
             performance: document.querySelector("#performance")?.checked || false,
             functional: document.querySelector("#functional")?.checked || false,
             advertising: document.querySelector("#advertising")?.checked || false,
@@ -130,7 +113,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         customizeModalInstance.hide();
     }
 
-    // API Call: Save Preferences to Backend
     async function sendPreferencesToDB(consentId, preferences) {
         try {
             const response = await fetch("https://backendcookie-8qc1.onrender.com/api/save", {
@@ -147,7 +129,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    // Save Location Data
     async function saveLocationData(consentId) {
         try {
             const response = await fetch("https://ipinfo.io/json?token=10772b28291307");
@@ -182,7 +163,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    // API Call: Send Location Data to Backend
     async function sendLocationDataToDB(locationData) {
         try {
             const response = await fetch("https://backendcookie-8qc1.onrender.com/api/location", {
