@@ -90,38 +90,52 @@
         </div>
     </div>
 
-    <!-- Cookie Preferences Modal -->
-    <div id="cookiePreferencesModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content p-4">
-                <h5>Customize Cookie Preferences</h5>
-                <p>Select which cookies you allow:</p>
-    
-                <!-- Strictly Necessary Cookies (Always Enabled) -->
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="strictlyNecessary" checked disabled>
-                    <label class="form-check-label" for="strictlyNecessary">Strictly Necessary Cookies (Required)</label>
-                </div>
-    
-                <!-- Functionality Cookies -->
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="functionalityCookies">
-                    <label class="form-check-label" for="functionalityCookies">Functionality Cookies</label>
-                </div>
-    
-                <!-- Targeting and Advertising Cookies -->
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="targetingCookies">
-                    <label class="form-check-label" for="targetingCookies">Targeting and Advertising Cookies</label>
-                </div>
-    
-                <div class="d-flex gap-2 mt-3">
-                    <button id="savePreferences" class="btn btn-primary">Save Preferences</button>
-                    <button id="cancelPreferences" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                </div>
+   <!-- Cookie Preferences Modal -->
+<div class="modal fade" id="cookiePreferencesModal" tabindex="-1" aria-labelledby="cookiePreferencesLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cookiePreferencesLabel">Manage Cookie Preferences</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>We use cookies to improve your experience. Choose your preferences below:</p>
+                <form id="cookiePreferencesForm">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="strictlyNecessary" checked disabled>
+                        <label class="form-check-label" for="strictlyNecessary">Strictly Necessary Cookies</label>
+                        <p class="text-muted small">These cookies are required for the website to function and cannot be disabled.</p>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="performance">
+                        <label class="form-check-label" for="performance">Performance Cookies</label>
+                        <p class="text-muted small">These cookies help us understand how visitors interact with our website.</p>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="functional">
+                        <label class="form-check-label" for="functional">Functional Cookies</label>
+                        <p class="text-muted small">These cookies remember choices you make to enhance your experience.</p>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="advertising">
+                        <label class="form-check-label" for="advertising">Advertising Cookies</label>
+                        <p class="text-muted small">These cookies help us deliver personalized ads based on your interests.</p>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="socialMedia">
+                        <label class="form-check-label" for="socialMedia">Social Media Cookies</label>
+                        <p class="text-muted small">These cookies enable social media features and sharing tools.</p>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelPreferences" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="savePreferences">Save Preferences</button>
             </div>
         </div>
     </div>
+</div>
+
     
 
     <!-- Scripts -->
