@@ -6,55 +6,41 @@ document.addEventListener("DOMContentLoaded", async () => {
     const savePreferencesButton = document.querySelector("#savePreferences");
     const cancelPreferencesButton = document.querySelector("#cancelPreferences");
     const cookiePreferencesModal = document.querySelector("#cookiePreferencesModal");
-    const openCookiePolicyButton = document.querySelector("#openCookiePolicy");
 
-    if (!cookieBanner) console.warn("⚠️ Missing: #cookieConsent");
-    if (!acceptCookiesButton) console.warn("⚠️ Missing: #acceptCookies");
-    if (!rejectCookiesButton) console.warn("⚠️ Missing: #rejectCookies");
-    if (!customizeCookiesButton) console.warn("⚠️ Missing: #customizeCookies");
-    if (!savePreferencesButton) console.warn("⚠️ Missing: #savePreferences");
-    if (!cancelPreferencesButton) console.warn("⚠️ Missing: #cancelPreferences");
-    if (!cookiePreferencesModal) console.warn("⚠️ Missing: #cookiePreferencesModal");
+    // Check for missing elements
+    const requiredElements = [
+        { element: cookieBanner, id: "#cookieConsent" },
+        { element: acceptCookiesButton, id: "#acceptCookies" },
+        { element: rejectCookiesButton, id: "#rejectCookies" },
+        { element: customizeCookiesButton, id: "#customizeCookies" },
+        { element: savePreferencesButton, id: "#savePreferences" },
+        { element: cancelPreferencesButton, id: "#cancelPreferences" },
+        { element: cookiePreferencesModal, id: "#cookiePreferencesModal" },
+    ];
 
-    if (!cookieBanner || !acceptCookiesButton || !rejectCookiesButton || !customizeCookiesButton || !savePreferencesButton || !cancelPreferencesButton || !cookiePreferencesModal) {
+    let hasMissingElements = false;
+    requiredElements.forEach(({ element, id }) => {
+        if (!element) {
+            console.warn(`⚠️ Missing: ${id}`);
+            hasMissingElements = true;
+        }
+    });
+
+    if (hasMissingElements) {
         console.error("❌ One or more required elements are missing.");
         return;
     }
 
-    const setCookie = (name, value, days) => {
-        const date = new Date();
-        date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-        document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/;secure;samesite=strict`;
-    };
-
-    const getCookie = (name) => {
-        const nameEq = `${name}=`;
-        return document.cookie.split("; ").find((c) => c.startsWith(nameEq))?.split("=")[1] || null;
-    };
-
-    let consentId = getCookie("consentId");
-    let cookiesAccepted = getCookie("cookiesAccepted");
-
-    if (!cookiesAccepted) {
-        setTimeout(() => cookieBanner.classList.add("show"), 500);
-    }
-
+    // Initialize the modal
     const customizeModalInstance = new bootstrap.Modal(cookiePreferencesModal);
 
+    // Add event listeners
     acceptCookiesButton?.addEventListener("click", () => handleCookieConsent(true));
     rejectCookiesButton?.addEventListener("click", () => handleCookieConsent(false));
-
     customizeCookiesButton?.addEventListener("click", (event) => {
         event.preventDefault();
         customizeModalInstance.show();
-
-        const strictlyNecessary = document.querySelector("#strictlyNecessary");
-        if (strictlyNecessary) {
-            strictlyNecessary.checked = true;
-            strictlyNecessary.disabled = true;
-        }
     });
-
     savePreferencesButton?.addEventListener("click", () => saveCookiePreferences());
     cancelPreferencesButton?.addEventListener("click", () => customizeModalInstance.hide());
 
