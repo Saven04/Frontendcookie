@@ -10,9 +10,6 @@ body {
     background: linear-gradient(135deg, #121212, #1e3c72, #2a5298);
     background-color: #121212;
     min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     color: #fff;
     overflow-x: hidden;
     position: relative;
@@ -43,7 +40,89 @@ body::before {
     }
 }
 
-/* Centered Container */
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background: rgba(0, 0, 0, 0.8);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header .logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #fff;
+}
+
+.header .auth-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.auth-buttons a {
+    color: white;
+    text-decoration: none;
+    padding: 8px 14px;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: all 0.3s ease-in-out;
+}
+
+.auth-buttons .login {
+    background-color: #4CAF50;
+}
+
+.auth-buttons .signup {
+    background-color: #007bff;
+}
+
+.auth-buttons a:hover {
+    opacity: 0.8;
+}
+
+/* Category Slider */
+.category-slider {
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 10px;
+    position: sticky;
+    top: 60px;
+    z-index: 999;
+}
+
+.category-slider::-webkit-scrollbar {
+    display: none;
+}
+
+.category-slider a {
+    display: inline-block;
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.1);
+    margin-right: 10px;
+    transition: all 0.3s ease-in-out;
+}
+
+.category-slider a:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Main Content */
+.main-content {
+    padding: 20px;
+    text-align: center;
+}
+
+/* Login & Signup Forms */
 .container {
     display: flex;
     flex-direction: column;
@@ -56,15 +135,7 @@ body::before {
     padding: 30px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
     animation: fadeIn 0.6s ease-in-out;
-}
-
-/* Header */
-.card-header h2 {
-    text-align: center;
-    font-size: 24px;
-    margin-bottom: 20px;
-    color: #ffffff;
-    font-weight: bold;
+    margin: 20px auto;
 }
 
 /* Input Fields */
@@ -134,59 +205,42 @@ button {
     transform: scale(1.03);
 }
 
-.forgot-password {
-    color: #bbb;
-    text-align: center;
-    display: block;
-    margin-top: 10px;
-    text-decoration: none;
-    font-size: 14px;
-    transition: color 0.3s;
-}
-
-.forgot-password:hover {
+/* Settings Dropdown */
+#settingsDropdown {
+    position: absolute;
+    top: 50px;
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.85);
     color: #fff;
-}
-
-/* Modal */
-.modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.modal-content {
-    background-color: #fff;
-    color: #333;
-    padding: 20px;
-    border-radius: 8px;
-    text-align: center;
-    max-width: 400px;
-    width: 90%;
-    animation: fadeIn 0.6s ease-in-out;
-}
-
-.modal-content p {
-    font-size: 16px;
-    margin-bottom: 15px;
-}
-
-.close-button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
     border-radius: 5px;
+    display: none;
+    z-index: 1000;
+    padding: 10px;
+    width: 150px;
 }
 
-.close-button:hover {
-    background-color: #3a9241;
+#settingsDropdown div {
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#settingsDropdown div:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Gear Icon */
+#settingsButton {
+    background-color: transparent;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #fff;
+    transition: transform 0.3s;
+}
+
+#settingsButton:hover {
+    transform: rotate(90deg);
 }
 
 /* Cookie Banner */
@@ -234,67 +288,20 @@ button {
     background-color: #007bff;
 }
 
-/* Settings Dropdown */
-#settingsDropdown {
-    position: fixed;
-    top: 50px;
-    right: 10px;
-    background-color: rgba(0, 0, 0, 0.85);
-    color: #fff;
-    border-radius: 5px;
-    display: none;
-    z-index: 1000;
-    padding: 10px;
-}
-
-#settingsDropdown div {
-    padding: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-#settingsDropdown div:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-#settingsDropdown .submenu {
-    padding-left: 20px;
-    display: none;
-}
-
-/* Gear Icon */
-#cookieSettingsButton {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    background-color: transparent;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: #fff;
-    transition: transform 0.3s;
-}
-
-#cookieSettingsButton:hover {
-    transform: rotate(90deg);
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .category-slider {
+        top: 110px;
+    }
+
     .container {
         width: 90%;
         padding: 20px;
-    }
-
-    .card-header h2 {
-        font-size: 22px;
-    }
-
-    .input-group input,
-    .login-button,
-    .register-button {
-        font-size: 14px;
-        padding: 10px;
     }
 
     .cookie-banner {

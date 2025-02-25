@@ -1,10 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
     // Show Login Popup Only for New Users
     const authModalEl = document.getElementById("authModal");
-    if (authModalEl && !isUserLoggedIn()) {
+    if (authModalEl && !isUserLoggedIn() && !sessionStorage.getItem("authModalShown")) {
         setTimeout(() => {
             const authModal = new bootstrap.Modal(authModalEl);
             authModal.show();
+            sessionStorage.setItem("authModalShown", "true");
         }, 5000);
     }
 
@@ -51,14 +52,18 @@ async function handleLogin() {
         showLoading(true);
         const response = await fetchAPI("/api/login", "POST", { email, password });
 
-        localStorage.setItem("token", response.token);
-        localStorage.setItem("user", JSON.stringify(response.user));
+        if (response.token) {
+            localStorage.setItem("token", response.token);
+            localStorage.setItem("user", JSON.stringify(response.user));
 
-        showModal("✅ Login successful!", "success");
+            showModal("✅ Login successful!", "success");
 
-        setTimeout(() => window.location.href = "/index.html", 1500);
+            setTimeout(() => window.location.href = "/index.html", 1500);
+        } else {
+            throw new Error("Invalid response from server");
+        }
     } catch (error) {
-        showModal(`❌ Login failed: ${error}`, "error");
+        showModal(`❌ Login failed: ${error.message || error}`, "error");
     } finally {
         showLoading(false);
     }
@@ -89,7 +94,7 @@ async function handleSignup() {
 
         showModal("✅ Sign-up successful! Please log in.", "success");
     } catch (error) {
-        showModal(`❌ ${error}`, "error");
+        showModal(`❌ ${error.message || error}`, "error");
     } finally {
         showLoading(false);
     }
@@ -134,7 +139,8 @@ function handleCookieConsent(accepted) {
  * Helper function to check if user is logged in.
  */
 function isUserLoggedIn() {
-    return localStorage.getItem("token") !== null;
+    const token = localStorage.getItem("token");
+    return token !== null && token !== "undefined";
 }
 
 /**
@@ -157,13 +163,17 @@ function getCookie(name) {
  * Generic API call function.
  */
 async function fetchAPI(endpoint, method, body = {}) {
-    const response = await fetch(`https://backendcookie-8qc1.onrender.com${endpoint}`, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-    });
+    try {
+        const response = await fetch(`https://backendcookie-8qc1.onrender.com${endpoint}`, {
+            method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+        });
 
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.message || "Request failed");
-    return data;
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || "Request failed");
+        return data;
+    } catch (error) {
+        throw new Error(error.message || "Network error");
+    }
 }
