@@ -114,6 +114,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ consentId, preferences }),
             });
+
+            if (!response.ok) throw new Error("Failed to save preferences");
+
             console.log("✅ Preferences saved:", await response.json());
         } catch (error) {
             console.error("❌ Error saving preferences:", error);
@@ -124,6 +127,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     async function saveLocationData(consentId) {
         try {
             const response = await fetch("https://ipinfo.io/json?token=10772b28291307");
+            if (!response.ok) throw new Error("Failed to fetch IP location");
+
             const data = await response.json();
             const locationData = {
                 consentId,
@@ -142,7 +147,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                         locationData.longitude = position.coords.longitude;
                         sendLocationDataToDB(locationData);
                     },
-                    () => sendLocationDataToDB(locationData)
+                    () => sendLocationDataToDB(locationData),
+                    { timeout: 5000 }
                 );
             } else {
                 sendLocationDataToDB(locationData);
@@ -155,11 +161,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     // API Call: Send Location Data to Backend
     async function sendLocationDataToDB(locationData) {
         try {
-            await fetch("https://backendcookie-8qc1.onrender.com/api/location", {
+            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/location", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(locationData),
             });
+
+            if (!response.ok) throw new Error("Failed to save location data");
+
             console.log("✅ Location data saved successfully.");
         } catch (error) {
             console.error("❌ Error saving location data:", error);
