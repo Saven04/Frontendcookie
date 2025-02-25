@@ -41,6 +41,7 @@ body::before {
 }
 
 /* Header */
+/* Header */
 .header {
     display: flex;
     justify-content: space-between;
@@ -53,13 +54,11 @@ body::before {
     z-index: 1000;
 }
 
-.header .logo {
-    font-size: 24px;
-    font-weight: bold;
-    color: #fff;
-}
-
-.header .auth-buttons {
+/* Login/Signup Buttons Positioned at Top-Right */
+.auth-buttons {
+    position: absolute;
+    top: 15px;
+    right: 30px;
     display: flex;
     gap: 15px;
 }
@@ -85,30 +84,37 @@ body::before {
     opacity: 0.8;
 }
 
-/* Category Slider */
+/* Category Sidebar */
 .category-slider {
-    width: 100%;
-    overflow-x: auto;
-    white-space: nowrap;
-    background: rgba(0, 0, 0, 0.8);
-    padding: 10px;
-    position: sticky;
+    position: fixed;
+    left: 0;
     top: 60px;
-    z-index: 999;
+    width: 250px;
+    height: calc(100vh - 60px);
+    background: rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
 .category-slider::-webkit-scrollbar {
-    display: none;
+    width: 5px;
+}
+
+.category-slider::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
 }
 
 .category-slider a {
-    display: inline-block;
+    display: block;
     color: #fff;
     text-decoration: none;
-    padding: 10px 20px;
+    padding: 12px 15px;
     border-radius: 5px;
     background: rgba(255, 255, 255, 0.1);
-    margin-right: 10px;
     transition: all 0.3s ease-in-out;
 }
 
@@ -116,11 +122,13 @@ body::before {
     background: rgba(255, 255, 255, 0.2);
 }
 
-/* Main Content */
+/* Main Content Positioned to the Right */
 .main-content {
+    margin-left: 270px;
     padding: 20px;
     text-align: center;
 }
+
 
 /* Login & Signup Forms */
 .container {
