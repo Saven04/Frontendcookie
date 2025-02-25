@@ -32,23 +32,74 @@
     </section>
 
     <!-- Cookie Consent Banner -->
-    <div id="cookieConsent" class="cookie-banner">
-        <div class="container d-flex justify-content-between align-items-center p-3">
+    <!-- Cookie Consent Banner -->
+<div id="cookieConsent" class="cookie-banner">
+    <div class="container d-flex justify-content-between align-items-center p-3">
+        <div class="text">
             <p class="mb-0">
                 We value your privacy! We use cookies to enhance your experience, analyze site traffic, and serve personalized content.
-                By clicking "Accept All", you agree to the use of all cookies. You can manage your preferences via "Customize".
+                By clicking "Accept All," you agree to the use of all cookies. You can manage your preferences via "Customize."
                 Learn more in our
                 <a href="/cookie-policy.html" class="text-light">Cookie Policy</a>,
                 <a href="/privacy-policy.html" class="text-light">Privacy Policy</a>, and
                 <a href="/terms-of-service.html" class="text-light">Terms of Service</a>.
             </p>
-            <div class="d-flex gap-2">
-                <button id="acceptCookies" class="btn btn-success btn-sm">Accept All</button>
-                <button id="rejectCookies" class="btn btn-danger btn-sm">Reject All</button>
-                <button id="customizeCookies" class="btn btn-outline-light btn-sm">Customize</button>
+        </div>
+        <div class="buttons d-flex gap-2">
+            <button id="acceptCookies" class="btn btn-success btn-sm">Accept All</button>
+            <button id="rejectCookies" class="btn btn-danger btn-sm">Reject All</button>
+            <button id="customizeCookies" class="btn btn-outline-light btn-sm">Customize</button>
+        </div>
+    </div>
+</div>
+
+<!-- Cookie Preferences Modal -->
+<div id="cookiePreferencesModal" class="modal fade" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-light">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title">Customize Your Preferences</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="strictlyNecessary" checked disabled>
+                    <label class="form-check-label" for="strictlyNecessary">
+                        Strictly Necessary Cookies (Required for website functionality)
+                    </label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="performance">
+                    <label class="form-check-label" for="performance">
+                        Performance (Analytical) Cookies
+                    </label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="functional">
+                    <label class="form-check-label" for="functional">
+                        Functional Cookies (Preferences)
+                    </label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="advertising">
+                    <label class="form-check-label" for="advertising">
+                        Advertising (Targeting) Cookies
+                    </label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="socialMedia">
+                    <label class="form-check-label" for="socialMedia">
+                        Social Media Cookies
+                    </label>
+                </div>
+                <div class="d-flex gap-2">
+                    <button id="savePreferences" class="btn btn-success flex-grow-1">Save Preferences</button>
+                    <button id="cancelPreferences" class="btn btn-secondary flex-grow-1" data-bs-dismiss="modal">Cancel</button>
+                </div>
             </div>
         </div>
     </div>
+</div>
 
     <!-- Login Modal -->
     <div id="loginModal" class="modal fade" tabindex="-1" aria-hidden="true">
