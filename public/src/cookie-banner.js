@@ -9,17 +9,24 @@ document.addEventListener("DOMContentLoaded", async () => {
     const cookiePolicyButton = document.querySelector("#cookiePolicy");
     const cookiePolicyModal = document.querySelector("#cookiePolicyModal");
 
-    if (!cookieBanner) console.warn("⚠️ Missing: #cookieConsent");
-    if (!acceptCookiesButton) console.warn("⚠️ Missing: #acceptCookies");
-    if (!rejectCookiesButton) console.warn("⚠️ Missing: #rejectCookies");
-    if (!customizeCookiesButton) console.warn("⚠️ Missing: #customizeCookies");
-    if (!savePreferencesButton) console.warn("⚠️ Missing: #savePreferences");
-    if (!cancelPreferencesButton) console.warn("⚠️ Missing: #cancelPreferences");
-    if (!cookiePreferencesModal) console.warn("⚠️ Missing: #cookiePreferencesModal");
-    if (!cookiePolicyButton) console.warn("⚠️ Missing: #cookiePolicy");
-    if (!cookiePolicyModal) console.warn("⚠️ Missing: #cookiePolicyModal");
+    // Check if all elements exist
+    const requiredElements = {
+        cookieBanner,
+        acceptCookiesButton,
+        rejectCookiesButton,
+        customizeCookiesButton,
+        savePreferencesButton,
+        cancelPreferencesButton,
+        cookiePreferencesModal,
+        cookiePolicyButton,
+        cookiePolicyModal
+    };
 
-    if (!cookieBanner || !acceptCookiesButton || !rejectCookiesButton || !customizeCookiesButton || !savePreferencesButton || !cancelPreferencesButton || !cookiePreferencesModal || !cookiePolicyButton || !cookiePolicyModal) {
+    Object.entries(requiredElements).forEach(([name, element]) => {
+        if (!element) console.warn(`⚠️ Missing: #${name}`);
+    });
+
+    if (Object.values(requiredElements).some(el => !el)) {
         console.error("❌ One or more required elements are missing from the DOM.");
         return;
     }
@@ -49,16 +56,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Bootstrap modal instances
-    const customizeModalInstance = new bootstrap.Modal(cookiePreferencesModal);
-    const policyModalInstance = new bootstrap.Modal(cookiePolicyModal);
+    let customizeModalInstance, policyModalInstance;
+    try {
+        customizeModalInstance = new bootstrap.Modal(cookiePreferencesModal);
+        policyModalInstance = new bootstrap.Modal(cookiePolicyModal);
+    } catch (error) {
+        console.error("❌ Error initializing modals:", error);
+    }
 
     // Handle Consent Buttons
-    acceptCookiesButton?.addEventListener("click", () => handleCookieConsent(true));
-    rejectCookiesButton?.addEventListener("click", () => handleCookieConsent(false));
+    acceptCookiesButton.addEventListener("click", () => handleCookieConsent(true));
+    rejectCookiesButton.addEventListener("click", () => handleCookieConsent(false));
 
-    customizeCookiesButton?.addEventListener("click", (event) => {
+    customizeCookiesButton.addEventListener("click", (event) => {
         event.preventDefault();
-        customizeModalInstance.show();
+        customizeModalInstance?.show();
 
         const strictlyNecessary = document.querySelector("#strictlyNecessary");
         if (strictlyNecessary) {
@@ -67,12 +79,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     });
 
-    savePreferencesButton?.addEventListener("click", () => saveCookiePreferences());
-    cancelPreferencesButton?.addEventListener("click", () => customizeModalInstance.hide());
+    savePreferencesButton.addEventListener("click", () => saveCookiePreferences());
+    cancelPreferencesButton.addEventListener("click", () => customizeModalInstance?.hide());
 
     // Show Cookie Policy Modal
-    cookiePolicyButton?.addEventListener("click", () => {
-        policyModalInstance.show();
+    cookiePolicyButton.addEventListener("click", () => {
+        policyModalInstance?.show();
     });
 
     // Hide Banner
@@ -127,7 +139,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         sendPreferencesToDB(consentId, preferences);
         saveLocationData(consentId);
         hideBanner();
-        customizeModalInstance.hide();
+        customizeModalInstance?.hide();
     }
 
     // API Call: Save Preferences to Backend
