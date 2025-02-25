@@ -1,23 +1,30 @@
 document.addEventListener("DOMContentLoaded", () => {
     // Show Login Popup Only for New Users
-    if (!isUserLoggedIn()) {
+    const authModalEl = document.getElementById("authModal");
+    if (authModalEl && !isUserLoggedIn()) {
         setTimeout(() => {
-            const authModal = new bootstrap.Modal(document.getElementById("authModal"));
+            const authModal = new bootstrap.Modal(authModalEl);
             authModal.show();
         }, 5000);
     }
 
     // Handle Login Form Submission
-    document.getElementById("loginForm").addEventListener("submit", async (event) => {
-        event.preventDefault();
-        await handleLogin();
-    });
+    const loginForm = document.getElementById("loginForm");
+    if (loginForm) {
+        loginForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            await handleLogin();
+        });
+    }
 
     // Handle Sign-Up Form Submission
-    document.getElementById("signupForm").addEventListener("submit", async (event) => {
-        event.preventDefault();
-        await handleSignup();
-    });
+    const signupForm = document.getElementById("signupForm");
+    if (signupForm) {
+        signupForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            await handleSignup();
+        });
+    }
 
     // Cookie Banner Logic
     handleCookieBanner();
@@ -27,8 +34,13 @@ document.addEventListener("DOMContentLoaded", () => {
  * Handles user login.
  */
 async function handleLogin() {
-    const email = document.getElementById("loginEmail").value.trim();
-    const password = document.getElementById("loginPassword").value.trim();
+    const emailInput = document.getElementById("loginEmail");
+    const passwordInput = document.getElementById("loginPassword");
+
+    if (!emailInput || !passwordInput) return;
+
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
 
     if (!email || !password) {
         showModal("❌ Please enter both email and password.", "error");
@@ -56,9 +68,15 @@ async function handleLogin() {
  * Handles user signup.
  */
 async function handleSignup() {
-    const name = document.getElementById("signupName").value.trim();
-    const email = document.getElementById("signupEmail").value.trim();
-    const password = document.getElementById("signupPassword").value.trim();
+    const nameInput = document.getElementById("signupName");
+    const emailInput = document.getElementById("signupEmail");
+    const passwordInput = document.getElementById("signupPassword");
+
+    if (!nameInput || !emailInput || !passwordInput) return;
+
+    const name = nameInput.value.trim();
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
 
     if (!name || !email || !password) {
         showModal("❌ Please fill in all fields.", "error");
@@ -82,12 +100,22 @@ async function handleSignup() {
  */
 function handleCookieBanner() {
     const cookieBanner = document.getElementById("cookieConsent");
+    if (!cookieBanner) return;
+
     if (!getCookie("cookiesAccepted")) {
         setTimeout(() => cookieBanner.classList.add("show"), 500);
     }
 
-    document.getElementById("acceptCookies").addEventListener("click", () => handleCookieConsent(true));
-    document.getElementById("rejectCookies").addEventListener("click", () => handleCookieConsent(false));
+    const acceptBtn = document.getElementById("acceptCookies");
+    const rejectBtn = document.getElementById("rejectCookies");
+
+    if (acceptBtn) {
+        acceptBtn.addEventListener("click", () => handleCookieConsent(true));
+    }
+    
+    if (rejectBtn) {
+        rejectBtn.addEventListener("click", () => handleCookieConsent(false));
+    }
 }
 
 /**
@@ -96,6 +124,8 @@ function handleCookieBanner() {
 function handleCookieConsent(accepted) {
     setCookie("cookiesAccepted", accepted.toString(), 365);
     const cookieBanner = document.getElementById("cookieConsent");
+    if (!cookieBanner) return;
+
     cookieBanner.classList.add("hide");
     setTimeout(() => cookieBanner.classList.remove("show", "hide"), 500);
 }
