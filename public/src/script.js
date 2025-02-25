@@ -2,6 +2,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // Show Login Popup Only for New Users
     const authModalEl = document.getElementById("authModal");
     if (authModalEl && !isUserLoggedIn() && !sessionStorage.getItem("authModalShown")) {
+        const loginForm = document.getElementById("loginForm");
+        const signupForm = document.getElementById("signupForm");
+        if (!loginForm || !signupForm) {
+            console.error("❌ Login or signup form not found in modal.");
+            return;
+        }
         setTimeout(() => {
             const authModal = new bootstrap.Modal(authModalEl);
             authModal.show();
@@ -37,27 +43,22 @@ document.addEventListener("DOMContentLoaded", () => {
 async function handleLogin() {
     const emailInput = document.getElementById("loginEmail");
     const passwordInput = document.getElementById("loginPassword");
-
-    if (!emailInput || !passwordInput) return;
-
+    if (!emailInput || !passwordInput) {
+        console.error("❌ Missing login form fields.");
+        return;
+    }
     const email = emailInput.value.trim();
     const password = passwordInput.value.trim();
 
-    if (!email || !password) {
-        showModal("❌ Please enter both email and password.", "error");
-        return;
-    }
+    if (!validateFormInputs({ email, password })) return;
 
     try {
         showLoading(true);
         const response = await fetchAPI("/api/login", "POST", { email, password });
-
         if (response.token) {
             localStorage.setItem("token", response.token);
             localStorage.setItem("user", JSON.stringify(response.user));
-
             showModal("✅ Login successful!", "success");
-
             setTimeout(() => window.location.href = "/index.html", 1500);
         } else {
             throw new Error("Invalid response from server");
@@ -76,22 +77,19 @@ async function handleSignup() {
     const nameInput = document.getElementById("signupName");
     const emailInput = document.getElementById("signupEmail");
     const passwordInput = document.getElementById("signupPassword");
-
-    if (!nameInput || !emailInput || !passwordInput) return;
-
+    if (!nameInput || !emailInput || !passwordInput) {
+        console.error("❌ Missing signup form fields.");
+        return;
+    }
     const name = nameInput.value.trim();
     const email = emailInput.value.trim();
     const password = passwordInput.value.trim();
 
-    if (!name || !email || !password) {
-        showModal("❌ Please fill in all fields.", "error");
-        return;
-    }
+    if (!validateFormInputs({ name, email, password })) return;
 
     try {
         showLoading(true);
         await fetchAPI("/api/register", "POST", { name, email, password });
-
         showModal("✅ Sign-up successful! Please log in.", "success");
     } catch (error) {
         showModal(`❌ ${error.message || error}`, "error");
@@ -105,21 +103,28 @@ async function handleSignup() {
  */
 function handleCookieBanner() {
     const cookieBanner = document.getElementById("cookieConsent");
-    if (!cookieBanner) return;
+    const acceptBtn = document.getElementById("acceptCookies");
+    const rejectBtn = document.getElementById("rejectCookies");
+
+    if (!cookieBanner) {
+        console.warn("⚠️ Cookie banner element (#cookieConsent) not found.");
+        return;
+    }
 
     if (!getCookie("cookiesAccepted")) {
         setTimeout(() => cookieBanner.classList.add("show"), 500);
     }
 
-    const acceptBtn = document.getElementById("acceptCookies");
-    const rejectBtn = document.getElementById("rejectCookies");
-
     if (acceptBtn) {
         acceptBtn.addEventListener("click", () => handleCookieConsent(true));
+    } else {
+        console.warn("⚠️ Accept cookies button (#acceptCookies) not found.");
     }
-    
+
     if (rejectBtn) {
         rejectBtn.addEventListener("click", () => handleCookieConsent(false));
+    } else {
+        console.warn("⚠️ Reject cookies button (#rejectCookies) not found.");
     }
 }
 
@@ -130,7 +135,6 @@ function handleCookieConsent(accepted) {
     setCookie("cookiesAccepted", accepted.toString(), 365);
     const cookieBanner = document.getElementById("cookieConsent");
     if (!cookieBanner) return;
-
     cookieBanner.classList.add("hide");
     setTimeout(() => cookieBanner.classList.remove("show", "hide"), 500);
 }
@@ -169,11 +173,47 @@ async function fetchAPI(endpoint, method, body = {}) {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body),
         });
-
         const data = await response.json();
-        if (!response.ok) throw new Error(data.message || "Request failed");
+        if (!response.ok) {
+            const errorMessage = data.message || `HTTP error! Status: ${response.status}`;
+            throw new Error(errorMessage);
+        }
         return data;
     } catch (error) {
-        throw new Error(error.message || "Network error");
+        console.error("❌ API Error:", error.message || "Network error");
+        throw error;
     }
+}
+
+/**
+ * Shows a modal with a message.
+ */
+function showModal(message, type = "info") {
+    console.log(`${type.toUpperCase()}: ${message}`);
+    // Implement UI logic to display the modal here
+}
+
+/**
+ * Toggles a loading spinner.
+ */
+function showLoading(isLoading) {
+    const loader = document.getElementById("loader");
+    if (!loader) {
+        console.warn("⚠️ Loader element (#loader) not found.");
+        return;
+    }
+    loader.style.display = isLoading ? "block" : "none";
+}
+
+/**
+ * Validates form inputs.
+ */
+function validateFormInputs(inputs) {
+    for (const [id, value] of Object.entries(inputs)) {
+        if (!value.trim()) {
+            showModal(`❌ Please enter a valid ${id.replace(/([A-Z])/g, " $1").toLowerCase()}.`, "error");
+            return false;
+        }
+    }
+    return true;
 }
