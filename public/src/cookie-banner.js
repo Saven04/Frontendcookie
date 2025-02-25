@@ -6,22 +6,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     const savePreferencesButton = document.querySelector("#savePreferences");
     const cancelPreferencesButton = document.querySelector("#cancelPreferences");
     const cookiePreferencesModal = document.querySelector("#cookiePreferencesModal");
-    const openCookiePolicyButton = document.querySelector("#openCookiePolicy");
 
-    if (!cookieBanner) console.warn("⚠️ Missing: #cookieConsent");
-    if (!acceptCookiesButton) console.warn("⚠️ Missing: #acceptCookies");
-    if (!rejectCookiesButton) console.warn("⚠️ Missing: #rejectCookies");
-    if (!customizeCookiesButton) console.warn("⚠️ Missing: #customizeCookies");
-    if (!savePreferencesButton) console.warn("⚠️ Missing: #savePreferences");
-    if (!cancelPreferencesButton) console.warn("⚠️ Missing: #cancelPreferences");
-    if (!cookiePreferencesModal) console.warn("⚠️ Missing: #cookiePreferencesModal");
-  
 
     if (!cookieBanner || !acceptCookiesButton || !rejectCookiesButton || !customizeCookiesButton || !savePreferencesButton || !cancelPreferencesButton || !cookiePreferencesModal) {
         console.error("❌ One or more required elements are missing.");
         return;
     }
 
+    // Cookie Functions
     const setCookie = (name, value, days) => {
         const date = new Date();
         date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
@@ -37,19 +29,29 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;secure;samesite=strict`;
     };
 
-    let consentId = getCookie("consentId");
-    let cookiesAccepted = getCookie("cookiesAccepted");
+    // Generate Unique Incremental Consent ID
+    function generateConsentID() {
+        let lastCID = localStorage.getItem("lastCID"); // Retrieve last CID from localStorage
+        let newCID = lastCID ? parseInt(lastCID.split("-")[1]) + 1 : 1; // Increment or start from 1
+        let consentID = `CID-${newCID}`;
 
-    if (!cookiesAccepted) {
+        localStorage.setItem("lastCID", consentID); // Store the new CID
+        return consentID;
+    }
+
+    let consentId = getCookie("consentId") || generateConsentID();
+    setCookie("consentId", consentId, 365); // Store the Consent ID
+
+    if (!getCookie("cookiesAccepted")) {
         setTimeout(() => cookieBanner.classList.add("show"), 500);
     }
 
     const customizeModalInstance = new bootstrap.Modal(cookiePreferencesModal);
 
-    acceptCookiesButton?.addEventListener("click", () => handleCookieConsent(true));
-    rejectCookiesButton?.addEventListener("click", () => handleCookieConsent(false));
+    acceptCookiesButton.addEventListener("click", () => handleCookieConsent(true));
+    rejectCookiesButton.addEventListener("click", () => handleCookieConsent(false));
 
-    customizeCookiesButton?.addEventListener("click", (event) => {
+    customizeCookiesButton.addEventListener("click", (event) => {
         event.preventDefault();
         customizeModalInstance.show();
 
@@ -60,11 +62,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     });
 
-    savePreferencesButton?.addEventListener("click", () => saveCookiePreferences());
-    cancelPreferencesButton?.addEventListener("click", () => customizeModalInstance.hide());
+    savePreferencesButton.addEventListener("click", saveCookiePreferences);
+    cancelPreferencesButton.addEventListener("click", () => customizeModalInstance.hide());
 
-    // Redirect Cookie Policy button to cookie-policy.html
-    openCookiePolicyButton?.addEventListener("click", () => {
+    // Redirect to Cookie Policy Page
+    openCookiePolicyButton.addEventListener("click", () => {
         window.location.href = "cookie-policy.html";
     });
 
@@ -76,11 +78,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
 
     function handleCookieConsent(accepted) {
-        if (!consentId) {
-            consentId = generateShortUUID();
-            setCookie("consentId", consentId, 365);
-        }
-
         const preferences = {
             strictlyNecessary: true,
             performance: accepted,
@@ -98,11 +95,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     function saveCookiePreferences() {
-        if (!consentId) {
-            consentId = generateShortUUID();
-            setCookie("consentId", consentId, 365);
-        }
-
         const preferences = {
             strictlyNecessary: true,
             performance: document.querySelector("#performance")?.checked || false,
@@ -184,9 +176,5 @@ document.addEventListener("DOMContentLoaded", async () => {
         } catch (error) {
             console.error("❌ Error saving location data:", error);
         }
-    }
-
-    function generateShortUUID() {
-        return 'xxxx-xxxx'.replace(/[x]/g, () => (Math.random() * 16 | 0).toString(16));
     }
 });
