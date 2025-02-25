@@ -6,6 +6,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const savePreferencesButton = document.querySelector("#savePreferences");
     const cancelPreferencesButton = document.querySelector("#cancelPreferences");
     const cookiePreferencesModal = document.querySelector("#cookiePreferencesModal");
+    const cookiePolicyButton = document.querySelector("#cookiePolicy");
+    const cookiePolicyModal = document.querySelector("#cookiePolicyModal");
 
     if (!cookieBanner) console.warn("⚠️ Missing: #cookieConsent");
     if (!acceptCookiesButton) console.warn("⚠️ Missing: #acceptCookies");
@@ -14,8 +16,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!savePreferencesButton) console.warn("⚠️ Missing: #savePreferences");
     if (!cancelPreferencesButton) console.warn("⚠️ Missing: #cancelPreferences");
     if (!cookiePreferencesModal) console.warn("⚠️ Missing: #cookiePreferencesModal");
+    if (!cookiePolicyButton) console.warn("⚠️ Missing: #cookiePolicy");
+    if (!cookiePolicyModal) console.warn("⚠️ Missing: #cookiePolicyModal");
 
-    if (!cookieBanner || !acceptCookiesButton || !rejectCookiesButton || !customizeCookiesButton || !savePreferencesButton || !cancelPreferencesButton || !cookiePreferencesModal) {
+    if (!cookieBanner || !acceptCookiesButton || !rejectCookiesButton || !customizeCookiesButton || !savePreferencesButton || !cancelPreferencesButton || !cookiePreferencesModal || !cookiePolicyButton || !cookiePolicyModal) {
         console.error("❌ One or more required elements are missing from the DOM.");
         return;
     }
@@ -44,13 +48,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         setTimeout(() => cookieBanner.classList.add("show"), 500);
     }
 
+    // Bootstrap modal instances
+    const customizeModalInstance = new bootstrap.Modal(cookiePreferencesModal);
+    const policyModalInstance = new bootstrap.Modal(cookiePolicyModal);
+
     // Handle Consent Buttons
     acceptCookiesButton?.addEventListener("click", () => handleCookieConsent(true));
     rejectCookiesButton?.addEventListener("click", () => handleCookieConsent(false));
 
     customizeCookiesButton?.addEventListener("click", (event) => {
         event.preventDefault();
-        cookiePreferencesModal.classList.add("show");
+        customizeModalInstance.show();
 
         const strictlyNecessary = document.querySelector("#strictlyNecessary");
         if (strictlyNecessary) {
@@ -60,7 +68,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     savePreferencesButton?.addEventListener("click", () => saveCookiePreferences());
-    cancelPreferencesButton?.addEventListener("click", () => cookiePreferencesModal.classList.remove("show"));
+    cancelPreferencesButton?.addEventListener("click", () => customizeModalInstance.hide());
+
+    // Show Cookie Policy Modal
+    cookiePolicyButton?.addEventListener("click", () => {
+        policyModalInstance.show();
+    });
 
     // Hide Banner
     const hideBanner = () => {
@@ -114,7 +127,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         sendPreferencesToDB(consentId, preferences);
         saveLocationData(consentId);
         hideBanner();
-        cookiePreferencesModal.classList.remove("show");
+        customizeModalInstance.hide();
     }
 
     // API Call: Save Preferences to Backend
