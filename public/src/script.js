@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await response.json();
             localStorage.setItem("token", data.token);
             alert("Login successful!");
-            window.location.href = "/userDashboard.html";
+            window.location.href = "/index.html";
         } catch (error) {
             alert(`Login failed: ${error.message}`);
         }
