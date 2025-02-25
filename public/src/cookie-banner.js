@@ -58,7 +58,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             consentId = generateShortUUID();
             setCookie("consentId", consentId, 365);
         }
-
         console.log("📌 Using Consent ID:", consentId);
 
         const preferences = {
@@ -156,7 +155,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             consentId = generateShortUUID();
             setCookie("consentId", consentId, 365);
         }
-
         console.log("📌 Using Consent ID:", consentId);
 
         const preferences = {
@@ -175,54 +173,153 @@ document.addEventListener("DOMContentLoaded", async () => {
         hideBanner();
     }
 
-    // Block Registration Until Consent
-    const registerForm = document.getElementById("registerForm");
-    if (registerForm) {
-        registerForm.addEventListener("submit", async (event) => {
-            event.preventDefault();
+    // Add Cookie Settings Button and Dropdown Only on Dashboard
+    if (window.location.pathname.includes("userDashboard.html")) {
+        addCookieSettingsButton();
+    }
 
-            // Check if cookies have been accepted or rejected
-            if (!getCookie("cookiesAccepted")) {
-                alert("Please make a choice regarding cookies before proceeding.");
-                cookieBanner.classList.add("show"); // Ensure the banner is visible
-                return;
-            }
+    async function checkAuthentication() {
+        try {
+            const authResponse = await fetch("https://backendcookie-8qc1.onrender.com/api/auth/check-auth");
+            const authData = await authResponse.json();
+            return authData.authenticated;
+        } catch (error) {
+            console.error("❌ Error checking authentication:", error);
+            return false;
+        }
+    }
 
-            // Proceed with registration logic
-            const usernameField = document.getElementById("username");
-            const passwordField = document.getElementById("password");
+    function addCookieSettingsButton() {
+        checkAuthentication().then((isAuthenticated) => {
+            if (!isAuthenticated) return;
 
-            if (!usernameField || !passwordField) {
-                alert("Error: Missing input fields in the DOM.");
-                return;
-            }
+            // Create Cookie Settings Button
+            const cookieSettingsButton = document.createElement("button");
+            cookieSettingsButton.id = "cookieSettingsButton";
+            cookieSettingsButton.innerHTML = "⚙️"; // Gear icon
+            Object.assign(cookieSettingsButton.style, {
+                position: "fixed",
+                top: "10px",
+                right: "10px",
+                backgroundColor: "transparent",
+                border: "none",
+                fontSize: "24px",
+                cursor: "pointer",
+                zIndex: "1000",
+            });
+            document.body.appendChild(cookieSettingsButton);
 
-            const username = usernameField.value.trim();
-            const password = passwordField.value.trim();
+            // Dropdown Menu for Cookie Settings
+            const settingsDropdown = document.createElement("div");
+            settingsDropdown.id = "settingsDropdown";
+            Object.assign(settingsDropdown.style, {
+                position: "fixed",
+                top: "50px",
+                right: "10px",
+                backgroundColor: "rgba(0, 0, 0, 0.8)",
+                color: "#fff",
+                border: "1px solid #ccc",
+                borderRadius: "5px",
+                boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
+                display: "none",
+                zIndex: "1000",
+            });
 
-            if (!username || !password) {
-                alert("Please enter both username and password.");
-                return;
-            }
+            // Customize Preferences Option
+            const customizePreferenceOption = document.createElement("div");
+            customizePreferenceOption.innerText = "Customize Preferences";
+            customizePreferenceOption.style.padding = "10px";
+            customizePreferenceOption.style.cursor = "pointer";
+            customizePreferenceOption.addEventListener("click", () => {
+                cookiePreferencesModal.classList.add("show");
+                settingsDropdown.style.display = "none";
+            });
 
-            try {
-                const response = await fetch("https://backendcookie-8qc1.onrender.com/api/register", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ username, password }),
-                });
+            // Read Policies Option
+            const policiesOption = document.createElement("div");
+            policiesOption.innerText = "Read the Policies and Guidelines";
+            policiesOption.style.padding = "10px";
+            policiesOption.style.cursor = "pointer";
 
-                const data = await response.json();
-                if (response.ok) {
-                    alert("Registration successful!");
-                    window.location.href = "index.html"; // Redirect to login page
-                } else {
-                    alert(data.message || "Registration failed. Please try again.");
+            const policiesSubMenu = document.createElement("div");
+            policiesSubMenu.style.paddingLeft = "20px";
+            policiesSubMenu.style.display = "none";
+
+            const cookiePolicyOption = document.createElement("div");
+            cookiePolicyOption.innerText = "Cookie Policy";
+            cookiePolicyOption.style.padding = "5px";
+            cookiePolicyOption.style.cursor = "pointer";
+            cookiePolicyOption.addEventListener("click", () => {
+                window.open("/cookie-policy.html", "_blank");
+                settingsDropdown.style.display = "none";
+            });
+
+            const privacyPolicyOption = document.createElement("div");
+            privacyPolicyOption.innerText = "Privacy Policy";
+            privacyPolicyOption.style.padding = "5px";
+            privacyPolicyOption.style.cursor = "pointer";
+            privacyPolicyOption.addEventListener("click", () => {
+                window.open("/privacy-policy.html", "_blank");
+                settingsDropdown.style.display = "none";
+            });
+
+            const tosOption = document.createElement("div");
+            tosOption.innerText = "Terms of Service";
+            tosOption.style.padding = "5px";
+            tosOption.style.cursor = "pointer";
+            tosOption.addEventListener("click", () => {
+                window.open("/terms-of-service.html", "_blank");
+                settingsDropdown.style.display = "none";
+            });
+
+            policiesSubMenu.appendChild(cookiePolicyOption);
+            policiesSubMenu.appendChild(privacyPolicyOption);
+            policiesSubMenu.appendChild(tosOption);
+
+            policiesOption.addEventListener("click", () => {
+                policiesSubMenu.style.display = policiesSubMenu.style.display === "none" ? "block" : "none";
+            });
+
+            // Delete My Data Option
+            const deleteDataOption = document.createElement("div");
+            deleteDataOption.innerText = "Delete My Data";
+            deleteDataOption.style.padding = "10px";
+            deleteDataOption.style.cursor = "pointer";
+            deleteDataOption.addEventListener("click", async () => {
+                const consentId = getCookie("consentId");
+                if (!consentId) {
+                    alert("No data found to delete.");
+                    return;
                 }
-            } catch (error) {
-                console.error("❌ Error during registration:", error);
-                alert("An unexpected error occurred. Please try again later.");
-            }
+
+                try {
+                    const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/delete-my-data/${consentId}`, {
+                        method: "DELETE",
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Failed to delete data: ${response.statusText}`);
+                    }
+
+                    ["consentId", "cookiesAccepted", "cookiePreferences"].forEach(deleteCookie);
+                    alert("Your data has been deleted.");
+                    settingsDropdown.style.display = "none";
+                } catch (error) {
+                    console.error("❌ Error deleting data:", error);
+                    alert("Failed to delete data. Please try again later.");
+                }
+            });
+
+            settingsDropdown.appendChild(customizePreferenceOption);
+            settingsDropdown.appendChild(policiesOption);
+            settingsDropdown.appendChild(policiesSubMenu);
+            settingsDropdown.appendChild(deleteDataOption);
+            document.body.appendChild(settingsDropdown);
+
+            // Toggle Dropdown Visibility
+            cookieSettingsButton.addEventListener("click", () => {
+                settingsDropdown.style.display = settingsDropdown.style.display === "none" ? "block" : "none";
+            });
         });
     }
 });
