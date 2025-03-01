@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Handle Cookie Consent Logic
-    let consentId = getCookie("consentId");
+    let consentId = localStorage.getItem("consentId"); // Use localStorage for consentId
     let cookiesAccepted = getCookie("cookiesAccepted");
 
     // Show consent banner if no choice has been made
@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     savePreferencesButton.addEventListener("click", () => {
         if (!consentId) {
             consentId = generateConsentID(); // Generate a new consent ID
-            setCookie("consentId", consentId, 365); // Store the consent ID in cookies
+            localStorage.setItem("consentId", consentId); // Store the consent ID in localStorage
         }
 
         console.log("📌 Using Consent ID:", consentId);
@@ -161,7 +161,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     function handleCookieConsent(accepted) {
         if (!consentId) {
             consentId = generateConsentID(); // Generate a new consent ID
-            setCookie("consentId", consentId, 365); // Store the consent ID in cookies
+            localStorage.setItem("consentId", consentId); // Store the consent ID in localStorage
         }
 
         console.log("📌 Using Consent ID:", consentId);
