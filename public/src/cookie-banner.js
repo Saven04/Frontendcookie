@@ -1,5 +1,5 @@
 // Function to generate a short unique consent ID
-async function generateSequentialConsentID() {
+async function generateShortUUID() {
     try {
         const response = await fetch("https://backendcookie-8qc1.onrender.com/api/last-consent-id");
         const data = await response.json();
