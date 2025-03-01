@@ -1,5 +1,5 @@
 // Function to generate a short unique consent ID
-async function generateShortUUID() {
+async function generateSequentialConsentID() {
     try {
         const response = await fetch("https://backendcookie-8qc1.onrender.com/api/last-consent-id");
         const data = await response.json();
@@ -49,10 +49,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Accept Cookies Button
-    acceptCookiesButton.addEventListener("click", () => handleCookieConsent(true));
+    acceptCookiesButton.addEventListener("click", async () => await handleCookieConsent(true));
 
     // Reject Cookies Button
-    rejectCookiesButton.addEventListener("click", () => handleCookieConsent(false));
+    rejectCookiesButton.addEventListener("click", async () => await handleCookieConsent(false));
 
     // Customize Cookies Button
     customizeCookiesButton.addEventListener("click", (event) => {
@@ -63,9 +63,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     // Save Preferences Button
-    savePreferencesButton.addEventListener("click", () => {
+    savePreferencesButton.addEventListener("click", async () => {
         if (!consentId) {
-            consentId = generateShortUUID();
+            consentId = await generateSequentialConsentID();
             setCookie("consentId", consentId, 365);
         }
 
@@ -82,8 +82,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         setCookie("cookiesAccepted", "true", 365);
         setCookie("cookiePreferences", JSON.stringify(preferences), 365);
 
-        sendPreferencesToDB(consentId, preferences);
-        saveLocationData(consentId);
+        await sendPreferencesToDB(consentId, preferences);
+        await saveLocationData(consentId);
         hideBanner();
         cookiePreferencesModal.classList.remove("show");
     });
@@ -161,9 +161,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Handle Cookie Consent
-    function handleCookieConsent(accepted) {
+    async function handleCookieConsent(accepted) {
         if (!consentId) {
-            consentId = generateShortUUID();
+            consentId = await generateSequentialConsentID();
             setCookie("consentId", consentId, 365);
         }
 
@@ -180,8 +180,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         setCookie("cookiesAccepted", accepted.toString(), 365);
         setCookie("cookiePreferences", JSON.stringify(preferences), 365);
 
-        sendPreferencesToDB(consentId, preferences);
-        saveLocationData(consentId);
+        await sendPreferencesToDB(consentId, preferences);
+        await saveLocationData(consentId);
         hideBanner();
     }
 
