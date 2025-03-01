@@ -1,10 +1,12 @@
-// Function to generate a sequential consent ID (e.g., CID-1, CID-2, ...)
+// Function to generate an incremented consent ID
 function generateConsentID() {
-    // Retrieve the last consent ID from localStorage
+    // Retrieve the last CID from localStorage
     let lastCID = localStorage.getItem("lastCID");
-    let newCID = lastCID ? parseInt(lastCID.split("-")[1]) + 1 : 1; // Increment the number part
+    // Increment the CID or start from 1 if it doesn't exist
+    let newCID = lastCID ? parseInt(lastCID.split("-")[1]) + 1 : 1;
     let consentID = `CID-${newCID}`;
-    localStorage.setItem("lastCID", consentID); // Save the new consent ID back to localStorage
+    // Store the new CID back into localStorage
+    localStorage.setItem("lastCID", consentID);
     return consentID;
 }
 
@@ -60,8 +62,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Save Preferences Button
     savePreferencesButton.addEventListener("click", () => {
         if (!consentId) {
-            consentId = generateConsentID(); // Generate sequential consent ID
-            setCookie("consentId", consentId, 365);
+            consentId = generateConsentID(); // Generate a new consent ID
+            setCookie("consentId", consentId, 365); // Store the consent ID in cookies
         }
 
         console.log("📌 Using Consent ID:", consentId);
@@ -158,8 +160,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Handle Cookie Consent
     function handleCookieConsent(accepted) {
         if (!consentId) {
-            consentId = generateConsentID(); // Generate sequential consent ID
-            setCookie("consentId", consentId, 365);
+            consentId = generateConsentID(); // Generate a new consent ID
+            setCookie("consentId", consentId, 365); // Store the consent ID in cookies
         }
 
         console.log("📌 Using Consent ID:", consentId);
