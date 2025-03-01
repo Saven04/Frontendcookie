@@ -1,6 +1,21 @@
 // Utility functions for handling cookies
-function generateShortUUID() {
-    return Math.random().toString(36).substring(2, 10); // Generates a short unique ID
+async function fetchConsentID() {
+    try {
+        const response = await fetch("https://backendcookie-8qc1.onrender.com/api/generate-consent-id", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data.consentId;
+    } catch (error) {
+        console.error("❌ Error fetching consentId:", error.message || error);
+        return null;
+    }
 }
 
 function setCookie(name, value, days) {
@@ -48,6 +63,13 @@ function showModal(message, type) {
     }, 3000);
 }
 
+// Function to reset the button after an action
+function resetButton() {
+    const registerButton = document.querySelector(".login-button");
+    registerButton.disabled = false;
+    registerButton.textContent = "Register";
+}
+
 // Register form submission event listener
 document.getElementById("registerForm").addEventListener("submit", async function (event) {
     event.preventDefault(); // Prevent default form submission
@@ -61,10 +83,10 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     const password = document.getElementById("password").value.trim();
     const confirmPassword = document.getElementById("confirmPassword").value.trim();
 
-    // Retrieve the consentId from cookies or generate a new one
+    // Retrieve the consentId from cookies or generate a new one if necessary
     let consentId = getCookie("consentId");
     if (!consentId) {
-        consentId = generateShortUUID();
+        consentId = await fetchConsentID() || generateShortUUID();
         setCookie("consentId", consentId, 365);
     }
 
@@ -102,18 +124,16 @@ document.getElementById("registerForm").addEventListener("submit", async functio
             }, 1500);
         } else {
             showModal(`❌ ${data.message || "Registration failed."}`, "error");
-            resetButton();
         }
     } catch (error) {
         console.error("❌ Error:", error);
         showModal("Registration failed. Please check your internet connection and try again.", "error");
+    } finally {
         resetButton();
     }
 });
 
-// Function to reset the button after an action
-function resetButton() {
-    const registerButton = document.querySelector(".login-button");
-    registerButton.disabled = false;
-    registerButton.textContent = "Register";
+// Generates a short unique ID
+function generateShortUUID() {
+    return Math.random().toString(36).substring(2, 10);
 }
