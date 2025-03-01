@@ -1,9 +1,6 @@
 // Function to generate a short unique consent ID
 async function generateSequentialConsentID() {
     try {
-        const response = await fetch("https://backendcookie-8qc1.onrender.com/api/last-consent-id");
-        const data = await response.json();
-
         let lastConsentID = data.lastConsentID || "CID-0"; // Default if no consent exists
         let nextNumber = parseInt(lastConsentID.split("-")[1]) + 1;
         return `CID-${nextNumber}`;
