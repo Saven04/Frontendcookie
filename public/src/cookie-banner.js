@@ -1,13 +1,11 @@
-// Function to generate a short unique consent ID
-async function generateSequentialConsentID() {
-    try {
-        let lastConsentID = data.lastConsentID || "CID-0"; // Default if no consent exists
-        let nextNumber = parseInt(lastConsentID.split("-")[1]) + 1;
-        return `CID-${nextNumber}`;
-    } catch (error) {
-        console.error("❌ Error fetching last Consent ID:", error);
-        return `CID-1`; // Fallback in case of error
-    }
+// Function to generate a sequential consent ID (e.g., CID-1, CID-2, ...)
+function generateConsentID() {
+    // Retrieve the last consent ID from localStorage
+    let lastCID = localStorage.getItem("lastCID");
+    let newCID = lastCID ? parseInt(lastCID.split("-")[1]) + 1 : 1; // Increment the number part
+    let consentID = `CID-${newCID}`;
+    localStorage.setItem("lastCID", consentID); // Save the new consent ID back to localStorage
+    return consentID;
 }
 
 // Document Ready Event
@@ -46,10 +44,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Accept Cookies Button
-    acceptCookiesButton.addEventListener("click", async () => await handleCookieConsent(true));
+    acceptCookiesButton.addEventListener("click", () => handleCookieConsent(true));
 
     // Reject Cookies Button
-    rejectCookiesButton.addEventListener("click", async () => await handleCookieConsent(false));
+    rejectCookiesButton.addEventListener("click", () => handleCookieConsent(false));
 
     // Customize Cookies Button
     customizeCookiesButton.addEventListener("click", (event) => {
@@ -60,9 +58,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     // Save Preferences Button
-    savePreferencesButton.addEventListener("click", async () => {
+    savePreferencesButton.addEventListener("click", () => {
         if (!consentId) {
-            consentId = await generateSequentialConsentID();
+            consentId = generateConsentID(); // Generate sequential consent ID
             setCookie("consentId", consentId, 365);
         }
 
@@ -79,8 +77,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         setCookie("cookiesAccepted", "true", 365);
         setCookie("cookiePreferences", JSON.stringify(preferences), 365);
 
-        await sendPreferencesToDB(consentId, preferences);
-        await saveLocationData(consentId);
+        sendPreferencesToDB(consentId, preferences);
+        saveLocationData(consentId);
         hideBanner();
         cookiePreferencesModal.classList.remove("show");
     });
@@ -158,9 +156,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Handle Cookie Consent
-    async function handleCookieConsent(accepted) {
+    function handleCookieConsent(accepted) {
         if (!consentId) {
-            consentId = await generateSequentialConsentID();
+            consentId = generateConsentID(); // Generate sequential consent ID
             setCookie("consentId", consentId, 365);
         }
 
@@ -177,8 +175,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         setCookie("cookiesAccepted", accepted.toString(), 365);
         setCookie("cookiePreferences", JSON.stringify(preferences), 365);
 
-        await sendPreferencesToDB(consentId, preferences);
-        await saveLocationData(consentId);
+        sendPreferencesToDB(consentId, preferences);
+        saveLocationData(consentId);
         hideBanner();
     }
 
