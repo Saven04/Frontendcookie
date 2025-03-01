@@ -1,13 +1,21 @@
-// Function to generate an incremented consent ID
-function generateConsentID() {
-    // Retrieve the last CID from localStorage
-    let lastCID = localStorage.getItem("lastCID");
-    // Increment the CID or start from 1 if it doesn't exist
-    let newCID = lastCID ? parseInt(lastCID.split("-")[1]) + 1 : 1;
-    let consentID = `CID-${newCID}`;
-    // Store the new CID back into localStorage
-    localStorage.setItem("lastCID", consentID);
-    return consentID;
+// Function to fetch a new consent ID from the backend
+async function fetchConsentID() {
+    try {
+        const response = await fetch("https://backendcookie-8qc1.onrender.com/api/generate-consent-id", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data.consentId;
+    } catch (error) {
+        console.error("❌ Error fetching consentId:", error.message || error);
+        return null;
+    }
 }
 
 // Document Ready Event
@@ -37,7 +45,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Handle Cookie Consent Logic
-    let consentId = localStorage.getItem("consentId"); // Use localStorage for consentId
+    let consentId = getCookie("consentId"); // Retrieve consentId from cookies
     let cookiesAccepted = getCookie("cookiesAccepted");
 
     // Show consent banner if no choice has been made
@@ -46,10 +54,24 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Accept Cookies Button
-    acceptCookiesButton.addEventListener("click", () => handleCookieConsent(true));
+    acceptCookiesButton.addEventListener("click", async () => {
+        if (!consentId) {
+            consentId = await fetchConsentID(); // Fetch a new consentId from the backend
+            setCookie("consentId", consentId, 365); // Store the consentId in cookies
+        }
+
+        handleCookieConsent(true);
+    });
 
     // Reject Cookies Button
-    rejectCookiesButton.addEventListener("click", () => handleCookieConsent(false));
+    rejectCookiesButton.addEventListener("click", async () => {
+        if (!consentId) {
+            consentId = await fetchConsentID(); // Fetch a new consentId from the backend
+            setCookie("consentId", consentId, 365); // Store the consentId in cookies
+        }
+
+        handleCookieConsent(false);
+    });
 
     // Customize Cookies Button
     customizeCookiesButton.addEventListener("click", (event) => {
@@ -60,10 +82,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     // Save Preferences Button
-    savePreferencesButton.addEventListener("click", () => {
+    savePreferencesButton.addEventListener("click", async () => {
         if (!consentId) {
-            consentId = generateConsentID(); // Generate a new consent ID
-            localStorage.setItem("consentId", consentId); // Store the consent ID in localStorage
+            consentId = await fetchConsentID(); // Fetch a new consentId from the backend
+            setCookie("consentId", consentId, 365); // Store the consentId in cookies
         }
 
         console.log("📌 Using Consent ID:", consentId);
@@ -159,13 +181,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Handle Cookie Consent
     function handleCookieConsent(accepted) {
-        if (!consentId) {
-            consentId = generateConsentID(); // Generate a new consent ID
-            localStorage.setItem("consentId", consentId); // Store the consent ID in localStorage
-        }
-
-        console.log("📌 Using Consent ID:", consentId);
-
         const preferences = {
             strictlyNecessary: true,
             performance: accepted,
