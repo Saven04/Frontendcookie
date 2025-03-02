@@ -1,28 +1,13 @@
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("📌 DOM fully loaded and parsed!");
-
-    // Ensure Bootstrap is loaded
-    if (typeof bootstrap === "undefined") {
-        console.error("❌ Bootstrap is not loaded! Modal functionality may not work.");
-        return;
-    }
-
-    
     // Attach event listeners for login and signup forms
     const loginForm = document.getElementById("loginForm");
     if (loginForm) {
         loginForm.addEventListener("submit", handleLogin);
-        console.log("✅ Login form event attached.");
-    } else {
-        console.warn("⚠️ Login form (#loginForm) not found in the DOM.");
     }
 
     const signupForm = document.getElementById("signupForm");
     if (signupForm) {
         signupForm.addEventListener("submit", handleSignup);
-        console.log("✅ Signup form event attached.");
-    } else {
-        console.warn("⚠️ Signup form (#signupForm) not found in the DOM.");
     }
 
     // Initialize Cookie Banner Logic
@@ -39,7 +24,6 @@ function isUserLoggedIn() {
  */
 function handleLogin(event) {
     event.preventDefault();  // Prevent form submission from reloading the page
-    console.log("🟢 Login form submitted!");
 
     // Retrieve the values
     const email = document.getElementById("auth-email").value;
@@ -62,7 +46,6 @@ function handleLogin(event) {
  */
 function handleSignup(event) {
     event.preventDefault();  // Prevent form submission from reloading the page
-    console.log("🟢 Signup form submitted!");
 
     // You can add signup logic here
 }
@@ -72,5 +55,4 @@ function handleSignup(event) {
  */
 function handleCookieBanner() {
     // You can define your cookie banner behavior here
-    console.log("🟢 Handling Cookie Banner...");
 }
