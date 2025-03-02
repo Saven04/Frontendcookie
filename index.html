@@ -15,9 +15,10 @@
 
     <nav class="navbar">
         <div class="navbar-container">
-            <button id="loginRegisterBtn" class="login-register-btn" aria-haspopup="dialog" aria-controls="loginModal" role="button">
-                Login | Register
-            </button>
+            <div class="auth-links">
+                <a href="#" id="login-btn">Login</a>
+                <a href="#" id="register-btn">Register</a>
+            </div>
             <button id="themeToggleBtn" aria-label="Toggle Light/Dark Mode">☀️ Light Mode</button>
         </div>
     </nav>
@@ -45,43 +46,6 @@
         </div>
     </div>
 
-    <!-- Cookie Preferences Modal -->
-    <div id="cookiePreferencesModal" class="cookie-preferences-modal" role="dialog" aria-hidden="true">
-        <div class="modal-content">
-            <h1>Customize Your Preferences</h1>
-            <br>
-            <div class="cookie-category">
-                <input type="checkbox" id="strictlyNecessary" checked disabled>
-                <label for="strictlyNecessary">Strictly Necessary Cookies (Required for website functionality)</label>
-            </div>
-            <br>
-            <div class="cookie-category">
-                <input type="checkbox" id="performance">
-                <label for="performance">Performance (Analytical) Cookies</label>
-            </div>
-            <br>
-            <div class="cookie-category">
-                <input type="checkbox" id="functional">
-                <label for="functional">Functional Cookies (Preferences)</label>
-            </div>
-            <br>
-            <div class="cookie-category">
-                <input type="checkbox" id="advertising">
-                <label for="advertising">Advertising (Targeting) Cookies</label>
-            </div>
-            <br>
-            <div class="cookie-category">
-                <input type="checkbox" id="socialMedia">
-                <label for="socialMedia">Social Media Cookies</label>
-            </div>
-            <br>
-            <div class="modal-buttons">
-                <button id="savePreferences" class="save-button">Save Preferences</button>
-                <button id="cancelPreferences" class="cancel-button">Cancel</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Login Modal -->
     <div id="loginModal" class="modal" role="dialog" aria-hidden="true">
         <div class="modal-content">
@@ -98,7 +62,7 @@
                 </div>
                 <button type="submit" class="login-button">Login</button>
                 <a href="#" class="forgot-password">Forgot Password?</a>
-                <button type="button" class="register-button" onclick="window.location.href='register.html'">Register</button>
+                <button type="button" class="register-button">Register</button>
             </form>
         </div>
     </div>
@@ -111,27 +75,34 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const loginRegisterBtn = document.getElementById("loginRegisterBtn");
+            const loginBtn = document.getElementById("login-btn");
+            const registerBtn = document.getElementById("register-btn");
             const loginModal = document.getElementById("loginModal");
             const closeLoginModal = document.getElementById("closeLoginModal");
 
-            if (loginRegisterBtn && loginModal && closeLoginModal) {
-                // Open Login Modal when "Login | Register" button is clicked
-                loginRegisterBtn.addEventListener("click", function () {
-                    loginModal.classList.add("show");  
+            if (loginBtn && registerBtn && loginModal && closeLoginModal) {
+                // Open Login Modal when "Login" button is clicked
+                loginBtn.addEventListener("click", function () {
+                    loginModal.classList.add("show");
+                    loginModal.setAttribute("aria-hidden", "false");
+                });
+
+                // Open Login Modal when "Register" button is clicked
+                registerBtn.addEventListener("click", function () {
+                    loginModal.classList.add("show"); 
                     loginModal.setAttribute("aria-hidden", "false");
                 });
 
                 // Close Login Modal when 'X' button is clicked
                 closeLoginModal.addEventListener("click", function () {
-                    loginModal.classList.remove("show");  
+                    loginModal.classList.remove("show");
                     loginModal.setAttribute("aria-hidden", "true");
                 });
 
                 // Close Modal when clicking outside of it
                 window.addEventListener("click", function (event) {
                     if (event.target === loginModal) {
-                        loginModal.classList.remove("show");  
+                        loginModal.classList.remove("show");
                         loginModal.setAttribute("aria-hidden", "true");
                     }
                 });
@@ -139,7 +110,7 @@
                 // Close modal on Esc key press
                 document.addEventListener("keydown", function (event) {
                     if (event.key === "Escape" && loginModal.classList.contains("show")) {
-                        loginModal.classList.remove("show");  
+                        loginModal.classList.remove("show");
                         loginModal.setAttribute("aria-hidden", "true");
                     }
                 });

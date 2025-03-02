@@ -61,6 +61,33 @@ body {
     z-index: 1000;
 }
 
+.navbar .auth-links {
+    background: var(--button-bg);
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: background 0.3s ease-in-out, transform 0.2s;
+    display: inline-block;
+    text-align: center;
+}
+
+
+.navbar .auth-links a {
+    background: var(--button-bg);
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: background 0.3s ease-in-out, transform 0.2s;
+    display: inline-block;
+    text-align: center;
+}
+
 .theme-toggle-btn {
     background: var(--primary-color);
     color: white;
