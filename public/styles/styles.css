@@ -46,6 +46,9 @@ body {
     }
 }
 
+
+
+
 /* Navbar Styling */
 .navbar {
     background: #222;
@@ -61,47 +64,49 @@ body {
     z-index: 1000;
 }
 
-.navbar .auth-links {
+/* Navbar container */
+.navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+/* Authentication button (Login | Register) */
+.auth-btn {
     background: var(--button-bg);
     color: #fff;
-    text-decoration: none;
     font-weight: bold;
     font-size: 16px;
     padding: 10px 20px;
     border-radius: 8px;
     transition: background 0.3s ease-in-out, transform 0.2s;
+    border: none;
+    cursor: pointer;
     display: inline-block;
     text-align: center;
 }
 
-
-.navbar .auth-links a {
-    background: var(--button-bg);
-    color: #fff;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 16px;
-    padding: 10px 20px;
-    border-radius: 8px;
-    transition: background 0.3s ease-in-out, transform 0.2s;
-    display: inline-block;
-    text-align: center;
+.auth-btn:hover {
+    background: var(--hover-color);
+    transform: scale(1.05);
 }
 
-.theme-toggle-btn {
+/* Theme Toggle Button */
+#themeToggleBtn {
     background: var(--primary-color);
     color: white;
     padding: 8px 15px;
     border: none;
     cursor: pointer;
     border-radius: 5px;
-    transition: background 0.3s;
+    transition: background 0.3s, transform 0.2s;
 }
 
-.theme-toggle-btn:hover {
+#themeToggleBtn:hover {
     background: var(--hover-color);
+    transform: scale(1.1);
 }
-
 /* Login Page Styles */
 .login-container {
     display: flex;
