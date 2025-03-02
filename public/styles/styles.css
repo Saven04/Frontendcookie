@@ -67,6 +67,28 @@ body {
     z-index: 1000;
 }
 
+.navbar .auth-links {
+    display: flex;
+    gap: 15px; /* Spacing between Login & Register */
+}
+
+
+navbar .auth-links a {
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+    transition: color 0.3s ease-in-out;
+}
+
+
+.navbar .auth-links a:hover {
+    color: var(--accent-color);
+    text-decoration: underline;
+}
+
+
+
 .theme-toggle-btn {
     background: transparent;
     border: none;
