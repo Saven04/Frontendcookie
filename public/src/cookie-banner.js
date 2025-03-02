@@ -55,6 +55,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     let consentId = await fetchConsentId();
     let cookiesAccepted = getCookie("cookiesAccepted");
 
+    // Show cookie banner if not accepted
     if (!cookiesAccepted) {
         setTimeout(() => cookieBanner.classList.add("show"), 500);
     }
@@ -92,7 +93,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         cookiePreferencesModal.classList.remove("show");
     });
 
-    // Handle Cookie Consent
+    // Handle Cookie Consent and Preferences
     function handleCookieConsent(accepted, preferences = null) {
         preferences = preferences || {
             strictlyNecessary: true,
@@ -151,6 +152,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
+    // Send Location Data to Backend
     async function sendLocationDataToDB(locationData) {
         try {
             await fetch("https://backendcookie-8qc1.onrender.com/api/location", {

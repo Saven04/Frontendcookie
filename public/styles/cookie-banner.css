@@ -1,7 +1,7 @@
 /* Cookie Consent Banner */
 .cookie-banner {
     position: fixed;
-    top: -100px;
+    top: -100px; /* Starts off-screen */
     left: 50%;
     transform: translateX(-50%);
     width: 80%;
@@ -13,7 +13,7 @@
     justify-content: center;
     align-items: center;
     font-size: 0.9rem;
-    z-index: 1000;
+    z-index: 1000; /* Ensure it's on top */
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     flex-direction: column;
@@ -22,22 +22,26 @@
     transition: opacity 0.5s ease, top 0.5s ease;
 }
 
+/* When the banner is shown */
 .cookie-banner.show {
     opacity: 1;
-    top: 20px;
+    top: 20px; /* Moves the banner into view */
 }
 
+/* Cookie banner content styles */
 .cookie-banner-content p {
     margin: 0;
     line-height: 1.5;
     font-size: 1rem;
 }
 
+/* Cookie link style */
 .cookie-banner a {
     color: #6a11cb;
     text-decoration: underline;
 }
 
+/* Cookie button container */
 .cookie-buttons {
     display: flex;
     justify-content: center;
@@ -45,6 +49,7 @@
     margin-top: 10px;
 }
 
+/* Styling the cookie buttons */
 .cookie-buttons button {
     padding: 8px 15px;
     font-size: 0.9rem;
@@ -54,6 +59,7 @@
     transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
+/* Button styles */
 .accept-button {
     background-color: #4CAF50;
     color: white;
@@ -69,6 +75,7 @@
     color: white;
 }
 
+/* Hover effect for buttons */
 .cookie-buttons button:hover {
     opacity: 0.8;
     transform: scale(1.05);
@@ -82,16 +89,18 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.7); /* Dimmed background */
     justify-content: center;
     align-items: center;
-    z-index: 2000;
+    z-index: 2000; /* Ensure it's on top of the page content */
 }
 
+/* Show the modal */
 .cookie-preferences-modal.show {
     display: flex;
 }
 
+/* Modal content styling */
 .modal-content {
     background: rgba(0, 0, 0, 0.8);
     color: #fff;
@@ -102,16 +111,19 @@
     text-align: left;
 }
 
+/* Cookie category styling */
 .cookie-category {
     margin-bottom: 10px;
 }
 
+/* Modal buttons (Save/Cancel) */
 .modal-buttons {
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
 }
 
+/* Save/Cancel button styling */
 .save-button, .cancel-button {
     padding: 8px 15px;
     font-size: 0.9rem;
@@ -121,19 +133,40 @@
     transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
+/* Save button style */
 .save-button {
     background-color: #4CAF50;
     color: white;
 }
 
+/* Cancel button style */
 .cancel-button {
     background-color: #f44336;
     color: white;
 }
 
+/* Hover effect for modal buttons */
 .save-button:hover, .cancel-button:hover {
     opacity: 0.8;
     transform: scale(1.05);
 }
 
-/* Cookie Info Popup (Updated) */
+/* Optional: Styling for Cookie Info Popup (you can implement later) */
+.cookie-info-popup {
+    display: none;
+    position: fixed;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 600px;
+    width: 80%;
+    z-index: 3000;
+}
+
+.cookie-info-popup.show {
+    display: block;
+}
