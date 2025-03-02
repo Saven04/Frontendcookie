@@ -7,48 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    // Select modal element
-    const authModalEl = document.getElementById("authModal");
-    if (authModalEl) {
-        console.log("✅ Auth Modal found.");
-
-        // Initialize Bootstrap modal
-        const authModal = new bootstrap.Modal(authModalEl, { keyboard: false });
-
-        // Show Login Popup Only for New Users
-        if (!isUserLoggedIn() && !sessionStorage.getItem("authModalShown")) {
-            setTimeout(() => {
-                console.log("🟢 Showing auth modal...");
-                authModal.show();
-                sessionStorage.setItem("authModalShown", "true");
-            }, 5000); // Show after 5 seconds
-        }
-
-        // Attach event listeners for modal opening
-        const authModalTrigger = document.getElementById("authModalTrigger");
-        if (authModalTrigger) {
-            authModalTrigger.addEventListener("click", () => {
-                console.log("🟢 Login trigger clicked. Showing modal.");
-                authModal.show();
-            });
-        } else {
-            console.warn("⚠️ authModalTrigger button not found.");
-        }
-
-        // Attach event listeners for modal closing
-        const closeAuthModal = document.getElementById("closeAuthModal");
-        if (closeAuthModal) {
-            closeAuthModal.addEventListener("click", () => {
-                console.log("🔴 Closing auth modal.");
-                authModal.hide();
-            });
-        } else {
-            console.warn("⚠️ closeAuthModal button not found.");
-        }
-    } else {
-        console.warn("⚠️ Auth Modal (#authModal) not found in the DOM.");
-    }
-
+    
     // Attach event listeners for login and signup forms
     const loginForm = document.getElementById("loginForm");
     if (loginForm) {
@@ -70,9 +29,6 @@ document.addEventListener("DOMContentLoaded", () => {
     handleCookieBanner();
 });
 
-/**
- * Helper function to check if user is logged in.
- */
 function isUserLoggedIn() {
     const token = localStorage.getItem("token");
     return token && token !== "undefined";
