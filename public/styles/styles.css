@@ -6,7 +6,7 @@
 }
 
 body {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Roboto', sans-serif; /* Assuming you have the local font files set up */
     background-color: var(--bg-color);
     color: var(--text-color);
     transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
@@ -32,6 +32,15 @@ body {
     --text-color: #333;
     --card-bg: rgba(255, 255, 255, 0.9);
     --input-bg: #ddd;
+}
+
+/* Import Local Font Files (add this at the top of your CSS) */
+@font-face {
+    font-family: 'Roboto';
+    src: url('fonts/Roboto-Regular.ttf') format('truetype'),
+         url('fonts/Roboto-Bold.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
 }
 
 /* Fade-in Animation */
