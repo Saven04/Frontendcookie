@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Professional Login Page</title>
+    <link rel="stylesheet" href="./public/styles/styles.css">
     <link rel="stylesheet" href="./public/styles/cookie-banner.css">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.3/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="./public/styles/customize.css">
@@ -151,48 +152,38 @@
     <script>
     
     document.addEventListener("DOMContentLoaded", () => {
-    // Login Modal
-    const authModal = document.getElementById("authModal");
-    const authModalTrigger = document.getElementById("authModalTrigger");
-    const closeAuthModal = document.getElementById("closeAuthModal");
-
-    if (authModalTrigger) {
-        authModalTrigger.addEventListener("click", () => {
-            authModal.classList.remove("hidden");
-        });
-    }
-
-    if (closeAuthModal) {
-        closeAuthModal.addEventListener("click", () => {
-            authModal.classList.add("hidden");
-        });
-    }
-
-    if (authModal) {
-        authModal.addEventListener("click", (event) => {
-            if (event.target === authModal) {
-                authModal.classList.add("hidden");
-            }
-        });
-    }
-
-    // Settings Dropdown
-    const settingsDropdown = document.getElementById("settingsDropdown");
-    const dropdownMenu = settingsDropdown.nextElementSibling;
-
-    if (settingsDropdown) {
-        settingsDropdown.addEventListener("click", () => {
-            dropdownMenu.classList.toggle("hidden");
-        });
-    }
-
-    // Close dropdown when clicking outside
-    document.addEventListener("click", (event) => {
-        if (!settingsDropdown.contains(event.target)) {
-            dropdownMenu.classList.add("hidden");
+        // Select the modal and trigger button
+        const authModal = document.getElementById("authModal");
+        const authModalTrigger = document.getElementById("authModalTrigger");
+        const closeAuthModal = document.getElementById("closeAuthModal");
+    
+        // Open the modal when the "Login | Register" button is clicked
+        if (authModalTrigger) {
+            authModalTrigger.addEventListener("click", () => {
+                authModal.style.display = "flex"; // Show the modal
+                document.body.style.overflow = "hidden"; // Prevent scrolling
+            });
+        }
+    
+        // Close the modal when the close button is clicked
+        if (closeAuthModal) {
+            closeAuthModal.addEventListener("click", () => {
+                authModal.style.display = "none"; // Hide the modal
+                document.body.style.overflow = "auto"; // Restore scrolling
+            });
+        }
+    
+        // Close the modal when clicking outside the modal content
+        if (authModal) {
+            authModal.addEventListener("click", (event) => {
+                if (event.target === authModal) {
+                    authModal.style.display = "none"; // Hide the modal
+                    document.body.style.overflow = "auto"; // Restore scrolling
+                }
+            });
         }
     });
-});
+    
     </script>
 
     <!-- JavaScript -->
