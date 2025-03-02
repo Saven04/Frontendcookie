@@ -224,7 +224,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const response = await fetch("https://backendcookie-8qc1.onrender.com/api/register", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ username, password }),
+                    body: JSON.stringify({ username, password,consentId}),
                 });
 
                 const data = await response.json();
