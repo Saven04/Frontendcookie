@@ -10,23 +10,17 @@
     <link rel="stylesheet" href="./public/styles/cookie-banner.css">
     <link rel="stylesheet" href="./public/styles/customize.css">
 </head>
-   
-
 
 <body>
 
     <nav class="navbar">
         <div class="navbar-container">
-            <button id="loginRegisterBtn" class="login-register-btn" aria-haspopup="dialog" aria-controls="loginModal">
-            Login | Register
+            <button id="loginRegisterBtn" class="login-register-btn" aria-haspopup="dialog" aria-controls="loginModal" role="button">
+                Login | Register
             </button>
-            <button id="themeToggleBtn">☀️ Light Mode</button>
-
+            <button id="themeToggleBtn" aria-label="Toggle Light/Dark Mode">☀️ Light Mode</button>
         </div>
     </nav>
-    
-
-
 
     <!-- Cookie Consent Banner -->
     <div id="cookieConsent" class="cookie-banner">
@@ -41,7 +35,7 @@
                 <a href="privacy-policy.html" target="_blank">Privacy Policy</a>, and  
                 <a href="terms-of-service.html" target="_blank">Terms of Service</a>.
             </p>
-    
+
             <!-- Buttons -->
             <div class="cookie-buttons">
                 <button id="acceptCookies" class="accept-button" aria-label="Accept all cookies">Accept All</button>
@@ -52,33 +46,33 @@
     </div>
 
     <!-- Cookie Preferences Modal -->
-    <div id="cookiePreferencesModal" class="cookie-preferences-modal">
+    <div id="cookiePreferencesModal" class="cookie-preferences-modal" role="dialog" aria-hidden="true">
         <div class="modal-content">
             <h1>Customize Your Preferences</h1>
             <br>
             <div class="cookie-category">
                 <input type="checkbox" id="strictlyNecessary" checked disabled>
-                <label for="strictlyNecessary" class="cookie-label" data-cookie-type="strictlyNecessary" data-info="Strictly necessary cookies are essential for the website's basic functionalities. These cookies ensure the site functions properly. <a href= cookie-policy.html target='_blank'>Learn More</a>">Strictly Necessary Cookies (Required for website functionality)</label>
+                <label for="strictlyNecessary">Strictly Necessary Cookies (Required for website functionality)</label>
             </div>
             <br>
             <div class="cookie-category">
                 <input type="checkbox" id="performance">
-                <label for="performance" class="cookie-label" data-cookie-type="performance" data-info="Performance cookies help us understand how visitors interact with our website. These cookies are used to improve website performance and functionality. <a href= cookie-policy.html target='_blank'>Learn More</a>">Performance (Analytical) Cookies</label>
+                <label for="performance">Performance (Analytical) Cookies</label>
             </div>
             <br>
             <div class="cookie-category">
                 <input type="checkbox" id="functional">
-                <label for="functional" class="cookie-label" data-cookie-type="functional" data-info="Functional cookies allow the website to remember your preferences and personalize the user experience. <a href= cookie-policy.html target='_blank'>Learn More</a>">Functional Cookies (Preferences)</label>
+                <label for="functional">Functional Cookies (Preferences)</label>
             </div>
             <br>
             <div class="cookie-category">
                 <input type="checkbox" id="advertising">
-                <label for="advertising" class="cookie-label" data-cookie-type="advertising" data-info="Advertising cookies help us provide you with personalized ads based on your interests and browsing history. <a href= cookie-policy.html target='_blank'>Learn More</a>">Advertising (Targeting) Cookies</label>
+                <label for="advertising">Advertising (Targeting) Cookies</label>
             </div>
             <br>
             <div class="cookie-category">
                 <input type="checkbox" id="socialMedia">
-                <label for="socialMedia" class="cookie-label" data-cookie-type="socialMedia" data-info="Social Media cookies allow you to share content and interact with social media platforms like Facebook and Twitter. <a href= cookie-policy.html target='_blank'>Learn More</a>">Social Media Cookies</label>
+                <label for="socialMedia">Social Media Cookies</label>
             </div>
             <br>
             <div class="modal-buttons">
@@ -88,64 +82,19 @@
         </div>
     </div>
 
-    <!-- Cookie Info Modal (For showing explanations about cookies) -->
-    <div id="cookieInfoModal" class="cookie-info-modal">
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal" role="dialog" aria-hidden="true">
         <div class="modal-content">
-            <p id="cookieInfoText"></p>
-            <button id="closeModalButton" class="close-modal-button">Close</button>
-        </div>
-    </div>
-
-    <!-- Cookie Policy Modal -->
-    <div id="cookiePolicyModal" class="cookie-policy-modal">
-        <div class="modal-content">
-            <h1>Cookie Policy</h1>
-            <br>
-            <p>
-                Our website uses cookies to improve your experience. Cookies are small text files stored on your device that help us analyze web traffic, personalize content, and provide relevant ads. By using our website, you consent to the use of cookies in accordance with this policy.
-            </p>
-            <br>
-            <br>
-            <h2>Types of Cookies We Use</h2>
-            <br>
-            <ul>
-                <li><strong>Strictly Necessary Cookies:</strong> These are essential for the website to function properly.</li>
-                <br>
-                <li><strong>Performance Cookies:</strong> These help us understand how visitors interact with our website.</li>
-                <br>
-                <li><strong>Functional Cookies:</strong> These allow the website to remember your preferences.</li>
-                <br>
-                <li><strong>Advertising Cookies:</strong> These help us deliver personalized ads based on your interests.</li>
-                <br>
-                <li><strong>Social Media Cookies:</strong> These enable you to share content on social media platforms.</li>
-            </ul>
-            <br>
-            <br>
-            <p>
-                For more details, please read our full <a href="cookie-policy.html" target="_blank">  Cookie Policy</a>
-            </p>
-            <br>
-            <br>
-            <button id="closeCookiePolicyModal" class="close-modal-button">Close</button>
-
-        </div>
-    </div>
-
-
-
-      <!-- Login Modal -->
-      <div id="loginModal" class="modal" role="dialog" aria-hidden="true" aria-labelledby="loginTitle">
-        <div class="modal-content">
-            <button class="close" id="closeLoginModal" aria-label="Close">&times;</button>
-            <h2 id="loginTitle">Login to Your Account</h2>
+            <button class="close" id="closeLoginModal" aria-label="Close Login Modal">&times;</button>
+            <h2>Login to Your Account</h2>
             <form id="loginForm">
                 <div class="input-group">
                     <label for="email">Email or Username</label>
-                    <input type="text" id="email" placeholder="Enter your email" required />
+                    <input type="text" id="email" placeholder="Enter your email" required>
                 </div>
                 <div class="input-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" placeholder="Enter your password" required />
+                    <input type="password" id="password" placeholder="Enter your password" required>
                 </div>
                 <button type="submit" class="login-button">Login</button>
                 <a href="#" class="forgot-password">Forgot Password?</a>
@@ -161,35 +110,40 @@
     <script src="./public/src/theme-toggle.js"></script>
 
     <script>
-       document.addEventListener("DOMContentLoaded", function () {
-    const loginRegisterBtn = document.getElementById("loginRegisterBtn");
-    const loginModal = document.getElementById("loginModal");
-    const closeLoginModal = document.getElementById("closeLoginModal");
+        document.addEventListener("DOMContentLoaded", function () {
+            const loginRegisterBtn = document.getElementById("loginRegisterBtn");
+            const loginModal = document.getElementById("loginModal");
+            const closeLoginModal = document.getElementById("closeLoginModal");
 
-    // Open Login Modal when "Login | Register" button is clicked
-    loginRegisterBtn.addEventListener("click", function () {
-        loginModal.style.display = "block"; 
-        loginModal.setAttribute("aria-hidden", "false"); // Accessibility improvement
-    });
+            // Open Login Modal when "Login | Register" button is clicked
+            loginRegisterBtn.addEventListener("click", function () {
+                loginModal.style.display = "block";
+                loginModal.setAttribute("aria-hidden", "false");
+            });
 
-    // Close Login Modal when 'X' button is clicked
-    closeLoginModal.addEventListener("click", function () {
-        loginModal.style.display = "none"; 
-        loginModal.setAttribute("aria-hidden", "true");
-    });
+            // Close Login Modal when 'X' button is clicked
+            closeLoginModal.addEventListener("click", function () {
+                loginModal.style.display = "none";
+                loginModal.setAttribute("aria-hidden", "true");
+            });
 
-    // Close Modal when clicking outside of it
-    window.addEventListener("click", function (event) {
-        if (event.target === loginModal) {
-            loginModal.style.display = "none"; 
-            loginModal.setAttribute("aria-hidden", "true");
-        }
-    });
-});
+            // Close Modal when clicking outside of it
+            window.addEventListener("click", function (event) {
+                if (event.target === loginModal) {
+                    loginModal.style.display = "none";
+                    loginModal.setAttribute("aria-hidden", "true");
+                }
+            });
+
+            // Close modal on Esc key press
+            document.addEventListener("keydown", function (event) {
+                if (event.key === "Escape" && loginModal.getAttribute("aria-hidden") === "false") {
+                    loginModal.style.display = "none";
+                    loginModal.setAttribute("aria-hidden", "true");
+                }
+            });
+        });
     </script>
-
-
-  
 
 </body>
 
