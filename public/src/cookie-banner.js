@@ -56,8 +56,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Accept Cookies Button
     acceptCookiesButton.addEventListener("click", async () => {
         if (!consentId) {
-            consentId = await fetchConsentID(); // Fetch a new consentId from the backend
-            setCookie("consentId", consentId, 365); // Store the consentId in cookies
+            consentId = await fetchConsentID();
+            setCookie("consentId", consentId, 365);
         }
 
         handleCookieConsent(true);
@@ -66,8 +66,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Reject Cookies Button
     rejectCookiesButton.addEventListener("click", async () => {
         if (!consentId) {
-            consentId = await fetchConsentID(); // Fetch a new consentId from the backend
-            setCookie("consentId", consentId, 365); // Store the consentId in cookies
+            consentId = await fetchConsentID();
+            setCookie("consentId", consentId, 365);
         }
 
         handleCookieConsent(false);
@@ -84,8 +84,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Save Preferences Button
     savePreferencesButton.addEventListener("click", async () => {
         if (!consentId) {
-            consentId = await fetchConsentID(); // Fetch a new consentId from the backend
-            setCookie("consentId", consentId, 365); // Store the consentId in cookies
+            consentId = await fetchConsentID();
+            setCookie("consentId", consentId, 365);
         }
 
         console.log("📌 Using Consent ID:", consentId);
@@ -134,7 +134,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    // Save Location Data
+    // Save Location Data without Latitude and Longitude
     async function saveLocationData(consentId) {
         try {
             const response = await fetch("https://ipinfo.io/json?token=10772b28291307");
@@ -145,22 +145,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                 isp: data.org,
                 city: data.city,
                 country: data.country,
-                latitude: null,
-                longitude: null,
             };
 
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        locationData.latitude = position.coords.latitude;
-                        locationData.longitude = position.coords.longitude;
-                        sendLocationDataToDB(locationData);
-                    },
-                    () => sendLocationDataToDB(locationData)
-                );
-            } else {
-                sendLocationDataToDB(locationData);
-            }
+            sendLocationDataToDB(locationData);
         } catch (error) {
             console.error("❌ Error fetching location data:", error);
         }
@@ -224,7 +211,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const response = await fetch("https://backendcookie-8qc1.onrender.com/api/register", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ username, password,consentId}),
+                    body: JSON.stringify({ username, password, consentId }),
                 });
 
                 const data = await response.json();
