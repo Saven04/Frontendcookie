@@ -161,31 +161,31 @@
     <script src="./public/src/theme-toggle.js"></script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const loginRegisterBtn = document.getElementById("loginRegisterBtn");
-            const loginModal = document.getElementById("loginModal");
-            const closeLoginModal = document.getElementById("closeLoginModal");
+       document.addEventListener("DOMContentLoaded", function () {
+    const loginRegisterBtn = document.getElementById("loginRegisterBtn");
+    const loginModal = document.getElementById("loginModal");
+    const closeLoginModal = document.getElementById("closeLoginModal");
 
-            // Show login modal
-            loginRegisterBtn.addEventListener("click", () => {
-                loginModal.classList.remove("hidden");
-                loginModal.setAttribute("aria-hidden", "false");
-            });
+    // Open Login Modal when "Login | Register" button is clicked
+    loginRegisterBtn.addEventListener("click", function () {
+        loginModal.style.display = "block"; 
+        loginModal.setAttribute("aria-hidden", "false"); // Accessibility improvement
+    });
 
-            // Hide login modal when clicking close button
-            closeLoginModal.addEventListener("click", () => {
-                loginModal.classList.add("hidden");
-                loginModal.setAttribute("aria-hidden", "true");
-            });
+    // Close Login Modal when 'X' button is clicked
+    closeLoginModal.addEventListener("click", function () {
+        loginModal.style.display = "none"; 
+        loginModal.setAttribute("aria-hidden", "true");
+    });
 
-            // Hide login modal when clicking outside
-            window.addEventListener("click", (event) => {
-                if (event.target === loginModal) {
-                    loginModal.classList.add("hidden");
-                    loginModal.setAttribute("aria-hidden", "true");
-                }
-            });
-        });
+    // Close Modal when clicking outside of it
+    window.addEventListener("click", function (event) {
+        if (event.target === loginModal) {
+            loginModal.style.display = "none"; 
+            loginModal.setAttribute("aria-hidden", "true");
+        }
+    });
+});
     </script>
 
 
