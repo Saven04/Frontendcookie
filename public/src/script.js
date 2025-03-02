@@ -21,24 +21,35 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.log("🟢 Showing auth modal...");
                 authModal.show();
                 sessionStorage.setItem("authModalShown", "true");
-            }, 5000);
+            }, 5000); // Show after 5 seconds
         }
 
-        // Attach event listeners safely
-        document.getElementById("authModalTrigger")?.addEventListener("click", () => {
-            console.log("🟢 Login trigger clicked. Showing modal.");
-            authModal.show();
-        });
+        // Attach event listeners for modal opening
+        const authModalTrigger = document.getElementById("authModalTrigger");
+        if (authModalTrigger) {
+            authModalTrigger.addEventListener("click", () => {
+                console.log("🟢 Login trigger clicked. Showing modal.");
+                authModal.show();
+            });
+        } else {
+            console.warn("⚠️ authModalTrigger button not found.");
+        }
 
-        document.getElementById("closeAuthModal")?.addEventListener("click", () => {
-            console.log("🔴 Closing auth modal.");
-            authModal.hide();
-        });
+        // Attach event listeners for modal closing
+        const closeAuthModal = document.getElementById("closeAuthModal");
+        if (closeAuthModal) {
+            closeAuthModal.addEventListener("click", () => {
+                console.log("🔴 Closing auth modal.");
+                authModal.hide();
+            });
+        } else {
+            console.warn("⚠️ closeAuthModal button not found.");
+        }
     } else {
         console.warn("⚠️ Auth Modal (#authModal) not found in the DOM.");
     }
 
-    // Attach event listeners safely for login and signup forms
+    // Attach event listeners for login and signup forms
     const loginForm = document.getElementById("loginForm");
     if (loginForm) {
         loginForm.addEventListener("submit", handleLogin);
@@ -86,6 +97,8 @@ function handleLogin(event) {
     // Simulate a login process
     console.log("Logging in with", email, password);
     // Your login logic goes here (e.g., API call to authenticate)
+    // On success, you can store the user token:
+    // localStorage.setItem("token", userToken);
 }
 
 /**
