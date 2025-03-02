@@ -69,31 +69,7 @@
     <script type="module" src="public/src/cookie-banner.js"></script>
     <script src="public/src/theme-toggle.js"></script>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const loginModal = document.getElementById("loginModal");
-            const loginRegisterBtn = document.getElementById("loginRegisterBtn");
-            const closeLoginModal = document.getElementById("closeLoginModal");
-
-            function toggleModal(open) {
-                loginModal.style.display = open ? "flex" : "none";
-                loginModal.setAttribute("aria-hidden", !open);
-            }
-
-            loginRegisterBtn.addEventListener("click", () => toggleModal(true));
-            closeLoginModal.addEventListener("click", () => toggleModal(false));
-
-            window.addEventListener("click", (event) => {
-                if (event.target === loginModal) toggleModal(false);
-            });
-
-            document.addEventListener("keydown", (event) => {
-                if (event.key === "Escape" && loginModal.style.display === "flex") {
-                    toggleModal(false);
-                }
-            });
-        });
-    </script>
+  
 
 </body>
 
