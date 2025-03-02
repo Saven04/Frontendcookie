@@ -46,9 +46,6 @@ body {
     }
 }
 
-
-
-
 /* Navbar Styling */
 .navbar {
     background: #222;
@@ -108,37 +105,49 @@ body {
     transform: scale(1.05);
 }
 
-
-
-
-.dropdown-menu {
-    min-width: 200px;
-}
-
-/* Submenu Styling */
-.dropdown-submenu {
-    position: relative;
-}
-
-.dropdown-submenu .submenu {
+/* Modal Styling */
+.modal {
     display: none;
-    position: absolute;
-    left: 100%;
+    position: fixed;
+    z-index: 1050; /* Increased z-index */
+    left: 0;
     top: 0;
-    background-color: white;
-    border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    overflow: auto; /* Ensure modal doesn't affect scrolling */
 }
 
-.dropdown-submenu:hover .submenu {
-    display: block;
+.modal.show {
+    display: flex; /* Show modal when 'show' class is added */
 }
 
-/* Dark Mode Styling */
-.dark-mode {
-    background-color: #121212 !important;
-    color: white !important;
+.modal-content {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    position: relative;
+    animation: fadeIn 0.6s ease-in-out;
 }
+
+.close {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--text-color);
+}
+
+.close:hover {
+    color: var(--primary-color);
+}
+
 /* Login Page Styles */
 .login-container {
     display: flex;
@@ -150,13 +159,6 @@ body {
     padding: 30px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
     animation: fadeIn 0.6s ease-in-out;
-}
-
-.card-header h2 {
-    text-align: center;
-    font-size: 28px;
-    margin-bottom: 20px;
-    color: var(--text-color);
 }
 
 /* Input Styles */
@@ -264,48 +266,16 @@ body {
     margin-right: 10px;
 }
 
-/* Modal Styling */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    justify-content: center;
-    align-items: center;
-}
-
-.modal-content {
-    background: var(--card-bg);
-    padding: 20px;
-    border-radius: 8px;
-    max-width: 400px;
-    width: 90%;
-    text-align: center;
-    position: relative;
-    animation: fadeIn 0.6s ease-in-out;
-}
-
-.close {
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    font-size: 24px;
-    cursor: pointer;
-    color: var(--text-color);
-}
-
-.close:hover {
-    color: var(--primary-color);
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
     .login-container {
         width: 90%;
         padding: 20px;
     }
+
+    .modal-content {
+        width: 95%;
+        max-width: 380px;
+    }
 }
+
