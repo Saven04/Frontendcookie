@@ -22,9 +22,58 @@
             <button id="themeToggleBtn" aria-label="Toggle Light/Dark Mode">☀️</button>
         </div>
     </nav>
-    
 
-    <!-- Cookie Consent Banner -->
+    <!-- Login & Register Modal -->
+    <div id="authModal" class="modal" role="dialog" aria-hidden="true">
+        <div class="modal-content">
+            <button class="close" id="closeAuthModal" aria-label="Close Modal">&times;</button>
+
+            <!-- Login Form -->
+            <div id="loginContainer">
+                <h2>Login to Your Account</h2>
+                <form id="loginForm">
+                    <div class="input-group">
+                        <label for="auth-email">Email or Username</label>
+                        <input type="text" id="auth-email" placeholder="Enter your email" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="auth-password">Password</label>
+                        <input type="password" id="auth-password" placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit" class="login-button">Login</button>
+                    <a href="#" class="forgot-password">Forgot Password?</a>
+                    <p>Don't have an account? <button type="button" id="switchToRegister" class="register-link">Register</button></p>
+                </form>
+            </div>
+
+            <!-- Register Form (Initially Hidden) -->
+            <div id="registerContainer" style="display: none;">
+                <h2>Create an Account</h2>
+                <form id="registerForm">
+                    <div class="input-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" placeholder="Enter your username" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" placeholder="Enter your email" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" placeholder="Enter your password" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
+                    </div>
+                    <button type="submit" class="login-button">Register</button>
+                    <p>Already have an account? <button type="button" id="switchToLogin" class="register-link">Login</button></p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cookie Banner -->
     <div id="cookieConsent" class="cookie-banner">
         <div class="cookie-banner-content">
             <p><strong>We value your privacy!</strong><br>  
@@ -37,12 +86,10 @@
                 <a href="privacy-policy.html" target="_blank">Privacy Policy</a>, and  
                 <a href="terms-of-service.html" target="_blank">Terms of Service</a>.
             </p>
-
-            <!-- Buttons -->
             <div class="cookie-buttons">
-                <button id="acceptCookies" class="accept-button" aria-label="Accept all cookies">Accept All</button>
-                <button id="rejectCookies" class="reject-button" aria-label="Reject all cookies">Reject All</button>
-                <button id="customizeCookies" class="customize-button" aria-label="Customize cookie preferences">Customize</button>
+                <button id="acceptCookies" class="accept-button">Accept All</button>
+                <button id="rejectCookies" class="reject-button">Reject All</button>
+                <button id="customizeCookies" class="customize-button">Customize</button>
             </div>
         </div>
     </div>
@@ -94,60 +141,7 @@
         </div>
     
 
-    <!-- Login Modal -->
-    <div id="authModal" class="modal" role="dialog" aria-hidden="true">
-        <div class="modal-content">
-            <button class="close" id="closeAuthModal" aria-label="Close Login Modal">&times;</button>
-            <h2>Login to Your Account</h2>
-            <form id="loginForm">
-                <div class="input-group">
-                    <label for="auth-email">Email or Username</label>
-                    <input type="text" id="auth-email" placeholder="Enter your email" required>
-                </div>
-                <div class="input-group">
-                    <label for="auth-password">Password</label>
-                    <input type="password" id="auth-password" placeholder="Enter your password" required>
-                </div>
-                <button type="submit" class="login-button">Login</button>
-                <a href="#" class="forgot-password">Forgot Password?</a>
-                <a href="register.html" class="register-button">Register</a>
-
-            </form>
-        </div>
-    </div>
-
-
-    <div class="login-container">
-        <div class="login-card">
-            <div class="card-header">
-                <h2>Create an Account</h2>
-            </div>
-            <form id="registerForm">
-                <div class="input-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" placeholder="Enter your username" required>
-                </div>
-                <div class="input-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" placeholder="Enter your email" required>
-                </div>
-                <div class="input-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" placeholder="Enter your password" required>
-                </div>
-                <div class="input-group">
-                    <label for="confirmPassword">Confirm Password</label>
-                    <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
-                </div>
-                <button type="submit" class="login-button">Register</button>
-            </form>
-            <p>Already have an account? <a href="index.html">Login here</a></p>
-        </div>
-    </div>
-
-    
-
-    <!-- Include JavaScript -->
+    <!-- JavaScript -->
     <script src="./public/src/main.js"></script>
     <script src="./public/src/script.js"></script>
     <script src="./public/src/register.js"></script>
@@ -155,40 +149,56 @@
     <script type="module" src="./public/src/cookie-banner.js"></script>
     <script src="./public/src/theme-toggle.js"></script>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const authModal = document.getElementById("authModal");
+            const authModalTrigger = document.getElementById("authModalTrigger");
+            const closeAuthModal = document.getElementById("closeAuthModal");
+            const loginContainer = document.getElementById("loginContainer");
+            const registerContainer = document.getElementById("registerContainer");
+            const switchToRegister = document.getElementById("switchToRegister");
+            const switchToLogin = document.getElementById("switchToLogin");
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-    const authModal = document.getElementById("authModal");
-    const authModalTrigger = document.getElementById("authModalTrigger"); // Button to open modal
-    const closeAuthModal = document.getElementById("closeAuthModal");
+            if (!authModal || !authModalTrigger || !closeAuthModal) {
+                console.error("Modal elements not found! Check your HTML IDs.");
+                return;
+            }
 
-    if (!authModal || !authModalTrigger || !closeAuthModal) {
-        console.error("Modal elements not found! Check your HTML IDs.");
-        return;
-    }
+            // Open Modal
+            authModalTrigger.addEventListener("click", function () {
+                authModal.style.display = "block";
+                authModal.setAttribute("aria-hidden", "false");
+                loginContainer.style.display = "block";
+                registerContainer.style.display = "none";
+            });
 
-    // Open Modal
-    authModalTrigger.addEventListener("click", function () {
-        authModal.style.display = "block";
-        authModal.setAttribute("aria-hidden", "false");
-    });
+            // Close Modal
+            closeAuthModal.addEventListener("click", function () {
+                authModal.style.display = "none";
+                authModal.setAttribute("aria-hidden", "true");
+            });
 
-    // Close Modal
-    closeAuthModal.addEventListener("click", function () {
-        authModal.style.display = "none";
-        authModal.setAttribute("aria-hidden", "true");
-    });
+            // Switch to Register Form
+            switchToRegister.addEventListener("click", function () {
+                loginContainer.style.display = "none";
+                registerContainer.style.display = "block";
+            });
 
-    // Close Modal on Outside Click
-    window.addEventListener("click", function (event) {
-        if (event.target === authModal) {
-            authModal.style.display = "none";
-            authModal.setAttribute("aria-hidden", "true");
-        }
-    });
-});
+            // Switch to Login Form
+            switchToLogin.addEventListener("click", function () {
+                loginContainer.style.display = "block";
+                registerContainer.style.display = "none";
+            });
 
-</script>
+            // Close modal on outside click
+            window.addEventListener("click", function (event) {
+                if (event.target === authModal) {
+                    authModal.style.display = "none";
+                    authModal.setAttribute("aria-hidden", "true");
+                }
+            });
+        });
+    </script>
 
 </body>
 
