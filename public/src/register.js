@@ -111,7 +111,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         const response = await fetch("https://backendcookie-8qc1.onrender.com/api/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, email, password, consentId }), // Include consentId in request
+            body: JSON.stringify({ username, email, password }), // Include consentId in request
         });
 
         const data = await response.json();
