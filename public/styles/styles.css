@@ -133,16 +133,21 @@ body {
 .login-button, .register-button {
     background: var(--button-bg);
     color: #fff;
-    padding: 8px 15px;
+    padding: 12px 20px;  /* Increased padding for better UI */
     border: none;
     cursor: pointer;
-    border-radius: 5px;
-    transition: background 0.3s;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    display: inline-block; /* Ensures buttons are properly displayed */
+    width: 100%;
+    transition: background 0.3s, transform 0.2s;
 }
 
 .login-button:hover, .register-button:hover {
     background: var(--button-hover-bg);
-   
+    transform: scale(1.05);
 }
 
 /* Forgot Password */
