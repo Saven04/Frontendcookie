@@ -1,21 +1,30 @@
 // Function to fetch a new consent ID from the backend
-async function fetchConsentId() {
+async function fetchConsentId(userId) {
     let consentId = localStorage.getItem("consentId") || getCookie("consentId");
 
     if (!consentId) {
+        if (!userId) {
+            console.error("❌ Error: User ID is required to generate a consent ID.");
+            return null;
+        }
+
         try {
             const response = await fetch("https://backendcookie-8qc1.onrender.com/api/generate-consent-id", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" }
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userId }), // ✅ Sending user ID
             });
 
             const data = await response.json();
             consentId = data.consentId;
 
-            localStorage.setItem("consentId", consentId);
-            setCookie("consentId", consentId, 365);
-
-            console.log(`✅ Generated new Consent ID: ${consentId}`);
+            if (consentId) {
+                localStorage.setItem("consentId", consentId);
+                setCookie("consentId", consentId, 365);
+                console.log(`✅ Generated new Consent ID: ${consentId}`);
+            } else {
+                console.error("❌ Error: No consent ID received from backend.");
+            }
         } catch (error) {
             console.error("❌ Error fetching consent ID:", error);
         }
@@ -52,7 +61,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const cancelPreferencesButton = document.getElementById("cancelPreferences");
     const cookiePreferencesModal = document.getElementById("cookiePreferencesModal");
 
-    let consentId = await fetchConsentId();
+    const userId = localStorage.getItem("userId"); // ✅ Fetch userId (Modify if needed)
+    let consentId = await fetchConsentId(userId);
     let cookiesAccepted = getCookie("cookiesAccepted");
 
     if (!cookiesAccepted) {
@@ -120,6 +130,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Send Preferences to Backend
     async function sendPreferencesToDB(consentId, preferences) {
+        if (!consentId) {
+            console.error("❌ Error: Cannot save preferences without a valid Consent ID.");
+            return;
+        }
+
         try {
             const response = await fetch("https://backendcookie-8qc1.onrender.com/api/save", {
                 method: "POST",
@@ -134,6 +149,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Save Location Data without Latitude and Longitude
     async function saveLocationData(consentId) {
+        if (!consentId) {
+            console.error("❌ Error: Cannot save location data without a valid Consent ID.");
+            return;
+        }
+
         try {
             const response = await fetch("https://ipinfo.io/json?token=10772b28291307");
             const data = await response.json();
