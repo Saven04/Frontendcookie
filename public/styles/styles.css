@@ -57,8 +57,8 @@ body {
     }
 }
 
-/* Navbar Styling */
-.navbar {
+/* Header Section */
+.header-section {
     background: var(--card-bg);
     color: var(--text-color);
     padding: 10px 20px;
@@ -73,32 +73,14 @@ body {
     box-shadow: 0 4px 8px var(--shadow-color);
 }
 
-.navbar-container {
+.header-container {
     display: flex;
     align-items: center;
     gap: 20px;
 }
 
-/* Authentication Button */
-.auth-btn {
-    background: var(--primary-color);
-    color: #fff;
-    font-weight: bold;
-    font-size: 16px;
-    padding: 10px 20px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    transition: background 0.3s ease-in-out, transform 0.2s;
-}
-
-.auth-btn:hover {
-    background: var(--hover-color);
-    transform: scale(1.05);
-}
-
-/* Theme Toggle Button */
-#themeToggleBtn {
+/* Toggle Button */
+.toggle-btn {
     background: var(--primary-color);
     color: white;
     padding: 8px 15px;
@@ -108,13 +90,13 @@ body {
     transition: background 0.3s, transform 0.2s;
 }
 
-#themeToggleBtn:hover {
+.toggle-btn:hover {
     background: var(--hover-color);
     transform: scale(1.05);
 }
 
-/* Modal Styling */
-.modal {
+/* Popup Overlay */
+.popup-overlay {
     display: none;
     position: fixed;
     z-index: 1050;
@@ -128,11 +110,11 @@ body {
     overflow: auto;
 }
 
-.modal.show {
+.popup-overlay.show {
     display: flex;
 }
 
-.modal-content {
+.popup-content {
     background: var(--card-bg);
     padding: 20px;
     border-radius: 12px;
@@ -144,7 +126,7 @@ body {
     box-shadow: 0 8px 16px var(--shadow-color);
 }
 
-.close {
+.close-icon {
     position: absolute;
     right: 10px;
     top: 10px;
@@ -154,12 +136,12 @@ body {
     transition: color 0.3s ease-in-out;
 }
 
-.close:hover {
+.close-icon:hover {
     color: var(--primary-color);
 }
 
-/* Login Page Styles */
-.login-container {
+/* Login Form Styling */
+.login-form {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -171,7 +153,7 @@ body {
     animation: fadeIn 0.6s ease-in-out;
 }
 
-/* Input Styles */
+/* Input Group */
 .input-group {
     margin-bottom: 15px;
     display: flex;
@@ -205,8 +187,8 @@ body {
     transform: scale(1.02);
 }
 
-/* Buttons */
-.login-button, .register-button {
+/* Action Buttons */
+.action-btn {
     width: 100%;
     padding: 14px;
     background: var(--primary-color);
@@ -219,13 +201,13 @@ body {
     font-weight: 600;
 }
 
-.login-button:hover, .register-button:hover {
+.action-btn:hover {
     background: var(--hover-color);
     transform: scale(1.02);
 }
 
-/* Forgot Password */
-.forgot-password {
+/* Forgot Password Link */
+.forgot-link {
     display: block;
     margin-top: 10px;
     color: var(--primary-color);
@@ -234,7 +216,7 @@ body {
     transition: color 0.3s ease-in-out;
 }
 
-.forgot-password:hover {
+.forgot-link:hover {
     text-decoration: underline;
     color: var(--hover-color);
 }
@@ -251,7 +233,7 @@ body {
     margin-bottom: 15px;
 }
 
-.social-button {
+.social-btn {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -268,24 +250,24 @@ body {
     font-weight: 500;
 }
 
-.social-button:hover {
+.social-btn:hover {
     background-color: rgba(255, 255, 255, 0.1);
     transform: scale(1.02);
 }
 
-.social-button img {
+.social-btn img {
     width: 20px;
     margin-right: 10px;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .login-container {
+    .login-form {
         width: 90%;
         padding: 20px;
     }
 
-    .modal-content {
+    .popup-content {
         width: 95%;
         max-width: 380px;
     }
@@ -296,7 +278,7 @@ input[type="checkbox"], input[type="radio"] {
     accent-color: var(--primary-color);
 }
 
-/* Spinner for loading state */
+/* Spinner for Loading State */
 .spinner {
     border: 4px solid var(--card-bg);
     border-top: 4px solid var(--primary-color);
