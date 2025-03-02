@@ -226,17 +226,16 @@ body {
 /* Modal Styling */
 .modal {
     display: none;
-    position: fixed;
-    z-index: 1050;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(0, 0, 0, 0.5); /* Semi-transparent backdrop */
-    width: 100%;
-    height: 100%;
-    backdrop-filter: blur(5px);
     align-items: center;
     justify-content: center;
+    position: fixed;
+    z-index: 1050;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
 }
