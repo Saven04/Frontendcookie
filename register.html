@@ -118,31 +118,40 @@
 
 
     <!-- Registration Form -->
-    <div class="login-container">
-        <div class="login-card">
-            <div class="card-header">
-                <h2>Create an Account</h2>
+    <div id="signupModal" class="modal fade" tabindex="-1" aria-labelledby="signupModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title" id="signupModalLabel">Create Your Account</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+    
+                <!-- Modal Body -->
+                <div class="modal-body">
+                    <form id="signupForm">
+                        <div class="mb-3">
+                            <label for="signup-email" class="form-label">Email</label>
+                            <input type="email" id="signup-email" class="form-control" placeholder="Enter your email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="signup-username" class="form-label">Username</label>
+                            <input type="text" id="signup-username" class="form-control" placeholder="Enter a username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="signup-password" class="form-label">Password</label>
+                            <input type="password" id="signup-password" class="form-control" placeholder="Enter a password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+                    </form>
+                </div>
+    
+                <!-- Modal Footer -->
+                <div class="modal-footer d-flex justify-content-between">
+                    <a href="#" class="forgot-password">Forgot Password?</a>
+                    <a href="index.html" class="login-button">Already have an account? Login</a>
+                </div>
             </div>
-            <form id="registerForm">
-                <div class="input-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" placeholder="Enter your username" required>
-                </div>
-                <div class="input-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" placeholder="Enter your email" required>
-                </div>
-                <div class="input-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" placeholder="Enter your password" required>
-                </div>
-                <div class="input-group">
-                    <label for="confirmPassword">Confirm Password</label>
-                    <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
-                </div>
-                <button type="submit" class="login-button">Register</button>
-            </form>
-            <p>Already have an account? <a href="index.html">Login here</a></p>
         </div>
     </div>
 
