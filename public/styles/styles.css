@@ -25,6 +25,7 @@ body {
     --input-bg: #333;
     --primary-color: #ff6600;
     --hover-color: #e65c00;
+    --shadow-color: rgba(0, 0, 0, 0.4);
 }
 
 [data-theme="light"] {
@@ -32,9 +33,10 @@ body {
     --text-color: #333;
     --card-bg: rgba(255, 255, 255, 0.9);
     --input-bg: #ddd;
+    --shadow-color: rgba(0, 0, 0, 0.1);
 }
 
-/* Import Local Font Files (add this at the top of your CSS) */
+/* Import Local Font Files */
 @font-face {
     font-family: 'Roboto';
     src: url('fonts/Roboto-Regular.ttf') format('truetype'),
@@ -47,7 +49,7 @@ body {
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(-50px);
+        transform: translateY(-20px);
     }
     to {
         opacity: 1;
@@ -57,7 +59,7 @@ body {
 
 /* Navbar Styling */
 .navbar {
-    background: #222;
+    background: var(--card-bg);
     color: var(--text-color);
     padding: 10px 20px;
     display: flex;
@@ -68,18 +70,16 @@ body {
     top: 0;
     left: 0;
     z-index: 1000;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Add shadow for better navbar contrast */
+    box-shadow: 0 4px 8px var(--shadow-color);
 }
 
-/* Navbar container */
 .navbar-container {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    width: 100%;
+    gap: 20px;
 }
 
-/* Authentication button (Login | Register) */
+/* Authentication Button */
 .auth-btn {
     background: var(--primary-color);
     color: #fff;
@@ -87,11 +87,9 @@ body {
     font-size: 16px;
     padding: 10px 20px;
     border-radius: 8px;
-    transition: background 0.3s ease-in-out, transform 0.2s;
     border: none;
     cursor: pointer;
-    display: inline-block;
-    text-align: center;
+    transition: background 0.3s ease-in-out, transform 0.2s;
 }
 
 .auth-btn:hover {
@@ -137,12 +135,13 @@ body {
 .modal-content {
     background: var(--card-bg);
     padding: 20px;
-    border-radius: 8px;
+    border-radius: 12px;
     max-width: 400px;
     width: 90%;
     text-align: center;
     position: relative;
     animation: fadeIn 0.6s ease-in-out;
+    box-shadow: 0 8px 16px var(--shadow-color);
 }
 
 .close {
@@ -152,6 +151,7 @@ body {
     font-size: 24px;
     cursor: pointer;
     color: var(--text-color);
+    transition: color 0.3s ease-in-out;
 }
 
 .close:hover {
@@ -167,7 +167,7 @@ body {
     background-color: var(--card-bg);
     border-radius: 12px;
     padding: 30px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 8px 16px var(--shadow-color);
     animation: fadeIn 0.6s ease-in-out;
 }
 
@@ -228,13 +228,15 @@ body {
 .forgot-password {
     display: block;
     margin-top: 10px;
-    color: #007bff;
+    color: var(--primary-color);
     text-decoration: none;
     text-align: center;
+    transition: color 0.3s ease-in-out;
 }
 
 .forgot-password:hover {
     text-decoration: underline;
+    color: var(--hover-color);
 }
 
 /* Social Login */
@@ -307,4 +309,4 @@ input[type="checkbox"], input[type="radio"] {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
-} 
+}
