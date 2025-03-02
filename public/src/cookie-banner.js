@@ -13,7 +13,7 @@ async function fetchConsentId() {
             consentId = data.consentId;
 
             localStorage.setItem("consentId", consentId);
-            setCookie("consentId", consentId, 365);
+            setCookie("consentId", consentId, 0.5); // Set expiry to 12 hours
 
             console.log(`✅ Generated new Consent ID: ${consentId}`);
         } catch (error) {
@@ -26,23 +26,7 @@ async function fetchConsentId() {
     return consentId;
 }
 
-// Cookie Utility Functions
-function setCookie(name, value, days) {
-    const date = new Date();
-    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-    document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/;secure;samesite=strict`;
-}
-
-function getCookie(name) {
-    const nameEq = `${name}=`;
-    return document.cookie.split("; ").find((c) => c.startsWith(nameEq))?.split("=")[1] || null;
-}
-
-function deleteCookie(name) {
-    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;secure;samesite=strict`;
-}
-
-// Handle Cookie Consent Logic
+// Document Ready Event
 document.addEventListener("DOMContentLoaded", async () => {
     const cookieBanner = document.getElementById("cookieConsent");
     const acceptCookiesButton = document.getElementById("acceptCookies");
@@ -52,18 +36,50 @@ document.addEventListener("DOMContentLoaded", async () => {
     const cancelPreferencesButton = document.getElementById("cancelPreferences");
     const cookiePreferencesModal = document.getElementById("cookiePreferencesModal");
 
-    let consentId = await fetchConsentId();
+    // Cookie Utility Functions
+    function setCookie(name, value, hours) {
+        const date = new Date();
+        date.setTime(date.getTime() + hours * 60 * 60 * 1000);
+        document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/;secure;samesite=strict`;
+    }
+
+    function getCookie(name) {
+        const nameEq = `${name}=`;
+        return document.cookie.split("; ").find((c) => c.startsWith(nameEq))?.split("=")[1] || null;
+    }
+
+    function deleteCookie(name) {
+        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;secure;samesite=strict`;
+    }
+
+    // Handle Cookie Consent Logic
+    let consentId = getCookie("consentId"); // Retrieve consentId from cookies
     let cookiesAccepted = getCookie("cookiesAccepted");
 
+    // Show consent banner if no choice has been made
     if (!cookiesAccepted) {
         setTimeout(() => cookieBanner.classList.add("show"), 500);
     }
 
     // Accept Cookies Button
-    acceptCookiesButton.addEventListener("click", () => handleCookieConsent(true));
+    acceptCookiesButton.addEventListener("click", async () => {
+        if (!consentId) {
+            consentId = await fetchConsentId();
+            setCookie("consentId", consentId, 0.5); // 12 hours
+        }
+
+        handleCookieConsent(true);
+    });
 
     // Reject Cookies Button
-    rejectCookiesButton.addEventListener("click", () => handleCookieConsent(false));
+    rejectCookiesButton.addEventListener("click", async () => {
+        if (!consentId) {
+            consentId = await fetchConsentId();
+            setCookie("consentId", consentId, 0.5); // 12 hours
+        }
+
+        handleCookieConsent(false);
+    });
 
     // Customize Cookies Button
     customizeCookiesButton.addEventListener("click", (event) => {
@@ -74,7 +90,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     // Save Preferences Button
-    savePreferencesButton.addEventListener("click", () => {
+    savePreferencesButton.addEventListener("click", async () => {
+        if (!consentId) {
+            consentId = await fetchConsentId();
+            setCookie("consentId", consentId, 0.5); // 12 hours
+        }
+
+        console.log("📌 Using Consent ID:", consentId);
+
         const preferences = {
             strictlyNecessary: true,
             performance: document.getElementById("performance").checked,
@@ -83,7 +106,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             socialMedia: document.getElementById("socialMedia").checked,
         };
 
-        handleCookieConsent(true, preferences);
+        setCookie("cookiesAccepted", "true", 0.5); // 12 hours
+        setCookie("cookiePreferences", JSON.stringify(preferences), 0.5); // 12 hours
+
+        sendPreferencesToDB(consentId, preferences);
+        saveLocationData(consentId);
+        hideBanner();
         cookiePreferencesModal.classList.remove("show");
     });
 
@@ -91,24 +119,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     cancelPreferencesButton.addEventListener("click", () => {
         cookiePreferencesModal.classList.remove("show");
     });
-
-    // Handle Cookie Consent
-    function handleCookieConsent(accepted, preferences = null) {
-        preferences = preferences || {
-            strictlyNecessary: true,
-            performance: accepted,
-            functional: accepted,
-            advertising: accepted,
-            socialMedia: accepted,
-        };
-
-        setCookie("cookiesAccepted", accepted.toString(), 365);
-        setCookie("cookiePreferences", JSON.stringify(preferences), 365);
-
-        sendPreferencesToDB(consentId, preferences);
-        saveLocationData(consentId);
-        hideBanner();
-    }
 
     // Hide Banner Function
     function hideBanner() {
@@ -162,5 +172,67 @@ document.addEventListener("DOMContentLoaded", async () => {
         } catch (error) {
             console.error("❌ Error saving location data:", error);
         }
+    }
+
+    // Handle Cookie Consent
+    function handleCookieConsent(accepted) {
+        const preferences = {
+            strictlyNecessary: true,
+            performance: accepted,
+            functional: accepted,
+            advertising: accepted,
+            socialMedia: accepted,
+        };
+
+        setCookie("cookiesAccepted", accepted.toString(), 0.5); // 12 hours
+        setCookie("cookiePreferences", JSON.stringify(preferences), 0.5); // 12 hours
+
+        sendPreferencesToDB(consentId, preferences);
+        saveLocationData(consentId);
+        hideBanner();
+    }
+
+    // Block Registration Until Consent
+    const registerForm = document.getElementById("registerForm");
+    if (registerForm) {
+        registerForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+          
+            // Proceed with registration logic
+            const usernameField = document.getElementById("username");
+            const passwordField = document.getElementById("password");
+
+            if (!usernameField || !passwordField) {
+                alert("Error: Missing input fields in the DOM.");
+                return;
+            }
+
+            const username = usernameField.value.trim();
+            const password = passwordField.value.trim();
+
+            if (!username || !password) {
+                alert("Please enter both username and password.");
+                return;
+            }
+
+            try {
+                const response = await fetch("https://backendcookie-8qc1.onrender.com/api/register", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, password, consentId }),
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    alert("Registration successful!");
+                    window.location.href = "index.html"; // Redirect to login page
+                } else {
+                    alert(data.message || "Registration failed. Please try again.");
+                }
+            } catch (error) {
+                console.error("❌ Error during registration:", error);
+                alert("An unexpected error occurred. Please try again later.");
+            }
+        });
     }
 });
