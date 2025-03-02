@@ -1,35 +1,28 @@
-// Import cookie functions (if using ES6 modules)
-// import { setCookie, getCookie } from './cookieSettings.js';
-
 document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("loginForm");
 
-    // Handle form submission
     if (loginForm) {
         loginForm.addEventListener("submit", async (event) => {
             event.preventDefault();
 
-            // Get input values
-            const emailField = document.getElementById("email");
+            const userField = document.getElementById("userInput");
             const passwordField = document.getElementById("password");
 
-            // Validate inputs
-            if (!emailField || !passwordField) {
+            if (!userField || !passwordField) {
                 console.error("Error: Missing input fields in the DOM.");
                 showModal("Error: Missing input fields in the DOM.", "error");
                 return;
             }
 
-            const email = emailField.value.trim();
+            const userInput = userField.value.trim(); // Could be username or email
             const password = passwordField.value.trim();
 
-            if (!email || !password) {
-                showModal("Please enter both email and password.", "error");
+            if (!userInput || !password) {
+                showModal("Please enter your username/email and password.", "error");
                 return;
             }
 
-            // Call the login function
-            await loginUser(email, password);
+            await loginUser(userInput, password);
         });
     }
 
@@ -44,8 +37,8 @@ function isUserLoggedIn() {
     return localStorage.getItem("token") !== null;
 }
 
-// ✅ Updated loginUser function to handle both JWT and session-based logins
-async function loginUser(email, password) {
+// ✅ Updated login function to accept both username and email
+async function loginUser(userInput, password) {
     try {
         const apiUrl = "https://backendcookie-8qc1.onrender.com/api/login";
         console.log("📡 Sending request to:", apiUrl);
@@ -53,7 +46,7 @@ async function loginUser(email, password) {
         const response = await fetch(apiUrl, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password }),
+            body: JSON.stringify({ userInput, password }), // Sending userInput (either username or email)
         });
 
         const data = await response.json();
@@ -76,20 +69,20 @@ async function loginUser(email, password) {
     }
 }
 
-// ✅ Function to attach JWT token to API requests
+// ✅ Attach JWT token to API requests
 function getAuthHeaders() {
     const token = localStorage.getItem("token");
     return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
-// ✅ Example function to fetch user data using JWT
+// ✅ Fetch user data
 async function fetchUserData() {
     try {
         const response = await fetch("https://backendcookie-8qc1.onrender.com/api/user", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                ...getAuthHeaders(), // Attach token to request
+                ...getAuthHeaders(),
             },
         });
 
@@ -113,11 +106,11 @@ function logoutUser() {
     }, 1500);
 }
 
-// ✅ Function to show a custom modal
+// ✅ Custom modal function
 function showModal(message, type) {
     const existingModal = document.getElementById("customModal");
     if (existingModal) {
-        existingModal.remove(); // Remove any existing modal to avoid duplicates
+        existingModal.remove(); // Avoid duplicate modals
     }
 
     const modalContainer = document.createElement("div");
@@ -145,7 +138,7 @@ function showModal(message, type) {
     modalContainer.appendChild(modalContent);
     document.body.appendChild(modalContainer);
 
-    // Automatically close the modal after 3 seconds
+    // Auto-close modal after 3 seconds
     setTimeout(() => {
         const modal = document.getElementById("customModal");
         if (modal) {
