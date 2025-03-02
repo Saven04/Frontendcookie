@@ -1,4 +1,16 @@
-// Utility functions for handling cookies
+// ✅ Fetch IP Information
+async function getIpInfo() {
+    try {
+        const response = await fetch("https://your-backend-url.com/api/get-ipinfo");
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("❌ Error fetching IP info:", error);
+        return null;
+    }
+}
+
+// ✅ Fetch Consent ID
 async function fetchConsentID() {
     try {
         const response = await fetch("https://backendcookie-8qc1.onrender.com/api/generate-consent-id", {
@@ -18,6 +30,7 @@ async function fetchConsentID() {
     }
 }
 
+// ✅ Cookie Handling Functions
 function setCookie(name, value, days) {
     const date = new Date();
     date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
@@ -29,8 +42,13 @@ function getCookie(name) {
     return document.cookie.split("; ").find((c) => c.startsWith(nameEq))?.split("=")[1] || null;
 }
 
-// Function to show a custom modal
+// ✅ Show Custom Modal
 function showModal(message, type) {
+    const existingModal = document.getElementById("customModal");
+    if (existingModal) {
+        existingModal.remove(); // Avoid duplicate modals
+    }
+
     const modalContainer = document.createElement("div");
     modalContainer.id = "customModal";
     modalContainer.classList.add("modal", type);
@@ -45,8 +63,9 @@ function showModal(message, type) {
     closeButton.textContent = "Close";
     closeButton.classList.add("close-button");
     closeButton.addEventListener("click", () => {
-        if (document.getElementById("customModal")) {
-            document.body.removeChild(modalContainer);
+        const modal = document.getElementById("customModal");
+        if (modal) {
+            document.body.removeChild(modal);
         }
     });
 
@@ -55,15 +74,16 @@ function showModal(message, type) {
     modalContainer.appendChild(modalContent);
     document.body.appendChild(modalContainer);
 
-    // Automatically close the modal after 3 seconds
+    // Auto-close modal after 3 seconds
     setTimeout(() => {
-        if (document.getElementById("customModal")) {
-            document.body.removeChild(modalContainer);
+        const modal = document.getElementById("customModal");
+        if (modal) {
+            document.body.removeChild(modal);
         }
     }, 3000);
 }
 
-// Function to reset the button after an action
+// ✅ Reset Button
 function resetButton() {
     const registerButton = document.querySelector(".login-button");
     if (registerButton) {
@@ -72,13 +92,13 @@ function resetButton() {
     }
 }
 
-// Register form submission event listener
+// ✅ Register Form Submission Event Listener
 document.getElementById("registerForm").addEventListener("submit", async function (event) {
-    event.preventDefault(); // Prevent default form submission
+    event.preventDefault();
 
     const registerButton = document.querySelector(".login-button");
     if (registerButton) {
-        registerButton.disabled = true; // Disable button to prevent multiple clicks
+        registerButton.disabled = true;
         registerButton.textContent = "Registering...";
     }
 
@@ -98,7 +118,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     const password = passwordField.value.trim();
     const confirmPassword = confirmPasswordField.value.trim();
 
-    // Validate inputs
+    // ✅ Validate Inputs
     if (!username || !email || !password || !confirmPassword) {
         showModal("❌ All fields are required!", "error");
         resetButton();
@@ -115,18 +135,22 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         return;
     }
 
-    // Retrieve the consentId from cookies or generate a new one if necessary
+    // ✅ Fetch Consent ID
     let consentId = getCookie("consentId");
     if (!consentId) {
         consentId = (await fetchConsentID()) || generateShortUUID();
         setCookie("consentId", consentId, 365);
     }
 
+    // ✅ Fetch IP Info
+    const ipInfo = await getIpInfo();
+
+    // ✅ Send Registration Request
     try {
         const response = await fetch("https://backendcookie-8qc1.onrender.com/api/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, email, password, consentId }), // Include consentId in request
+            body: JSON.stringify({ username, email, password, consentId, ipInfo }),
         });
 
         const data = await response.json();
@@ -134,21 +158,21 @@ document.getElementById("registerForm").addEventListener("submit", async functio
             showModal("✅ Registration successful! Redirecting to login...", "success");
 
             setTimeout(() => {
-                document.getElementById("registerForm").reset(); // Reset form
-                window.location.href = "index.html"; // Redirect to login page
+                document.getElementById("registerForm").reset();
+                window.location.href = "index.html";
             }, 1500);
         } else {
             showModal(`❌ ${data.message || "Registration failed."}`, "error");
         }
     } catch (error) {
-        console.error("❌ Error:", error);
+        console.error("❌ Registration error:", error);
         showModal("❌ Registration failed. Please check your internet connection and try again.", "error");
     } finally {
         resetButton();
     }
 });
 
-// Generates a short unique ID
+// ✅ Generate Short Unique ID
 function generateShortUUID() {
     return Math.random().toString(36).substring(2, 10);
 }
