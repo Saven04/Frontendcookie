@@ -22,6 +22,45 @@
             <button id="themeToggleBtn" aria-label="Toggle Light/Dark Mode">☀️</button>
         </div>
     </nav>
+
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">NewsPortal</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="settingsDropdown" role="button" data-bs-toggle="dropdown">
+                            ⚙️ Settings
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li class="dropdown-submenu">
+                                <a class="dropdown-item" href="#">📖 Read Guidelines & Policies →</a>
+                                <ul class="submenu">
+                                    <li><a class="dropdown-item" href="#">📜 Cookie Policy</a></li>
+                                    <li><a class="dropdown-item" href="#">🔒 Privacy Policy</a></li>
+                                    <li><a class="dropdown-item" href="#">📄 Terms of Service</a></li>
+                                </ul>
+                            </li>
+                            <li><a class="dropdown-item" href="#" id="userProfile">👤 User Profile</a></li>
+                            <li><a class="dropdown-item" href="#" id="toggleTheme">🌙 Theme (Dark/Light)</a></li>
+                            <li class="dropdown-submenu">
+                                <a class="dropdown-item" href="#">🍪 Cookies →</a>
+                                <ul class="submenu">
+                                    <li><a class="dropdown-item" href="#" id="cookieSettings">⚙️ Cookie Settings</a></li>
+                                    <li><a class="dropdown-item text-danger" href="#" id="deleteAllData">🗑️ Delete All Data</a></li>
+                                </ul>
+                            </li>
+                            <li><a class="dropdown-item text-danger" href="#" id="logout">🚪 Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
     
 
     <!-- Cookie Consent Banner -->
@@ -125,6 +164,9 @@
     <script src="./public/src/script.js"></script>
     <script type="module" src="./public/src/cookie-banner.js"></script>
     <script src="./public/src/theme-toggle.js"></script>
+    <script src="settings.js"></script>
+
+    
 
 
 <script>

@@ -107,6 +107,38 @@ body {
     background: var(--hover-color);
     transform: scale(1.05);
 }
+
+
+
+
+.dropdown-menu {
+    min-width: 200px;
+}
+
+/* Submenu Styling */
+.dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-submenu .submenu {
+    display: none;
+    position: absolute;
+    left: 100%;
+    top: 0;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dropdown-submenu:hover .submenu {
+    display: block;
+}
+
+/* Dark Mode Styling */
+.dark-mode {
+    background-color: #121212 !important;
+    color: white !important;
+}
 /* Login Page Styles */
 .login-container {
     display: flex;
