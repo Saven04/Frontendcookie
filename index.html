@@ -147,7 +147,9 @@
     </div>
 
     <!-- JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.0.0/dist/umd/supabase.min.js"></script>
+    <script type="module">
+        import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@1.29.0/+esm";
+      </script>
     <script src="./public/src/main.js"></script>
     <script src="./public/src/script.js"></script>
     <script type="module" src="./public/src/cookie-banner.js"></script>
