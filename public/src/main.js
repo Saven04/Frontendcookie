@@ -23,11 +23,12 @@ function getAuthHeaders() {
 
 // ✅ Event listeners setup
 function setupEventListeners() {
-    const loginRegisterButton = document.getElementById("login-register-btn");
-    const loginModal = document.getElementById("login-modal");
-    const closeModal = document.getElementById("close-login-modal");
+    const loginRegisterButton = document.getElementById("loginRegisterBtn"); // Fixed ID
+    const loginModal = document.getElementById("loginModal"); // Fixed ID
+    const closeModal = document.getElementById("closeLoginModal"); // Fixed ID
     const logoutButton = document.getElementById("logout-btn");
     const loginForm = document.getElementById("loginForm");
+    const themeToggleBtn = document.getElementById("themeToggleBtn");
 
     // ✅ Open login modal on clicking "Login | Register"
     if (loginRegisterButton && loginModal) {
@@ -70,6 +71,16 @@ function setupEventListeners() {
     if (logoutButton) {
         logoutButton.addEventListener("click", logoutUser);
     }
+
+    // ✅ Theme toggle button event listener
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener("click", () => {
+            document.body.classList.toggle("dark-mode");
+            themeToggleBtn.textContent = document.body.classList.contains("dark-mode") 
+                ? "🌙 Dark Mode" 
+                : "☀️ Light Mode";
+        });
+    }
 }
 
 // ✅ User login function
@@ -92,7 +103,7 @@ async function loginUser(userInput, password) {
 
         // ✅ Close login modal after successful login
         setTimeout(() => {
-            document.getElementById("login-modal").style.display = "none";
+            document.getElementById("loginModal").style.display = "none";
             window.location.href = "/userDashboard.html";
         }, 1500);
     } catch (error) {
