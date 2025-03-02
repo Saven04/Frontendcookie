@@ -1,4 +1,5 @@
 /* General Styles */
+
 * {
     margin: 0;
     padding: 0;
@@ -7,24 +8,40 @@
 
 body {
     font-family: 'Roboto', sans-serif;
-    background-image: url('../image/Background.jpeg'); /* Ensure this path is correct */
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    color: #fff;
-    overflow-x: hidden; /* Prevent horizontal scrolling */
+    overflow-x: hidden;
 }
 
+/* Theme Variables */
+:root {
+    --background-color: #1e1e1e;
+    --text-color: #fff;
+    --navbar-bg: #222;
+    --button-bg: #ff6600;
+    --button-hover-bg: #e65c00;
+}
+
+[data-theme="light"] {
+    --background-color: #f5f5f5;
+    --text-color: #333;
+    --navbar-bg: #fff;
+    --button-bg: #007bff;
+    --button-hover-bg: #0056b3;
+}
+
+/* Fade-in Animation */
 @keyframes fadeIn {
-    0% {
+    from {
         opacity: 0;
         transform: translateY(-50px);
     }
-    100% {
+    to {
         opacity: 1;
         transform: translateY(0);
     }
@@ -32,8 +49,8 @@ body {
 
 /* Navbar Styling */
 .navbar {
-    background: #222;
-    color: #fff;
+    background: var(--navbar-bg);
+    color: var(--text-color);
     padding: 10px 20px;
     display: flex;
     justify-content: space-between;
@@ -45,47 +62,40 @@ body {
     z-index: 1000;
 }
 
-.login-register-btn {
-    background: #ff6600;
-    color: #fff;
-    padding: 8px 15px;
+.theme-toggle-btn {
+    background: transparent;
     border: none;
+    font-size: 18px;
     cursor: pointer;
-    border-radius: 5px;
-    transition: background 0.3s;
+    color: var(--text-color);
+    transition: transform 0.2s;
 }
 
-.login-register-btn:hover {
-    background: #e65c00;
+.theme-toggle-btn:hover {
+    transform: scale(1.1);
 }
 
 /* Login Page Styles */
 .login-container {
     display: flex;
-    justify-content: center;
-    align-items: center;
     flex-direction: column;
     width: 100%;
     max-width: 400px;
-    background-color: rgba(0, 0, 0, 0.7); /* Slightly darker for better contrast */
+    background-color: var(--card-bg);
     border-radius: 12px;
     padding: 30px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
     animation: fadeIn 0.6s ease-in-out;
 }
 
-.login-card {
-    width: 100%;
-}
-
 .card-header h2 {
     text-align: center;
     font-size: 28px;
     margin-bottom: 20px;
-    color: #fff;
-    letter-spacing: 1px;
+    color: var(--text-color);
 }
 
+/* Input Styles */
 .input-group {
     margin-bottom: 15px;
     display: flex;
@@ -104,8 +114,8 @@ body {
     font-size: 16px;
     border: none;
     border-radius: 8px;
-    background-color: #333;
-    color: white;
+    background-color: var(--input-bg);
+    color: var(--text-color);
     outline: none;
     transition: background-color 0.3s, transform 0.3s;
 }
@@ -116,27 +126,26 @@ body {
 
 .input-group input:focus {
     background-color: #444;
-    transform: scale(1.02); /* Slight zoom effect on focus */
+    transform: scale(1.02);
 }
 
+/* Buttons */
 .login-button, .register-button {
-    width: 100%;
-    padding: 14px;
-    background: #ff6600;
-    color: white;
+    background: var(--button-bg);
+    color: #fff;
+    padding: 8px 15px;
     border: none;
-    border-radius: 8px;
-    font-size: 16px;
     cursor: pointer;
-    transition: background 0.3s, transform 0.3s;
-    font-weight: 600;
+    border-radius: 5px;
+    transition: background 0.3s;
 }
 
 .login-button:hover, .register-button:hover {
-    background: #e65c00;
-    transform: scale(1.02); /* Slight zoom effect on hover */
+    background: var(--button-hover-bg);
+   
 }
 
+/* Forgot Password */
 .forgot-password {
     display: block;
     margin-top: 10px;
@@ -180,7 +189,7 @@ body {
 
 .social-button:hover {
     background-color: rgba(255, 255, 255, 0.1);
-    transform: scale(1.02); /* Slight zoom effect on hover */
+    transform: scale(1.02);
 }
 
 .social-button img {
@@ -203,14 +212,13 @@ body {
 }
 
 .modal-content {
-    background: #fff;
+    background: var(--card-bg);
     padding: 20px;
     border-radius: 8px;
     max-width: 400px;
     width: 90%;
     text-align: center;
     position: relative;
-    animation: fadeIn 0.6s ease-in-out;
 }
 
 .close {
@@ -219,11 +227,11 @@ body {
     top: 10px;
     font-size: 24px;
     cursor: pointer;
-    color: #333;
+    color: var(--text-color);
 }
 
 .close:hover {
-    color: #ff6600;
+    color: var(--primary-color);
 }
 
 /* Responsive Design */

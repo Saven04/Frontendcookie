@@ -12,11 +12,13 @@
 </head>
 
 <body>
+
     <!-- Navbar with Login Button -->
     <nav class="navbar">
         <div class="navbar-container">
-            <h1 class="logo">Your Newspaper</h1>
-            <button id="loginRegisterBtn" class="login-register-btn">Login | Register</button>
+            <button id="loginRegisterBtn" class="login-register-btn" aria-haspopup="dialog" aria-controls="loginModal">
+                Login | Register
+            </button>
         </div>
     </nav>
 
@@ -42,13 +44,13 @@
     </div>
 
     <!-- Login Modal -->
-    <div id="loginModal" class="modal">
+    <div id="loginModal" class="modal" role="dialog" aria-hidden="true" aria-labelledby="loginTitle">
         <div class="modal-content">
-            <span class="close" id="closeLoginModal">&times;</span>
-            <h2>Login to Your Account</h2>
+            <button class="close" id="closeLoginModal" aria-label="Close">&times;</button>
+            <h2 id="loginTitle">Login to Your Account</h2>
             <form id="loginForm">
                 <div class="input-group">
-                    <label for="identifier">Email or Username</label>
+                    <label for="email">Email or Username</label>
                     <input type="text" id="email" placeholder="Enter your email" required />
                 </div>
                 <div class="input-group">
@@ -65,6 +67,7 @@
     <!-- Include JavaScript -->
     <script src="public/src/main.js"></script>
     <script type="module" src="public/src/cookie-banner.js"></script>
+    <script src="public/src/theme-toggle.js"></script>
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
@@ -72,17 +75,21 @@
             const loginRegisterBtn = document.getElementById("loginRegisterBtn");
             const closeLoginModal = document.getElementById("closeLoginModal");
 
-            loginRegisterBtn.addEventListener("click", () => {
-                loginModal.style.display = "block";
-            });
+            function toggleModal(open) {
+                loginModal.style.display = open ? "flex" : "none";
+                loginModal.setAttribute("aria-hidden", !open);
+            }
 
-            closeLoginModal.addEventListener("click", () => {
-                loginModal.style.display = "none";
-            });
+            loginRegisterBtn.addEventListener("click", () => toggleModal(true));
+            closeLoginModal.addEventListener("click", () => toggleModal(false));
 
             window.addEventListener("click", (event) => {
-                if (event.target === loginModal) {
-                    loginModal.style.display = "none";
+                if (event.target === loginModal) toggleModal(false);
+            });
+
+            document.addEventListener("keydown", (event) => {
+                if (event.key === "Escape" && loginModal.style.display === "flex") {
+                    toggleModal(false);
                 }
             });
         });
