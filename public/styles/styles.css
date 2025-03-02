@@ -22,107 +22,97 @@ body {
     --background-color: #1e1e1e;
     --text-color: #fff;
     --navbar-bg: #222;
-    --button-bg: #ff6600;
-    --button-hover-bg: #e65c00;
-    --card-bg: #2a2a2a; /* Added missing variable */
-    --input-bg: #333; /* Added missing variable */
-    --primary-color: #ff6600; /* Added missing variable */
+    --button-bg: linear-gradient(45deg, #ff6600, #ff4500);
+    --button-hover-bg: linear-gradient(45deg, #e65c00, #cc3b00);
+    --card-bg: #2a2a2a;
+    --input-bg: #333;
+    --primary-color: #ff6600;
+    --accent-color: #ffcc00;
 }
 
 [data-theme="light"] {
     --background-color: #f5f5f5;
     --text-color: #333;
     --navbar-bg: #fff;
-    --button-bg: #007bff;
-    --button-hover-bg: #0056b3;
+    --button-bg: linear-gradient(45deg, #007bff, #0056b3);
+    --button-hover-bg: linear-gradient(45deg, #0056b3, #004494);
     --card-bg: #fff;
     --input-bg: #ddd;
     --primary-color: #007bff;
-}
-
-/* Fade-in Animation */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    --accent-color: #ff6600;
 }
 
 /* Navbar Styling */
 .navbar {
-    background: var(--navbar-bg);
-    color: var(--text-color);
-    padding: 10px 20px;
+    background-color: var(--navbar-bg);
+    padding: 15px 20px;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
-    width: 100vw;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1000;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    width: 100%;
 }
 
 .navbar .auth-links {
     display: flex;
-    gap: 15px; /* Spacing between Login & Register */
+    gap: 20px;
 }
 
-
 .navbar .auth-links a {
-    color: var(--text-color);
+    background: var(--button-bg);
+    color: #fff;
     text-decoration: none;
     font-weight: bold;
     font-size: 16px;
-    transition: color 0.3s ease-in-out;
+    padding: 10px 18px;
+    border-radius: 25px;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 8px rgba(255, 102, 0, 0.4);
 }
-
 
 .navbar .auth-links a:hover {
-    color: var(--accent-color);
-    text-decoration: underline;
+    background: var(--button-hover-bg);
+    box-shadow: 0 6px 12px rgba(255, 102, 0, 0.6);
+    transform: translateY(-2px);
 }
 
-
-
+/* Dark Mode Toggle */
 .theme-toggle-btn {
-    background: transparent;
+    background: none;
     border: none;
-    font-size: 18px;
+    font-size: 22px;
     cursor: pointer;
     color: var(--text-color);
-    transition: transform 0.2s;
+    transition: transform 0.2s ease-in-out, color 0.3s ease-in-out;
+    margin-left: 20px;
 }
 
 .theme-toggle-btn:hover {
-    transform: scale(1.1);
+    transform: rotate(20deg);
+    color: var(--accent-color);
 }
 
-/* Login Page Styles */
+/* Login & Register Styling */
 .login-container {
     display: flex;
     flex-direction: column;
     width: 100%;
     max-width: 400px;
     background-color: var(--card-bg);
-    border-radius: 12px;
+    border-radius: 15px;
     padding: 30px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
     animation: fadeIn 0.6s ease-in-out;
 }
 
 .card-header h2 {
     text-align: center;
-    font-size: 28px;
+    font-size: 26px;
     margin-bottom: 20px;
     color: var(--text-color);
 }
 
-/* Input Styles */
+/* Input Fields */
 .input-group {
     margin-bottom: 15px;
     display: flex;
@@ -140,11 +130,11 @@ body {
     padding: 14px;
     font-size: 16px;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     background-color: var(--input-bg);
     color: var(--text-color);
     outline: none;
-    transition: background-color 0.3s, transform 0.3s;
+    transition: all 0.3s ease-in-out;
 }
 
 .input-group input::placeholder {
@@ -154,73 +144,41 @@ body {
 .input-group input:focus {
     background-color: #444;
     transform: scale(1.02);
+    box-shadow: 0 4px 10px rgba(255, 102, 0, 0.3);
 }
 
 /* Buttons */
 .login-button, .register-button {
     background: var(--button-bg);
     color: #fff;
-    padding: 10px 15px;
+    padding: 12px 18px;
     border: none;
     cursor: pointer;
-    border-radius: 5px;
-    transition: background 0.3s;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 6px 12px rgba(255, 102, 0, 0.4);
 }
 
 .login-button:hover, .register-button:hover {
     background: var(--button-hover-bg);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(255, 102, 0, 0.6);
 }
 
 /* Forgot Password */
 .forgot-password {
     display: block;
     margin-top: 10px;
-    color: var(--button-bg);
+    color: var(--accent-color);
     text-decoration: none;
     text-align: center;
+    font-weight: 500;
 }
 
 .forgot-password:hover {
     text-decoration: underline;
-}
-
-/* Social Login */
-.social-login {
-    text-align: center;
-    margin-top: 20px;
-}
-
-.social-login p {
-    font-size: 14px;
-    color: #ccc;
-    margin-bottom: 15px;
-}
-
-.social-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 12px 20px;
-    font-size: 16px;
-    background-color: transparent;
-    border: 1px solid #ccc;
-    color: #ccc;
-    cursor: pointer;
-    width: 100%;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    transition: background-color 0.3s, transform 0.3s;
-    font-weight: 500;
-}
-
-.social-button:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    transform: scale(1.02);
-}
-
-.social-button img {
-    width: 20px;
-    margin-right: 10px;
 }
 
 /* Modal Styling */
@@ -234,8 +192,8 @@ body {
     top: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(5px);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
 }
@@ -246,14 +204,14 @@ body {
 }
 
 .modal-content {
-    background: var(--card-bg, #1e1e1e);
+    background: var(--card-bg);
     padding: 30px;
     border-radius: 12px;
     max-width: 420px;
     width: 90%;
     text-align: center;
     position: relative;
-    box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.3);
+    box-shadow: 0px 8px 18px rgba(0, 0, 0, 0.4);
     transform: scale(0.85);
     transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
     opacity: 0;
@@ -264,43 +222,20 @@ body {
     opacity: 1;
 }
 
+/* Close Button */
 .close {
     position: absolute;
     right: 18px;
     top: 14px;
     font-size: 26px;
     cursor: pointer;
-    color: var(--text-color, #ddd);
+    color: var(--text-color);
     transition: color 0.3s ease-in-out, transform 0.2s;
 }
 
 .close:hover {
-    color: var(--primary-color, #ff5a5f);
+    color: var(--primary-color);
     transform: scale(1.1);
-}
-
-/* Smooth Fade In/Out Animation */
-@keyframes fadeInModal {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.modal.show .modal-content {
-    animation: fadeInModal 0.3s ease-in-out;
-}
-
-/* Add responsiveness */
-@media (max-width: 480px) {
-    .modal-content {
-        width: 95%;
-        padding: 20px;
-    }
 }
 
 /* Responsive Design */
