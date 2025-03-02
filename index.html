@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Professional Login Page</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="./public/styles/styles.css">
     <link rel="stylesheet" href="./public/styles/cookie-banner.css">
     <link rel="stylesheet" href="./public/styles/customize.css">
@@ -14,33 +13,33 @@
 
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar">
         <div class="container">
             <a class="navbar-brand" href="#">NewsPortal</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
+            <button id="authModalTrigger" class="auth-modal-trigger">
+                Login | Register
             </button>
 
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+            <div class="navbar-links">
+                <ul class="navbar-nav">
                     <!-- Login / Register -->
                     <li class="nav-item">
-                        <button id="authModalTrigger" class="btn btn-outline-light me-3" data-bs-toggle="modal" data-bs-target="#authModal">
+                        <button id="authModalTrigger" class="btn auth-modal-btn">
                             Login | Register
                         </button>
                     </li>
 
                     <!-- Dark Mode Toggle -->
                     <li class="nav-item">
-                        <button id="themeToggleBtn" class="btn btn-outline-light">🌙</button>
+                        <button id="themeToggleBtn" class="btn theme-toggle-btn">🌙</button>
                     </li>
 
                     <!-- Settings Dropdown -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="settingsDropdown" role="button" data-bs-toggle="dropdown">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="settingsDropdown">
                             ⚙️ Settings
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
+                        <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="#">📖 Read Guidelines & Policies</a></li>
                             <li><a class="dropdown-item" href="#">👤 User Profile</a></li>
                             <li><a class="dropdown-item" href="#" id="cookieSettings">🍪 Cookie Settings</a></li>
@@ -113,44 +112,39 @@
         </div>
     </div>
 
-
-
-
     <!-- Login Modal -->
-  <!-- Authentication Modal -->
-<div id="authModal" class="modal fade" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <!-- Modal Header -->
-            <div class="modal-header">
-                <h5 class="modal-title" id="authModalLabel">Login to Your Account</h5>
-                <button type="button" class="btn-close" id="closeAuthModal" aria-label="Close"></button>
-            </div>
+    <div id="authModal" class="modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title" id="authModalLabel">Login to Your Account</h5>
+                    <button type="button" class="btn-close" id="closeAuthModal" aria-label="Close"></button>
+                </div>
 
-            <!-- Modal Body -->
-            <div class="modal-body">
-                <form id="loginForm">
-                    <div class="mb-3">
-                        <label for="auth-email" class="form-label">Email or Username</label>
-                        <input type="text" id="auth-email" class="form-control" placeholder="Enter your email" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="auth-password" class="form-label">Password</label>
-                        <input type="password" id="auth-password" class="form-control" placeholder="Enter your password" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Login</button>
-                </form>
-            </div>
+                <!-- Modal Body -->
+                <div class="modal-body">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="auth-email" class="form-label">Email or Username</label>
+                            <input type="text" id="auth-email" class="form-control" placeholder="Enter your email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="auth-password" class="form-label">Password</label>
+                            <input type="password" id="auth-password" class="form-control" placeholder="Enter your password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Login</button>
+                    </form>
+                </div>
 
-            <!-- Modal Footer -->
-            <div class="modal-footer d-flex justify-content-between">
-                <a href="#" class="forgot-password">Forgot Password?</a>
-                <a href="register.html" class="register-button">Register</a>
+                <!-- Modal Footer -->
+                <div class="modal-footer">
+                    <a href="#" class="forgot-password">Forgot Password?</a>
+                    <a href="register.html" class="register-button">Register</a>
+                </div>
             </div>
         </div>
     </div>
-</div>
-
 
     <!-- JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.0.0/dist/umd/supabase.min.js"></script>
@@ -159,7 +153,6 @@
     <script type="module" src="./public/src/cookie-banner.js"></script>
     <script src="./public/src/theme-toggle.js"></script>
     <script type="module" src="./public/src/settings.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 
