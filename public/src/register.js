@@ -1,32 +1,36 @@
-// ✅ Fetch IP Information
+// ✅ Fetch IP Information (with timeout to prevent unresponsiveness)
 async function getIpInfo() {
     try {
-        const response = await fetch("https://your-backend-url.com/api/get-ipinfo");
-        const data = await response.json();
-        return data;
+        const response = await Promise.race([
+            fetch("https://your-backend-url.com/api/get-ipinfo"),
+            new Promise((_, reject) => setTimeout(() => reject(new Error("Request timed out")), 5000))
+        ]);
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        return await response.json();
     } catch (error) {
-        console.error("❌ Error fetching IP info:", error);
+        console.warn("⚠️ IP info fetch failed:", error.message);
         return null;
     }
 }
 
-// ✅ Fetch Consent ID
+// ✅ Fetch Consent ID (with timeout)
 async function fetchConsentID() {
     try {
-        const response = await fetch("https://backendcookie-8qc1.onrender.com/api/generate-consent-id", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-        });
+        const response = await Promise.race([
+            fetch("https://backendcookie-8qc1.onrender.com/api/generate-consent-id", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+            }),
+            new Promise((_, reject) => setTimeout(() => reject(new Error("Request timed out")), 5000))
+        ]);
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
         const data = await response.json();
         return data.consentId;
     } catch (error) {
-        console.error("❌ Error fetching consentId:", error.message || error);
-        return null;
+        console.warn("⚠️ Consent ID fetch failed:", error.message);
+        return generateShortUUID(); // Fallback
     }
 }
 
@@ -38,49 +42,30 @@ function setCookie(name, value, days) {
 }
 
 function getCookie(name) {
-    const nameEq = `${name}=`;
-    return document.cookie.split("; ").find((c) => c.startsWith(nameEq))?.split("=")[1] || null;
+    return document.cookie
+        .split("; ")
+        .find((c) => c.startsWith(name + "="))
+        ?.split("=")[1] || null;
 }
 
-// ✅ Show Custom Modal
+// ✅ Show Custom Modal (prevent duplicate modals)
 function showModal(message, type) {
-    const existingModal = document.getElementById("customModal");
-    if (existingModal) {
-        existingModal.remove(); // Avoid duplicate modals
+    let modal = document.getElementById("customModal");
+    if (!modal) {
+        modal = document.createElement("div");
+        modal.id = "customModal";
+        modal.classList.add("modal", type);
+        document.body.appendChild(modal);
     }
 
-    const modalContainer = document.createElement("div");
-    modalContainer.id = "customModal";
-    modalContainer.classList.add("modal", type);
+    modal.innerHTML = `<div class="modal-content">
+        <p>${message}</p>
+        <button class="close-button">Close</button>
+    </div>`;
 
-    const modalContent = document.createElement("div");
-    modalContent.classList.add("modal-content");
+    modal.querySelector(".close-button").addEventListener("click", () => modal.remove());
 
-    const messageElement = document.createElement("p");
-    messageElement.textContent = message;
-
-    const closeButton = document.createElement("button");
-    closeButton.textContent = "Close";
-    closeButton.classList.add("close-button");
-    closeButton.addEventListener("click", () => {
-        const modal = document.getElementById("customModal");
-        if (modal) {
-            document.body.removeChild(modal);
-        }
-    });
-
-    modalContent.appendChild(messageElement);
-    modalContent.appendChild(closeButton);
-    modalContainer.appendChild(modalContent);
-    document.body.appendChild(modalContainer);
-
-    // Auto-close modal after 3 seconds
-    setTimeout(() => {
-        const modal = document.getElementById("customModal");
-        if (modal) {
-            document.body.removeChild(modal);
-        }
-    }, 3000);
+    setTimeout(() => modal.remove(), 3000);
 }
 
 // ✅ Reset Button
@@ -97,50 +82,35 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     event.preventDefault();
 
     const registerButton = document.querySelector(".login-button");
-    if (registerButton) {
-        registerButton.disabled = true;
-        registerButton.textContent = "Registering...";
-    }
+    registerButton.disabled = true;
+    registerButton.textContent = "Registering...";
 
-    const usernameField = document.getElementById("username");
-    const emailField = document.getElementById("email");
-    const passwordField = document.getElementById("password");
-    const confirmPasswordField = document.getElementById("confirmPassword");
+    const username = document.getElementById("username")?.value.trim();
+    const email = document.getElementById("email")?.value.trim();
+    const password = document.getElementById("password")?.value.trim();
+    const confirmPassword = document.getElementById("confirmPassword")?.value.trim();
 
-    if (!usernameField || !emailField || !passwordField || !confirmPasswordField) {
-        showModal("❌ Error: Missing input fields in the DOM.", "error");
-        resetButton();
-        return;
-    }
-
-    const username = usernameField.value.trim();
-    const email = emailField.value.trim();
-    const password = passwordField.value.trim();
-    const confirmPassword = confirmPasswordField.value.trim();
-
-    // ✅ Validate Inputs
     if (!username || !email || !password || !confirmPassword) {
         showModal("❌ All fields are required!", "error");
         resetButton();
         return;
     }
+
     if (password.length < 6) {
         showModal("❌ Password must be at least 6 characters long.", "error");
         resetButton();
         return;
     }
+
     if (password !== confirmPassword) {
         showModal("❌ Passwords do not match!", "error");
         resetButton();
         return;
     }
 
-    // ✅ Fetch Consent ID
-    let consentId = getCookie("consentId");
-    if (!consentId) {
-        consentId = (await fetchConsentID()) || generateShortUUID();
-        setCookie("consentId", consentId, 365);
-    }
+    // ✅ Optimize Consent ID Handling
+    let consentId = getCookie("consentId") || (await fetchConsentID());
+    setCookie("consentId", consentId, 365);
 
     // ✅ Fetch IP Info
     const ipInfo = await getIpInfo();
@@ -156,7 +126,6 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         const data = await response.json();
         if (response.ok) {
             showModal("✅ Registration successful! Redirecting to login...", "success");
-
             setTimeout(() => {
                 document.getElementById("registerForm").reset();
                 window.location.href = "index.html";
@@ -166,7 +135,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         }
     } catch (error) {
         console.error("❌ Registration error:", error);
-        showModal("❌ Registration failed. Please check your internet connection and try again.", "error");
+        showModal("❌ Registration failed. Please try again later.", "error");
     } finally {
         resetButton();
     }

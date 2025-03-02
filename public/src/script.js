@@ -3,27 +3,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const authModalEl = document.getElementById("authModal");
     if (authModalEl && !isUserLoggedIn() && !sessionStorage.getItem("authModalShown")) {
         setTimeout(() => {
-            if (typeof bootstrap !== "undefined") {
+            if (window.bootstrap) {
                 const authModal = new bootstrap.Modal(authModalEl);
                 authModal.show();
                 sessionStorage.setItem("authModalShown", "true");
             } else {
-                console.warn("⚠️ Bootstrap is not loaded. Modal cannot be displayed.");
+                console.warn("⚠️ Bootstrap not loaded. Modal cannot be displayed.");
             }
         }, 5000);
     }
 
-    // Handle Login Form Submission
-    document.getElementById("loginForm")?.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        await handleLogin();
-    });
-
-    // Handle Sign-Up Form Submission
-    document.getElementById("signupForm")?.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        await handleSignup();
-    });
+    // Attach event listeners safely
+    document.getElementById("loginForm")?.addEventListener("submit", handleLogin);
+    document.getElementById("signupForm")?.addEventListener("submit", handleSignup);
 
     // Initialize Cookie Banner Logic
     handleCookieBanner();
@@ -32,7 +24,8 @@ document.addEventListener("DOMContentLoaded", () => {
 /**
  * Handles user login.
  */
-async function handleLogin() {
+async function handleLogin(event) {
+    event?.preventDefault(); // Ensure function works in event-based execution
     const email = document.getElementById("loginEmail")?.value.trim();
     const password = document.getElementById("loginPassword")?.value.trim();
 
@@ -41,6 +34,7 @@ async function handleLogin() {
     try {
         showLoading(true);
         const response = await fetchAPI("/api/login", "POST", { email, password });
+
         if (response.token) {
             localStorage.setItem("token", response.token);
             localStorage.setItem("user", JSON.stringify(response.user));
@@ -59,7 +53,8 @@ async function handleLogin() {
 /**
  * Handles user signup.
  */
-async function handleSignup() {
+async function handleSignup(event) {
+    event?.preventDefault();
     const name = document.getElementById("signupName")?.value.trim();
     const email = document.getElementById("signupEmail")?.value.trim();
     const password = document.getElementById("signupPassword")?.value.trim();
