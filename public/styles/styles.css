@@ -94,19 +94,21 @@ body {
 
 /* Theme Toggle Button */
 #themeToggleBtn {
-    background: var(--primary-color);
+    background: transparent; /* Transparent background */
     color: white;
     padding: 8px 15px;
-    border: none;
+    border: 1px solid var(--primary-color); /* Optional border for visibility */
     cursor: pointer;
     border-radius: 5px;
-    transition: background 0.3s, transform 0.2s;
+    transition: background 0.3s, transform 0.2s, border 0.3s;
 }
 
 #themeToggleBtn:hover {
-    background: var(--hover-color);
+    background: rgba(255, 255, 255, 0.1); /* Slight highlight on hover */
+    border-color: var(--hover-color);
     transform: scale(1.05);
 }
+
 /* Login Page Styles */
 .login-container {
     display: flex;
