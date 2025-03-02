@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Professional Login Page</title>
+    <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="./public/styles/styles.css">
     <link rel="stylesheet" href="./public/styles/cookie-banner.css">
     <link rel="stylesheet" href="./public/styles/customize.css">
@@ -16,39 +18,46 @@
     <!-- Header Section -->
     <header class="header-section">
         <div class="header-container">
+            <!-- Site Logo -->
             <a class="site-logo" href="#">NewsPortal</a>
-            
-            <!-- Authentication Trigger -->
-            <button id="authModalTrigger" class="action-btn">Login | Register</button>
 
-            <!-- Theme Toggle Button -->
-            <button id="themeToggleBtn" class="toggle-btn">🌙</button>
-
-            <!-- Settings Dropdown -->
-            <div class="settings-dropdown">
-                <button id="settingsDropdown" class="dropdown-trigger">⚙️ Settings</button>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">📖 Read Guidelines & Policies</a></li>
-                    <li><a class="dropdown-item" href="#">👤 User Profile</a></li>
-                    <li><a class="dropdown-item" href="#" id="cookieSettings">🍪 Cookie Settings</a></li>
-                    <li><a class="dropdown-item danger-link" href="#" id="deleteAllData">🗑️ Delete All Data</a></li>
-                    <li><a class="dropdown-item danger-link" href="#" id="logout">🚪 Logout</a></li>
-                </ul>
-            </div>
+            <!-- Navigation Links -->
+            <nav class="nav-links">
+                <div class="nav-item">
+                    <!-- Authentication Trigger -->
+                    <button id="authModalTrigger" class="action-btn">Login | Register</button>
+                </div>
+                <div class="nav-item">
+                    <!-- Theme Toggle Button -->
+                    <button id="themeToggleBtn" class="toggle-btn">🌙</button>
+                </div>
+                <div class="nav-item">
+                    <!-- Settings Dropdown -->
+                    <button id="settingsDropdown" class="dropdown-trigger">⚙️ Settings</button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">📖 Read Guidelines & Policies</a></li>
+                        <li><a class="dropdown-item" href="#">👤 User Profile</a></li>
+                        <li><a class="dropdown-item" href="#" id="cookieSettings">🍪 Cookie Settings</a></li>
+                        <li><a class="dropdown-item danger-link" href="#" id="deleteAllData">🗑️ Delete All Data</a></li>
+                        <li><a class="dropdown-item danger-link" href="#" id="logout">🚪 Logout</a></li>
+                    </ul>
+                </div>
+            </nav>
         </div>
     </header>
 
     <!-- Cookie Consent Banner -->
     <div id="cookieConsent" class="cookie-banner">
         <div class="cookie-banner-content">
-            <p><strong>We value your privacy!</strong><br>  
-                We use cookies to enhance your experience, analyze site traffic, and serve personalized content.  
-                By clicking "Accept All", you agree to the use of all cookies.  
-                You can manage your preferences via "Customize". 
-                <br> 
-                Learn more in our  
-                <a href="cookie-policy.html" target="_blank">Cookie Policy</a>,  
-                <a href="privacy-policy.html" target="_blank">Privacy Policy</a>, and  
+            <p>
+                <strong>We value your privacy!</strong><br>
+                We use cookies to enhance your experience, analyze site traffic, and serve personalized content.<br>
+                By clicking "Accept All", you agree to the use of all cookies.<br>
+                You can manage your preferences via "Customize".
+                <br>
+                Learn more in our
+                <a href="cookie-policy.html" target="_blank">Cookie Policy</a>,
+                <a href="privacy-policy.html" target="_blank">Privacy Policy</a>, and
                 <a href="terms-of-service.html" target="_blank">Terms of Service</a>.
             </p>
 
@@ -68,27 +77,37 @@
             <br>
             <div class="cookie-category">
                 <input type="checkbox" id="strictlyNecessary" checked disabled>
-                <label for="strictlyNecessary" class="cookie-label" data-cookie-type="strictlyNecessary" data-info="Strictly necessary cookies are essential for the website's basic functionalities. These cookies ensure the site functions properly. <a href='cookie-policy.html' target='_blank'>Learn More</a>">Strictly Necessary Cookies (Required for website functionality)</label>
+                <label for="strictlyNecessary" class="cookie-label" data-cookie-type="strictlyNecessary" data-info="Strictly necessary cookies are essential for the website's basic functionalities. These cookies ensure the site functions properly. <a href='cookie-policy.html' target='_blank'>Learn More</a>">
+                    Strictly Necessary Cookies (Required for website functionality)
+                </label>
             </div>
             <br>
             <div class="cookie-category">
                 <input type="checkbox" id="performance">
-                <label for="performance" class="cookie-label" data-cookie-type="performance" data-info="Performance cookies help us understand how visitors interact with our website. These cookies are used to improve website performance and functionality. <a href='cookie-policy.html' target='_blank'>Learn More</a>">Performance (Analytical) Cookies</label>
+                <label for="performance" class="cookie-label" data-cookie-type="performance" data-info="Performance cookies help us understand how visitors interact with our website. These cookies are used to improve website performance and functionality. <a href='cookie-policy.html' target='_blank'>Learn More</a>">
+                    Performance (Analytical) Cookies
+                </label>
             </div>
             <br>
             <div class="cookie-category">
                 <input type="checkbox" id="functional">
-                <label for="functional" class="cookie-label" data-cookie-type="functional" data-info="Functional cookies allow the website to remember your preferences and personalize the user experience. <a href='cookie-policy.html' target='_blank'>Learn More</a>">Functional Cookies (Preferences)</label>
+                <label for="functional" class="cookie-label" data-cookie-type="functional" data-info="Functional cookies allow the website to remember your preferences and personalize the user experience. <a href='cookie-policy.html' target='_blank'>Learn More</a>">
+                    Functional Cookies (Preferences)
+                </label>
             </div>
             <br>
             <div class="cookie-category">
                 <input type="checkbox" id="advertising">
-                <label for="advertising" class="cookie-label" data-cookie-type="advertising" data-info="Advertising cookies help us provide you with personalized ads based on your interests and browsing history. <a href='cookie-policy.html' target='_blank'>Learn More</a>">Advertising (Targeting) Cookies</label>
+                <label for="advertising" class="cookie-label" data-cookie-type="advertising" data-info="Advertising cookies help us provide you with personalized ads based on your interests and browsing history. <a href='cookie-policy.html' target='_blank'>Learn More</a>">
+                    Advertising (Targeting) Cookies
+                </label>
             </div>
             <br>
             <div class="cookie-category">
                 <input type="checkbox" id="socialMedia">
-                <label for="socialMedia" class="cookie-label" data-cookie-type="socialMedia" data-info="Social Media cookies allow you to share content and interact with social media platforms like Facebook and Twitter. <a href='cookie-policy.html' target='_blank'>Learn More</a>">Social Media Cookies</label>
+                <label for="socialMedia" class="cookie-label" data-cookie-type="socialMedia" data-info="Social Media cookies allow you to share content and interact with social media platforms like Facebook and Twitter. <a href='cookie-policy.html' target='_blank'>Learn More</a>">
+                    Social Media Cookies
+                </label>
             </div>
             <br>
             <div class="modal-buttons">
