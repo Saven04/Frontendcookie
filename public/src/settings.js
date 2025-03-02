@@ -1,4 +1,5 @@
 // Correct Supabase initialization
+import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = "https://ieyefjxdupzywnmqltnw.supabase.co";
 const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlleWVmanhkdXB6eXdubXFsdG53Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA5MTg2ODIsImV4cCI6MjA1NjQ5NDY4Mn0.Bcl4f67ub3t0MCveOq1zlO9-bD5uRbv12mu-ONG0Whc";
 const supabase = createClient(supabaseUrl, supabaseAnonKey); // Correct method
