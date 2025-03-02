@@ -150,63 +150,58 @@
     <script src="./public/src/theme-toggle.js"></script>
 
 <script>
-    
-    document.addEventListener("DOMContentLoaded", function () {
+
+  document.addEventListener("DOMContentLoaded", function () {
     const authModal = document.getElementById("authModal");
     const authModalTrigger = document.getElementById("authModalTrigger");
     const closeAuthModal = document.getElementById("closeAuthModal");
     const loginContainer = document.getElementById("loginContainer");
     const registerContainer = document.getElementById("registerContainer");
-    const switchToRegister = document.getElementById("switchToRegister");
-    const switchToLogin = document.getElementById("switchToLogin");
     const body = document.body;
 
-    if (!authModal || !authModalTrigger || !closeAuthModal) {
+    if (!authModal || !authModalTrigger || !closeAuthModal || !loginContainer || !registerContainer) {
         console.error("Modal elements not found! Check your HTML IDs.");
         return;
     }
 
-    // Open Modal
-    authModalTrigger.addEventListener("click", function () {
-        authModal.style.display = "flex";  // Use flex instead of block for better centering
+    // Function to open the modal
+    function openModal() {
+        authModal.classList.add("show"); // Add a class for styling instead of modifying styles directly
         authModal.setAttribute("aria-hidden", "false");
-        loginContainer.style.display = "block";
-        registerContainer.style.display = "none";
-        body.style.overflow = "hidden"; // Prevent background scrolling
-    });
+        loginContainer.classList.remove("hidden");
+        registerContainer.classList.add("hidden");
+        body.style.overflow = "hidden"; // Disable scrolling
+    }
 
-    // Close Modal
+    // Function to close the modal
     function closeModal() {
-        authModal.style.display = "none";
+        authModal.classList.remove("show");
         authModal.setAttribute("aria-hidden", "true");
         body.style.overflow = "auto"; // Restore scrolling
     }
 
+    // Open Modal on button click
+    authModalTrigger.addEventListener("click", openModal);
+
+    // Close Modal on button click or outside click
     closeAuthModal.addEventListener("click", closeModal);
-
-    // Switch to Register Form
-    switchToRegister.addEventListener("click", function () {
-        loginContainer.style.display = "none";
-        registerContainer.style.display = "block";
-    });
-
-    // Switch to Login Form
-    switchToLogin.addEventListener("click", function () {
-        loginContainer.style.display = "block";
-        registerContainer.style.display = "none";
-    });
-
-    // Close modal on outside click
-    window.addEventListener("click", function (event) {
-        if (event.target === authModal) {
-            closeModal();
-        }
+    window.addEventListener("click", (event) => {
+        if (event.target === authModal) closeModal();
     });
 
     // Close modal with Escape key
-    window.addEventListener("keydown", function (event) {
-        if (event.key === "Escape") {
-            closeModal();
+    window.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") closeModal();
+    });
+
+    // Toggle between login & register
+    document.addEventListener("click", (event) => {
+        if (event.target.id === "switchToRegister") {
+            loginContainer.classList.add("hidden");
+            registerContainer.classList.remove("hidden");
+        } else if (event.target.id === "switchToLogin") {
+            registerContainer.classList.add("hidden");
+            loginContainer.classList.remove("hidden");
         }
     });
 });
