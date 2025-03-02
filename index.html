@@ -110,44 +110,43 @@
     <script src="./public/src/theme-toggle.js"></script>
 
     <script>
-     document.addEventListener("DOMContentLoaded", function () {
-    const loginRegisterBtn = document.getElementById("loginRegisterBtn");
-    const loginModal = document.getElementById("loginModal");
-    const closeLoginModal = document.getElementById("closeLoginModal");
+        document.addEventListener("DOMContentLoaded", function () {
+            const loginRegisterBtn = document.getElementById("loginRegisterBtn");
+            const loginModal = document.getElementById("loginModal");
+            const closeLoginModal = document.getElementById("closeLoginModal");
 
-    if (loginRegisterBtn && loginModal && closeLoginModal) {
-        // Open Login Modal when "Login | Register" button is clicked
-        loginRegisterBtn.addEventListener("click", function () {
-            loginModal.classList.add("show");  
-            loginModal.setAttribute("aria-hidden", "false");
-        });
+            if (loginRegisterBtn && loginModal && closeLoginModal) {
+                // Open Login Modal when "Login | Register" button is clicked
+                loginRegisterBtn.addEventListener("click", function () {
+                    loginModal.classList.add("show");  
+                    loginModal.setAttribute("aria-hidden", "false");
+                });
 
-        // Close Login Modal when 'X' button is clicked
-        closeLoginModal.addEventListener("click", function () {
-            loginModal.classList.remove("show");  
-            loginModal.setAttribute("aria-hidden", "true");
-        });
+                // Close Login Modal when 'X' button is clicked
+                closeLoginModal.addEventListener("click", function () {
+                    loginModal.classList.remove("show");  
+                    loginModal.setAttribute("aria-hidden", "true");
+                });
 
-        // Close Modal when clicking outside of it
-        window.addEventListener("click", function (event) {
-            if (event.target === loginModal) {
-                loginModal.classList.remove("show");  
-                loginModal.setAttribute("aria-hidden", "true");
+                // Close Modal when clicking outside of it
+                window.addEventListener("click", function (event) {
+                    if (event.target === loginModal) {
+                        loginModal.classList.remove("show");  
+                        loginModal.setAttribute("aria-hidden", "true");
+                    }
+                });
+
+                // Close modal on Esc key press
+                document.addEventListener("keydown", function (event) {
+                    if (event.key === "Escape" && loginModal.classList.contains("show")) {
+                        loginModal.classList.remove("show");  
+                        loginModal.setAttribute("aria-hidden", "true");
+                    }
+                });
+            } else {
+                console.error("Modal elements not found! Check your HTML IDs.");
             }
         });
-
-        // Close modal on Esc key press
-        document.addEventListener("keydown", function (event) {
-            if (event.key === "Escape" && loginModal.classList.contains("show")) {
-                loginModal.classList.remove("show");  
-                loginModal.setAttribute("aria-hidden", "true");
-            }
-        });
-    } else {
-        console.error("Modal elements not found! Check your HTML IDs.");
-    }
-});
-
     </script>
 
 </body>

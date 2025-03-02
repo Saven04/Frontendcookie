@@ -2,38 +2,30 @@ document.addEventListener("DOMContentLoaded", () => {
     // Show Login Popup Only for New Users
     const authModalEl = document.getElementById("authModal");
     if (authModalEl && !isUserLoggedIn() && !sessionStorage.getItem("authModalShown")) {
-        const loginForm = document.getElementById("loginForm");
-        const signupForm = document.getElementById("signupForm");
-        if (!loginForm || !signupForm) {
-            console.error("❌ Login or signup form not found in modal.");
-            return;
-        }
         setTimeout(() => {
-            const authModal = new bootstrap.Modal(authModalEl);
-            authModal.show();
-            sessionStorage.setItem("authModalShown", "true");
+            if (typeof bootstrap !== "undefined") {
+                const authModal = new bootstrap.Modal(authModalEl);
+                authModal.show();
+                sessionStorage.setItem("authModalShown", "true");
+            } else {
+                console.warn("⚠️ Bootstrap is not loaded. Modal cannot be displayed.");
+            }
         }, 5000);
     }
 
     // Handle Login Form Submission
-    const loginForm = document.getElementById("loginForm");
-    if (loginForm) {
-        loginForm.addEventListener("submit", async (event) => {
-            event.preventDefault();
-            await handleLogin();
-        });
-    }
+    document.getElementById("loginForm")?.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        await handleLogin();
+    });
 
     // Handle Sign-Up Form Submission
-    const signupForm = document.getElementById("signupForm");
-    if (signupForm) {
-        signupForm.addEventListener("submit", async (event) => {
-            event.preventDefault();
-            await handleSignup();
-        });
-    }
+    document.getElementById("signupForm")?.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        await handleSignup();
+    });
 
-    // Cookie Banner Logic
+    // Initialize Cookie Banner Logic
     handleCookieBanner();
 });
 
@@ -41,14 +33,8 @@ document.addEventListener("DOMContentLoaded", () => {
  * Handles user login.
  */
 async function handleLogin() {
-    const emailInput = document.getElementById("loginEmail");
-    const passwordInput = document.getElementById("loginPassword");
-    if (!emailInput || !passwordInput) {
-        console.error("❌ Missing login form fields.");
-        return;
-    }
-    const email = emailInput.value.trim();
-    const password = passwordInput.value.trim();
+    const email = document.getElementById("loginEmail")?.value.trim();
+    const password = document.getElementById("loginPassword")?.value.trim();
 
     if (!validateFormInputs({ email, password })) return;
 
@@ -74,16 +60,9 @@ async function handleLogin() {
  * Handles user signup.
  */
 async function handleSignup() {
-    const nameInput = document.getElementById("signupName");
-    const emailInput = document.getElementById("signupEmail");
-    const passwordInput = document.getElementById("signupPassword");
-    if (!nameInput || !emailInput || !passwordInput) {
-        console.error("❌ Missing signup form fields.");
-        return;
-    }
-    const name = nameInput.value.trim();
-    const email = emailInput.value.trim();
-    const password = passwordInput.value.trim();
+    const name = document.getElementById("signupName")?.value.trim();
+    const email = document.getElementById("signupEmail")?.value.trim();
+    const password = document.getElementById("signupPassword")?.value.trim();
 
     if (!validateFormInputs({ name, email, password })) return;
 
@@ -115,17 +94,8 @@ function handleCookieBanner() {
         setTimeout(() => cookieBanner.classList.add("show"), 500);
     }
 
-    if (acceptBtn) {
-        acceptBtn.addEventListener("click", () => handleCookieConsent(true));
-    } else {
-        console.warn("⚠️ Accept cookies button (#acceptCookies) not found.");
-    }
-
-    if (rejectBtn) {
-        rejectBtn.addEventListener("click", () => handleCookieConsent(false));
-    } else {
-        console.warn("⚠️ Reject cookies button (#rejectCookies) not found.");
-    }
+    acceptBtn?.addEventListener("click", () => handleCookieConsent(true));
+    rejectBtn?.addEventListener("click", () => handleCookieConsent(false));
 }
 
 /**
@@ -144,7 +114,7 @@ function handleCookieConsent(accepted) {
  */
 function isUserLoggedIn() {
     const token = localStorage.getItem("token");
-    return token !== null && token !== "undefined";
+    return token && token !== "undefined";
 }
 
 /**
@@ -175,8 +145,7 @@ async function fetchAPI(endpoint, method, body = {}) {
         });
         const data = await response.json();
         if (!response.ok) {
-            const errorMessage = data.message || `HTTP error! Status: ${response.status}`;
-            throw new Error(errorMessage);
+            throw new Error(data.message || `HTTP error! Status: ${response.status}`);
         }
         return data;
     } catch (error) {
