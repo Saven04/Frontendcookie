@@ -10,10 +10,6 @@ body {
     background-color: var(--bg-color);
     color: var(--text-color);
     transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
     overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
@@ -46,9 +42,6 @@ body {
     }
 }
 
-
-
-
 /* Navbar Styling */
 .navbar {
     background: #222;
@@ -64,27 +57,21 @@ body {
     z-index: 1000;
 }
 
-/* Navbar container */
-.navbar-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-}
-
 /* Authentication button (Login | Register) */
 .auth-btn {
-    background: var(--button-bg);
+    background: var(--primary-color);
     color: #fff;
     font-weight: bold;
     font-size: 16px;
-    padding: 10px 20px;
+    padding: 12px 24px;
     border-radius: 8px;
     transition: background 0.3s ease-in-out, transform 0.2s;
     border: none;
     cursor: pointer;
-    display: inline-block;
     text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .auth-btn:hover {
@@ -94,22 +81,22 @@ body {
 
 /* Theme Toggle Button */
 #themeToggleBtn {
-    background: transparent; /* Transparent background */
+    background: transparent;
     color: white;
     padding: 8px 15px;
-    border: 1px solid var(--primary-color); /* Optional border for visibility */
+    border: 1px solid var(--primary-color);
     cursor: pointer;
     border-radius: 5px;
     transition: background 0.3s, transform 0.2s, border 0.3s;
 }
 
 #themeToggleBtn:hover {
-    background: rgba(255, 255, 255, 0.1); /* Slight highlight on hover */
+    background: rgba(255, 255, 255, 0.1);
     border-color: var(--hover-color);
     transform: scale(1.05);
 }
 
-/* Login Page Styles */
+/* Login/Register Container */
 .login-container {
     display: flex;
     flex-direction: column;
@@ -120,13 +107,6 @@ body {
     padding: 30px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
     animation: fadeIn 0.6s ease-in-out;
-}
-
-.card-header h2 {
-    text-align: center;
-    font-size: 28px;
-    margin-bottom: 20px;
-    color: var(--text-color);
 }
 
 /* Input Styles */
@@ -182,58 +162,6 @@ body {
     transform: scale(1.02);
 }
 
-/* Forgot Password */
-.forgot-password {
-    display: block;
-    margin-top: 10px;
-    color: #007bff;
-    text-decoration: none;
-    text-align: center;
-}
-
-.forgot-password:hover {
-    text-decoration: underline;
-}
-
-/* Social Login */
-.social-login {
-    text-align: center;
-    margin-top: 20px;
-}
-
-.social-login p {
-    font-size: 14px;
-    color: #ccc;
-    margin-bottom: 15px;
-}
-
-.social-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 12px 20px;
-    font-size: 16px;
-    background-color: transparent;
-    border: 1px solid #ccc;
-    color: #ccc;
-    cursor: pointer;
-    width: 100%;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    transition: background-color 0.3s, transform 0.3s;
-    font-weight: 500;
-}
-
-.social-button:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    transform: scale(1.02);
-}
-
-.social-button img {
-    width: 20px;
-    margin-right: 10px;
-}
-
 /* Modal Styling */
 .modal {
     display: none;
@@ -246,6 +174,12 @@ body {
     background: rgba(0, 0, 0, 0.5);
     justify-content: center;
     align-items: center;
+    pointer-events: none; /* Prevent interaction when hidden */
+}
+
+.modal.show {
+    display: flex;
+    pointer-events: auto; /* Allow interaction when visible */
 }
 
 .modal-content {
@@ -272,9 +206,20 @@ body {
     color: var(--primary-color);
 }
 
-.hidden { display: none; }
+/* Fix modal background dim issue */
+.modal-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+}
 
-.show { display: flex; }
+.modal.show + .modal-background {
+    display: block;
+}
 
 /* Responsive Design */
 @media (max-width: 768px) {
