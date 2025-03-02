@@ -180,14 +180,14 @@ body {
 
 /* Popup Overlay */
 .popup-overlay {
-    display: none;
+    display: none; /* Hidden by default */
     position: fixed;
     z-index: 1050;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6); /* Slightly darker overlay */
     justify-content: center;
     align-items: center;
     overflow: auto;
@@ -199,28 +199,33 @@ body {
 
 .popup-content {
     background: var(--card-bg);
-    padding: 20px;
-    border-radius: 12px;
-    max-width: 400px;
-    width: 90%;
+    padding: 30px;
+    border-radius: 16px; /* Increased border radius for a softer look */
+    max-width: 450px; /* Slightly wider modal */
+    width: 95%;
     text-align: center;
     position: relative;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3); /* Enhanced shadow for depth */
     animation: fadeIn 0.6s ease-in-out;
-    box-shadow: 0 8px 16px var(--shadow-color);
+    transition: transform 0.3s ease-in-out;
+}
+
+.popup-content:hover {
+    transform: scale(1.02); /* Subtle hover effect */
 }
 
 .close-icon {
     position: absolute;
-    right: 10px;
-    top: 10px;
-    font-size: 24px;
+    right: 15px;
+    top: 15px;
+    font-size: 28px;
     cursor: pointer;
     color: var(--text-color);
     transition: color 0.3s ease-in-out;
 }
 
 .close-icon:hover {
-    color: var(--primary-color);
+    color: var(--hover-color);
 }
 
 /* Login Form Styling */
@@ -228,74 +233,69 @@ body {
     display: flex;
     flex-direction: column;
     width: 100%;
-    max-width: 400px;
+    max-width: 450px;
     background-color: var(--card-bg);
-    border-radius: 12px;
+    border-radius: 16px;
     padding: 30px;
-    box-shadow: 0 8px 16px var(--shadow-color);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
     animation: fadeIn 0.6s ease-in-out;
 }
 
 /* Input Group */
 .input-group {
-    margin-bottom: 15px;
-    display: flex;
-    flex-direction: column;
+    margin-bottom: 20px;
+    position: relative;
 }
 
-.input-group label {
+.input-label {
     font-size: 14px;
-    color: #ccc;
-    margin-bottom: 5px;
     font-weight: 500;
+    color: var(--text-color);
+    margin-bottom: 8px;
+    display: block;
 }
 
-.input-group input {
+.input-field {
+    width: 100%;
     padding: 14px;
     font-size: 16px;
-    border: none;
-    border-radius: 8px;
-    background-color: var(--input-bg);
+    border: 2px solid transparent; /* Transparent border for focus effect */
+    border-radius: 10px;
+    background: var(--input-bg);
     color: var(--text-color);
     outline: none;
-    transition: background-color 0.3s, transform 0.3s;
+    transition: border-color 0.3s ease-in-out, transform 0.2s ease-in-out;
 }
 
-.input-group input::placeholder {
-    color: #bbb;
-}
-
-.input-group input:focus {
-    background-color: #444;
-    transform: scale(1.02);
+.input-field:focus {
+    border-color: var(--primary-color); /* Highlight border on focus */
+    transform: scale(1.02); /* Slight zoom effect */
 }
 
 /* Action Buttons */
 .action-btn {
     width: 100%;
-    padding: 14px;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: 600;
     background: var(--primary-color);
     color: white;
     border: none;
-    border-radius: 8px;
-    font-size: 16px;
+    border-radius: 10px;
     cursor: pointer;
-    transition: background 0.3s, transform 0.3s;
-    font-weight: 600;
+    transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
 }
 
 .action-btn:hover {
     background: var(--hover-color);
-    transform: scale(1.02);
+    transform: scale(1.02); /* Slight zoom effect */
 }
 
 /* Forgot Password Link */
 .forgot-link {
-    display: block;
-    margin-top: 10px;
+    font-size: 14px;
     color: var(--primary-color);
     text-decoration: none;
-    text-align: center;
     transition: color 0.3s ease-in-out;
 }
 
@@ -323,19 +323,18 @@ body {
     padding: 12px 20px;
     font-size: 16px;
     background-color: transparent;
-    border: 1px solid #ccc;
-    color: #ccc;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
     cursor: pointer;
     width: 100%;
-    border-radius: 8px;
+    border-radius: 10px;
     margin-bottom: 10px;
-    transition: background-color 0.3s, transform 0.3s;
-    font-weight: 500;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
 .social-btn:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    transform: scale(1.02);
+    background-color: var(--primary-color);
+    color: white;
 }
 
 .social-btn img {
@@ -372,7 +371,7 @@ body {
     }
 
     .login-form {
-        width: 90%;
+        width: 95%;
         padding: 20px;
     }
 
