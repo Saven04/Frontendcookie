@@ -77,8 +77,8 @@ function setupEventListeners() {
         themeToggleBtn.addEventListener("click", () => {
             document.body.classList.toggle("dark-mode");
             themeToggleBtn.textContent = document.body.classList.contains("dark-mode") 
-                ? "🌙 Dark Mode" 
-                : "☀️ Light Mode";
+                ? "🌙" 
+                : "☀️";
         });
     }
 }
