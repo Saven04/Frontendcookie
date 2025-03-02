@@ -1,5 +1,4 @@
 /* General Styles */
-
 * {
     margin: 0;
     padding: 0;
@@ -25,6 +24,9 @@ body {
     --navbar-bg: #222;
     --button-bg: #ff6600;
     --button-hover-bg: #e65c00;
+    --card-bg: #2a2a2a; /* Added missing variable */
+    --input-bg: #333; /* Added missing variable */
+    --primary-color: #ff6600; /* Added missing variable */
 }
 
 [data-theme="light"] {
@@ -33,6 +35,9 @@ body {
     --navbar-bg: #fff;
     --button-bg: #007bff;
     --button-hover-bg: #0056b3;
+    --card-bg: #fff;
+    --input-bg: #ddd;
+    --primary-color: #007bff;
 }
 
 /* Fade-in Animation */
@@ -55,7 +60,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
+    width: 100vw;
     position: fixed;
     top: 0;
     left: 0;
@@ -133,7 +138,7 @@ body {
 .login-button, .register-button {
     background: var(--button-bg);
     color: #fff;
-    padding: 8px 15px;
+    padding: 10px 15px;
     border: none;
     cursor: pointer;
     border-radius: 5px;
@@ -142,14 +147,13 @@ body {
 
 .login-button:hover, .register-button:hover {
     background: var(--button-hover-bg);
-   
 }
 
 /* Forgot Password */
 .forgot-password {
     display: block;
     margin-top: 10px;
-    color: #007bff;
+    color: var(--button-bg);
     text-decoration: none;
     text-align: center;
 }
