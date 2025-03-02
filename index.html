@@ -94,18 +94,18 @@
     
 
     <!-- Login Modal -->
-    <div id="loginModal" class="modal" role="dialog" aria-hidden="true">
+    <div id="authModal" class="modal" role="dialog" aria-hidden="true">
         <div class="modal-content">
-            <button class="close" id="closeLoginModal" aria-label="Close Login Modal">&times;</button>
+            <button class="close" id="closeAuthModal" aria-label="Close Login Modal">&times;</button>
             <h2>Login to Your Account</h2>
             <form id="loginForm">
                 <div class="input-group">
-                    <label for="email">Email or Username</label>
-                    <input type="text" id="email" placeholder="Enter your email" required>
+                    <label for="auth-email">Email or Username</label>
+                    <input type="text" id="auth-email" placeholder="Enter your email" required>
                 </div>
                 <div class="input-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" placeholder="Enter your password" required>
+                    <label for="auth-password">Password</label>
+                    <input type="password" id="auth-password" placeholder="Enter your password" required>
                 </div>
                 <button type="submit" class="login-button">Login</button>
                 <a href="#" class="forgot-password">Forgot Password?</a>
@@ -113,6 +113,7 @@
             </form>
         </div>
     </div>
+    
 
     <!-- Include JavaScript -->
     <script src="./public/src/main.js"></script>
@@ -120,52 +121,40 @@
     <script type="module" src="./public/src/cookie-banner.js"></script>
     <script src="./public/src/theme-toggle.js"></script>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const loginBtn = document.getElementById("login-btn");
-            const registerBtn = document.getElementById("register-btn");
-            const loginModal = document.getElementById("loginModal");
-            const closeLoginModal = document.getElementById("closeLoginModal");
 
-            if (loginBtn && registerBtn && loginModal && closeLoginModal) {
-                // Open Login Modal when "Login" button is clicked
-                loginBtn.addEventListener("click", function () {
-                    loginModal.classList.add("show");
-                    loginModal.setAttribute("aria-hidden", "false");
-                });
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const authModal = document.getElementById("authModal");
+    const authModalTrigger = document.getElementById("authModalTrigger"); // Button to open modal
+    const closeAuthModal = document.getElementById("closeAuthModal");
 
-                // Open Login Modal when "Register" button is clicked
-                registerBtn.addEventListener("click", function () {
-                    loginModal.classList.add("show"); 
-                    loginModal.setAttribute("aria-hidden", "false");
-                });
+    if (!authModal || !authModalTrigger || !closeAuthModal) {
+        console.error("Modal elements not found! Check your HTML IDs.");
+        return;
+    }
 
-                // Close Login Modal when 'X' button is clicked
-                closeLoginModal.addEventListener("click", function () {
-                    loginModal.classList.remove("show");
-                    loginModal.setAttribute("aria-hidden", "true");
-                });
+    // Open Modal
+    authModalTrigger.addEventListener("click", function () {
+        authModal.style.display = "block";
+        authModal.setAttribute("aria-hidden", "false");
+    });
 
-                // Close Modal when clicking outside of it
-                window.addEventListener("click", function (event) {
-                    if (event.target === loginModal) {
-                        loginModal.classList.remove("show");
-                        loginModal.setAttribute("aria-hidden", "true");
-                    }
-                });
+    // Close Modal
+    closeAuthModal.addEventListener("click", function () {
+        authModal.style.display = "none";
+        authModal.setAttribute("aria-hidden", "true");
+    });
 
-                // Close modal on Esc key press
-                document.addEventListener("keydown", function (event) {
-                    if (event.key === "Escape" && loginModal.classList.contains("show")) {
-                        loginModal.classList.remove("show");
-                        loginModal.setAttribute("aria-hidden", "true");
-                    }
-                });
-            } else {
-                console.error("Modal elements not found! Check your HTML IDs.");
-            }
-        });
-    </script>
+    // Close Modal on Outside Click
+    window.addEventListener("click", function (event) {
+        if (event.target === authModal) {
+            authModal.style.display = "none";
+            authModal.setAttribute("aria-hidden", "true");
+        }
+    });
+});
+
+</script>
 
 </body>
 
