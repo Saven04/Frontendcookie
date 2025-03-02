@@ -23,9 +23,9 @@ function getAuthHeaders() {
 
 // ✅ Event listeners setup
 function setupEventListeners() {
-    const loginRegisterButton = document.getElementById("loginRegisterBtn"); // Fixed ID
-    const loginModal = document.getElementById("loginModal"); // Fixed ID
-    const closeModal = document.getElementById("closeLoginModal"); // Fixed ID
+    const loginRegisterButton = document.getElementById("loginRegisterBtn");
+    const loginModal = document.getElementById("loginModal");
+    const closeModal = document.getElementById("closeLoginModal");
     const logoutButton = document.getElementById("logout-btn");
     const loginForm = document.getElementById("loginForm");
     const themeToggleBtn = document.getElementById("themeToggleBtn");
@@ -34,13 +34,14 @@ function setupEventListeners() {
     if (loginRegisterButton && loginModal) {
         loginRegisterButton.addEventListener("click", () => {
             loginModal.style.display = "flex";
+            document.body.style.overflow = "hidden"; // Prevent scrolling when modal is open
         });
     }
 
     // ✅ Close login modal when clicking the close button
     if (closeModal && loginModal) {
         closeModal.addEventListener("click", () => {
-            loginModal.style.display = "none";
+            closeLoginModal();
         });
     }
 
@@ -48,7 +49,7 @@ function setupEventListeners() {
     if (loginModal) {
         loginModal.addEventListener("click", (event) => {
             if (event.target === loginModal) {
-                loginModal.style.display = "none";
+                closeLoginModal();
             }
         });
     }
@@ -83,6 +84,15 @@ function setupEventListeners() {
     }
 }
 
+// ✅ Close login modal function
+function closeLoginModal() {
+    const loginModal = document.getElementById("loginModal");
+    if (loginModal) {
+        loginModal.style.display = "none";
+        document.body.style.overflow = "auto"; // Restore scrolling when modal is closed
+    }
+}
+
 // ✅ User login function
 async function loginUser(userInput, password) {
     try {
@@ -103,7 +113,7 @@ async function loginUser(userInput, password) {
 
         // ✅ Close login modal after successful login
         setTimeout(() => {
-            document.getElementById("loginModal").style.display = "none";
+            closeLoginModal();
             window.location.href = "/userDashboard.html";
         }, 1500);
     } catch (error) {
@@ -163,10 +173,7 @@ function showModal(message, type) {
     closeButton.textContent = "Close";
     closeButton.classList.add("close-button");
     closeButton.addEventListener("click", () => {
-        const modal = document.getElementById("customModal");
-        if (modal) {
-            document.body.removeChild(modal);
-        }
+        removeModal();
     });
 
     modalContent.appendChild(messageElement);
@@ -174,10 +181,13 @@ function showModal(message, type) {
     modalContainer.appendChild(modalContent);
     document.body.appendChild(modalContainer);
 
-    setTimeout(() => {
-        const modal = document.getElementById("customModal");
-        if (modal) {
-            document.body.removeChild(modal);
-        }
-    }, 3000);
+    setTimeout(removeModal, 3000);
+}
+
+// ✅ Function to remove modal safely
+function removeModal() {
+    const modal = document.getElementById("customModal");
+    if (modal) {
+        modal.remove();
+    }
 }
