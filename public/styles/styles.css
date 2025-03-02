@@ -5,8 +5,16 @@
     box-sizing: border-box;
 }
 
+@font-face {
+    font-family: 'Open Sans';
+    src: url('fonts/OpenSans-Regular.ttf') format('truetype'),
+         url('fonts/OpenSans-Bold.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
 body {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Open Sans', sans-serif;
     background-color: var(--bg-color);
     color: var(--text-color);
     transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
@@ -34,15 +42,6 @@ body {
     --card-bg: rgba(255, 255, 255, 0.9);
     --input-bg: #ddd;
     --shadow-color: rgba(0, 0, 0, 0.1);
-}
-
-/* Import Local Font Files */
-@font-face {
-    font-family: 'Roboto';
-    src: url('fonts/Roboto-Regular.ttf') format('truetype'),
-         url('fonts/Roboto-Bold.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
 }
 
 /* Fade-in Animation */
