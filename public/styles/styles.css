@@ -227,14 +227,18 @@ body {
 .modal {
     display: none;
     position: fixed;
-    z-index: 1000;
+    z-index: 1050;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent backdrop */
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(5px);
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
 }
 
 .modal.show {
@@ -243,34 +247,53 @@ body {
 }
 
 .modal-content {
-    background: var(--card-bg);
-    padding: 25px;
-    border-radius: 10px;
-    max-width: 400px;
+    background: var(--card-bg, #1e1e1e);
+    padding: 30px;
+    border-radius: 12px;
+    max-width: 420px;
     width: 90%;
     text-align: center;
     position: relative;
-    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
-    transform: scale(0.9);
-    transition: transform 0.3s ease-in-out;
+    box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.3);
+    transform: scale(0.85);
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    opacity: 0;
 }
 
 .modal.show .modal-content {
     transform: scale(1);
+    opacity: 1;
 }
 
 .close {
     position: absolute;
-    right: 15px;
-    top: 12px;
-    font-size: 24px;
+    right: 18px;
+    top: 14px;
+    font-size: 26px;
     cursor: pointer;
-    color: var(--text-color);
-    transition: color 0.3s ease-in-out;
+    color: var(--text-color, #ddd);
+    transition: color 0.3s ease-in-out, transform 0.2s;
 }
 
 .close:hover {
-    color: var(--primary-color);
+    color: var(--primary-color, #ff5a5f);
+    transform: scale(1.1);
+}
+
+/* Smooth Fade In/Out Animation */
+@keyframes fadeInModal {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal.show .modal-content {
+    animation: fadeInModal 0.3s ease-in-out;
 }
 
 /* Add responsiveness */
