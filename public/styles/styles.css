@@ -6,7 +6,7 @@
 }
 
 body {
-    font-family: 'Roboto', sans-serif; /* Assuming you have the local font files set up */
+    font-family: 'Roboto', sans-serif;
     background-color: var(--bg-color);
     color: var(--text-color);
     transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
@@ -68,6 +68,7 @@ body {
     top: 0;
     left: 0;
     z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Add shadow for better navbar contrast */
 }
 
 /* Navbar container */
@@ -118,7 +119,7 @@ body {
 .modal {
     display: none;
     position: fixed;
-    z-index: 1050; /* Increased z-index */
+    z-index: 1050;
     left: 0;
     top: 0;
     width: 100%;
@@ -126,11 +127,11 @@ body {
     background: rgba(0, 0, 0, 0.5);
     justify-content: center;
     align-items: center;
-    overflow: auto; /* Ensure modal doesn't affect scrolling */
+    overflow: auto;
 }
 
 .modal.show {
-    display: flex; /* Show modal when 'show' class is added */
+    display: flex;
 }
 
 .modal-content {
@@ -290,7 +291,7 @@ body {
 
 /* Additional Enhancements */
 input[type="checkbox"], input[type="radio"] {
-    accent-color: var(--primary-color); /* Custom checkbox and radio button */
+    accent-color: var(--primary-color);
 }
 
 /* Spinner for loading state */
@@ -306,4 +307,4 @@ input[type="checkbox"], input[type="radio"] {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
-}
+} 
