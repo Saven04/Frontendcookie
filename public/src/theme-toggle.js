@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function applyTheme(theme) {
         document.body.setAttribute("data-theme", theme);
         localStorage.setItem("theme", theme);
-        themeToggleBtn.textContent = theme === "dark" ? "🌙 Dark Mode" : "☀️ Light Mode";
+        themeToggleBtn.textContent = theme === "dark" ? "🌙" : "☀️";
     }
 
     // Toggle theme on button click
