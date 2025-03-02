@@ -162,6 +162,34 @@
     <script type="module" src="./public/src/cookie-banner.js"></script>
     <script src="./public/src/theme-toggle.js"></script>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const loginRegisterBtn = document.getElementById("loginRegisterBtn");
+            const loginModal = document.getElementById("loginModal");
+            const closeLoginModal = document.getElementById("closeLoginModal");
+
+            // Show login modal
+            loginRegisterBtn.addEventListener("click", () => {
+                loginModal.classList.remove("hidden");
+                loginModal.setAttribute("aria-hidden", "false");
+            });
+
+            // Hide login modal when clicking close button
+            closeLoginModal.addEventListener("click", () => {
+                loginModal.classList.add("hidden");
+                loginModal.setAttribute("aria-hidden", "true");
+            });
+
+            // Hide login modal when clicking outside
+            window.addEventListener("click", (event) => {
+                if (event.target === loginModal) {
+                    loginModal.classList.add("hidden");
+                    loginModal.setAttribute("aria-hidden", "true");
+                }
+            });
+        });
+    </script>
+
 
   
 

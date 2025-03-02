@@ -23,12 +23,36 @@ function getAuthHeaders() {
 
 // ✅ Event listeners setup
 function setupEventListeners() {
+    const loginRegisterButton = document.getElementById("login-register-btn");
+    const loginModal = document.getElementById("login-modal");
+    const closeModal = document.getElementById("close-login-modal");
     const logoutButton = document.getElementById("logout-btn");
-    if (logoutButton) {
-        logoutButton.addEventListener("click", logoutUser);
+    const loginForm = document.getElementById("loginForm");
+
+    // ✅ Open login modal on clicking "Login | Register"
+    if (loginRegisterButton && loginModal) {
+        loginRegisterButton.addEventListener("click", () => {
+            loginModal.style.display = "flex";
+        });
     }
 
-    const loginForm = document.getElementById("loginForm");
+    // ✅ Close login modal when clicking the close button
+    if (closeModal && loginModal) {
+        closeModal.addEventListener("click", () => {
+            loginModal.style.display = "none";
+        });
+    }
+
+    // ✅ Close modal if clicking outside the content
+    if (loginModal) {
+        loginModal.addEventListener("click", (event) => {
+            if (event.target === loginModal) {
+                loginModal.style.display = "none";
+            }
+        });
+    }
+
+    // ✅ Handle user login
     if (loginForm) {
         loginForm.addEventListener("submit", async (event) => {
             event.preventDefault();
@@ -40,6 +64,11 @@ function setupEventListeners() {
             }
             await loginUser(userInput, password);
         });
+    }
+
+    // ✅ Handle user logout
+    if (logoutButton) {
+        logoutButton.addEventListener("click", logoutUser);
     }
 }
 
@@ -61,7 +90,9 @@ async function loginUser(userInput, password) {
         localStorage.setItem("user", JSON.stringify(data.user));
         showModal("✅ Login successful!", "success");
 
+        // ✅ Close login modal after successful login
         setTimeout(() => {
+            document.getElementById("login-modal").style.display = "none";
             window.location.href = "/userDashboard.html";
         }, 1500);
     } catch (error) {
