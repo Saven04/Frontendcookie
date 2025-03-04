@@ -1,7 +1,6 @@
-// Function to generate a short unique consent ID
-// Ensure you have the js-cookie library included in your project if you're using it
+// Make sure the js-cookie library is included in your project
 // Example: <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
-import Cookies from 'js-cookie';
+// For module-based setup (npm, bundlers), ensure js-cookie is installed via npm
 
 // Function to generate a short unique consent ID
 function generateShortUUID() {
@@ -16,8 +15,6 @@ function generateShortUUID() {
 
     return consentId;
 }
-
-
 
 // Document Ready Event
 document.addEventListener("DOMContentLoaded", async () => {
@@ -40,9 +37,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         const nameEq = `${name}=`;
         return document.cookie.split("; ").find((c) => c.startsWith(nameEq))?.split("=")[1] || null;
     }
-    const consentIdFromStorage = localStorage.getItem("consentId");
-    console.log("Consent ID from localStorage:", consentIdFromStorage);
-    
 
     // Handle Cookie Consent Logic
     let consentId = getCookie("consentId");
@@ -54,13 +48,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Accept Cookies Button
-    acceptCookiesButton.addEventListener("click", () => handleCookieConsent(true));
+    acceptCookiesButton?.addEventListener("click", () => handleCookieConsent(true));
 
     // Reject Cookies Button
-    rejectCookiesButton.addEventListener("click", () => handleCookieConsent(false));
+    rejectCookiesButton?.addEventListener("click", () => handleCookieConsent(false));
 
     // Customize Cookies Button
-    customizeCookiesButton.addEventListener("click", (event) => {
+    customizeCookiesButton?.addEventListener("click", (event) => {
         event.preventDefault();
         cookiePreferencesModal.classList.add("show");
         document.getElementById("strictlyNecessary").checked = true;
@@ -68,7 +62,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     // Save Preferences Button
-    savePreferencesButton.addEventListener("click", () => {
+    savePreferencesButton?.addEventListener("click", () => {
         if (!consentId) {
             consentId = generateShortUUID();
             setCookie("consentId", consentId, 365);
@@ -78,10 +72,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const preferences = {
             strictlyNecessary: true,
-            performance: document.getElementById("performance").checked,
-            functional: document.getElementById("functional").checked,
-            advertising: document.getElementById("advertising").checked,
-            socialMedia: document.getElementById("socialMedia").checked,
+            performance: document.getElementById("performance")?.checked,
+            functional: document.getElementById("functional")?.checked,
+            advertising: document.getElementById("advertising")?.checked,
+            socialMedia: document.getElementById("socialMedia")?.checked,
         };
 
         setCookie("cookiesAccepted", "true", 365);
@@ -94,7 +88,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     // Cancel Preferences Button
-    cancelPreferencesButton.addEventListener("click", () => {
+    cancelPreferencesButton?.addEventListener("click", () => {
         cookiePreferencesModal.classList.remove("show");
     });
 
