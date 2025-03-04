@@ -68,7 +68,7 @@ async function loginUser(email, password) {
         showModal("✅ Login successful!", "success");
 
         setTimeout(() => {
-            window.location.href = "/userDashboard.html";
+            window.location.href = "/news.html";
         }, 1500);
     } catch (error) {
         console.error("Login error:", error);
@@ -109,7 +109,7 @@ function logoutUser() {
     localStorage.removeItem("token");
     showModal("✅ Logged out successfully!", "success");
     setTimeout(() => {
-        window.location.href = "login.html";
+        window.location.href = "index.html";
     }, 1500);
 }
 
