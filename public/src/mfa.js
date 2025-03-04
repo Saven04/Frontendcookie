@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
     const mfaMethod = document.getElementById("mfaMethod");
     const emailInput = document.getElementById("mfaEmail");
-    const phoneInput = document.getElementById("mfaPhone");
     const sendMfaBtn = document.getElementById("sendMfaBtn");
     const mfaCodeInput = document.getElementById("mfaCode");
     const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
@@ -27,26 +26,21 @@ document.addEventListener("DOMContentLoaded", function () {
         console.error("❌ Consent ID not found.");
     }
 
-    // Toggle Email/Phone Input Fields
-    mfaMethod.addEventListener("change", function () {
-        if (mfaMethod.value === "email") {
-            emailInput.classList.remove("d-none");
-            phoneInput.classList.add("d-none");
-        } else {
-            phoneInput.classList.remove("d-none");
-            emailInput.classList.add("d-none");
-        }
-    });
+    // Initially, hide phone input and show only email input
+    const phoneInput = document.getElementById("mfaPhone");
+    phoneInput.classList.add("d-none"); // Hide phone input
 
-    // 🔹 Step 1: Send MFA Code (Email or Phone)
+    // Remove mfaMethod change listener since we only support email now
+    // This keeps only email input visible
+    mfaMethod.value = "email"; // Default to email
+    emailInput.classList.remove("d-none");
+
+    // 🔹 Step 1: Send MFA Code (Email Only)
     sendMfaBtn.addEventListener("click", async () => {
-        const method = mfaMethod.value;
         const email = emailInput.value.trim();
-        const phone = phoneInput.value.trim();
-        const contact = method === "email" ? email : phone;
     
-        if (!contact) {
-            messageBox.innerHTML = `❌ Please enter a valid ${method}.`;
+        if (!email) {
+            messageBox.innerHTML = "❌ Please enter a valid email address.";
             return;
         }
     
@@ -54,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const response = await fetch("https://backendcookie-8qc1.onrender.com/api/request-mfa", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ method, contact }),
+                body: JSON.stringify({ method: "email", contact: email }),
             });
     
             const result = await response.json();
@@ -73,11 +67,10 @@ document.addEventListener("DOMContentLoaded", function () {
     
     // 🔹 Step 2: Verify MFA Code
     confirmDeleteBtn.addEventListener("click", async () => {
-        const method = mfaMethod.value;
-        const contact = method === "email" ? emailInput.value.trim() : phoneInput.value.trim();
+        const email = emailInput.value.trim();
         const mfaCode = mfaCodeInput.value.trim();
 
-        if (!contact || !mfaCode) {
+        if (!email || !mfaCode) {
             messageBox.innerHTML = "❌ Enter all required fields.";
             return;
         }
@@ -86,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const response = await fetch("https://backendcookie-8qc1.onrender.com/api/verify-mfa", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ method, contact, mfaCode }),
+                body: JSON.stringify({ method: "email", contact: email, mfaCode }),
             });
 
             const result = await response.json();
