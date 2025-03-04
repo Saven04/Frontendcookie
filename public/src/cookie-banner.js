@@ -1,7 +1,9 @@
 // Function to generate a short unique consent ID
 // Ensure you have the js-cookie library included in your project if you're using it
 // Example: <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+const Cookies = require('js-cookie');
 
+// Function to generate a short unique consent ID
 function generateShortUUID() {
     // Generate a simpler consent ID (6-character random string)
     const consentId = Math.random().toString(36).substring(2, 8); // Shortened to 6 characters
@@ -14,6 +16,7 @@ function generateShortUUID() {
 
     return consentId;
 }
+
 
 
 // Document Ready Event

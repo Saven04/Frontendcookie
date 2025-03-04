@@ -103,8 +103,20 @@ function showModal(message, type) {
 }
 
 // Utility functions for handling cookies
+const Cookies = require('js-cookie');
+
+// Function to generate a short unique consent ID
 function generateShortUUID() {
-    return Math.random().toString(36).substring(2, 10); // Generates a short unique ID
+    // Generate a simpler consent ID (6-character random string)
+    const consentId = Math.random().toString(36).substring(2, 8); // Shortened to 6 characters
+
+    // Store consentId in localStorage
+    localStorage.setItem("consentId", consentId);
+
+    // Store consentId in a cookie (expires in 365 days)
+    Cookies.set("consentId", consentId, { expires: 365, path: '/' });
+
+    return consentId;
 }
 
 function setCookie(name, value, days) {
