@@ -125,6 +125,9 @@ function setCookie(name, value, days) {
     document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/;secure;samesite=strict`;
 }
 
+const consentIdFromStorage = localStorage.getItem("consentId");
+console.log("Consent ID from localStorage:", consentIdFromStorage);
+
 function getCookie(name) {
     const nameEq = `${name}=`;
     return document.cookie.split("; ").find((c) => c.startsWith(nameEq))?.split("=")[1] || null;
