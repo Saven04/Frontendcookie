@@ -9,7 +9,6 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     // Retrieving form values
     const username = document.getElementById("username").value.trim();
     const email = document.getElementById("email").value.trim();
-    const phone = document.getElementById("phone").value.trim();
     const password = document.getElementById("password").value.trim();
     const confirmPassword = document.getElementById("confirmPassword").value.trim();
 
@@ -18,16 +17,12 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     setCookie("consentId", consentId, 365); // Ensure the consentId is stored in cookies
 
     // Validate inputs
-    if (!username || !email || !phone || !password || !confirmPassword) {
+    if (!username || !email || !password || !confirmPassword) {
         showModal("All fields are required!", "error");
         resetButton();
         return;
     }
-    if (!/^\+\d{1,3}\s?\d{7,15}$/.test(phone)) {
-        showModal("Invalid phone number format. Use +CountryCode Number (e.g., +1 1234567890).", "error");
-        resetButton();
-        return;
-    }
+
     if (password.length < 6) {
         showModal("Password must be at least 6 characters long.", "error");
         resetButton();
@@ -43,12 +38,12 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         const response = await fetch("https://backendcookie-8qc1.onrender.com/api/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, email, phone, password, consentId }), // Include phone in the request body
+            body: JSON.stringify({ username, email, password, consentId }), // Removed phone from request body since it's not used
         });
 
         const data = await response.json();
         if (response.ok) {
-            showModal("✅ Registration successful! Redirecting to login...", "success");
+            showModal("✅ Registration successful! Please check your email for MFA code.", "success");
             setTimeout(() => {
                 document.getElementById("registerForm").reset(); // Reset form
                 window.location.href = "index.html"; // Redirect to login page
@@ -124,4 +119,3 @@ function getCookie(name) {
     const nameEq = `${name}=`;
     return document.cookie.split("; ").find((c) => c.startsWith(nameEq))?.split("=")[1] || null;
 }
-
