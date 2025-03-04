@@ -1,4 +1,3 @@
-// Register form submission handler
 document.getElementById("registerForm").addEventListener("submit", async function (event) {
     event.preventDefault(); // Prevent default form submission
 
@@ -6,13 +5,12 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     registerButton.disabled = true; // Disable button to prevent multiple clicks
     registerButton.textContent = "Registering...";
 
-    // Retrieving form values
     const username = document.getElementById("username").value.trim();
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
     const confirmPassword = document.getElementById("confirmPassword").value.trim();
 
-    // Retrieve or generate consentId
+    // Retrieve the consentId from cookies
     const consentId = getCookie("consentId") || generateShortUUID(); // Generate one if it doesn't exist
     setCookie("consentId", consentId, 365); // Ensure the consentId is stored in cookies
 
@@ -22,7 +20,6 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         resetButton();
         return;
     }
-
     if (password.length < 6) {
         showModal("Password must be at least 6 characters long.", "error");
         resetButton();
@@ -38,12 +35,12 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         const response = await fetch("https://backendcookie-8qc1.onrender.com/api/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, email, password, consentId }), // Removed phone from request body since it's not used
+            body: JSON.stringify({ username, email, password, consentId }), // Include consentId in the request body
         });
 
         const data = await response.json();
         if (response.ok) {
-            showModal("✅ Registration successful! Please check your email for MFA code.", "success");
+            showModal("✅ Registration successful! Redirecting to login...", "success");
             setTimeout(() => {
                 document.getElementById("registerForm").reset(); // Reset form
                 window.location.href = "index.html"; // Redirect to login page
@@ -99,22 +96,27 @@ function showModal(message, type) {
     }, 3000);
 }
 
-// Function to generate a short unique consent ID
+// Utility functions for handling cookies
 function generateShortUUID() {
+    // Generate a simpler consent ID (6-character random string)
     const consentId = Math.random().toString(36).substring(2, 8); // Shortened to 6 characters
+
+    // Store consentId in localStorage
     localStorage.setItem("consentId", consentId);
+
+    // Store consentId in a cookie (expires in 365 days)
     Cookies.set("consentId", consentId, { expires: 365, path: '/' });
+
     return consentId;
 }
 
-// Function to set a cookie
+
 function setCookie(name, value, days) {
     const date = new Date();
     date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
     document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/;secure;samesite=strict`;
 }
 
-// Function to get a cookie value
 function getCookie(name) {
     const nameEq = `${name}=`;
     return document.cookie.split("; ").find((c) => c.startsWith(nameEq))?.split("=")[1] || null;
