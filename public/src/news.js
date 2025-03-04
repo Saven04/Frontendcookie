@@ -1,15 +1,12 @@
-const API_KEY = "ffd35d0e1efe4cf1bd052e6dd7835eec"; 
 const newsContainer = document.getElementById("newsContainer");
 const searchInput = document.getElementById("searchInput");
 
-// Function to fetch news
+// Function to fetch news from the backend
 async function fetchNews(category = "general") {
-    const url = `https://newsapi.org/v2/top-headlines?category=${category}&country=us&apiKey=${API_KEY}`;
-    
     try {
-        const response = await fetch(url);
-        const data = await response.json();
-        displayNews(data.articles);
+        const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/news?category=${category}`);
+        const articles = await response.json();
+        displayNews(articles);
     } catch (error) {
         console.error("Error fetching news:", error);
     }
@@ -17,7 +14,7 @@ async function fetchNews(category = "general") {
 
 // Function to display news
 function displayNews(articles) {
-    newsContainer.innerHTML = ""; // Clear old news
+    newsContainer.innerHTML = ""; 
     articles.forEach(article => {
         const newsItem = `
             <div class="col-md-4 mb-3">
