@@ -181,14 +181,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         registerForm.addEventListener("submit", async (event) => {
             event.preventDefault();
 
-            // Check if cookies have been accepted or rejected
-            if (!getCookie("cookiesAccepted")) {
-                alert("Please make a choice regarding cookies before proceeding.");
-                cookieBanner.classList.add("show"); // Ensure the banner is visible
-                return;
-            }
-
-            // Proceed with registration logic
             const usernameField = document.getElementById("username");
             const passwordField = document.getElementById("password");
 

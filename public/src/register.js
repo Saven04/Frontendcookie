@@ -7,6 +7,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
 
     const username = document.getElementById("username").value.trim();
     const email = document.getElementById("email").value.trim();
+    const phone = document.getElementById("phone").value.trim();
     const password = document.getElementById("password").value.trim();
     const confirmPassword = document.getElementById("confirmPassword").value.trim();
 
@@ -15,8 +16,13 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     setCookie("consentId", consentId, 365); // Ensure the consentId is stored in cookies
 
     // Validate inputs
-    if (!username || !email || !password || !confirmPassword) {
+    if (!username || !email || !phone || !password || !confirmPassword) {
         showModal("All fields are required!", "error");
+        resetButton();
+        return;
+    }
+    if (!/^\+\d{1,3}\s?\d{7,15}$/.test(phone)) {
+        showModal("Invalid phone number format. Use +CountryCode Number (e.g., +1 1234567890).", "error");
         resetButton();
         return;
     }
@@ -35,7 +41,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         const response = await fetch("https://backendcookie-8qc1.onrender.com/api/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, email, password, consentId }), // Include consentId in the request body
+            body: JSON.stringify({ username, email, phone, password, consentId }), // Include phone in the request body
         });
 
         const data = await response.json();
