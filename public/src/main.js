@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Redirect logged-in users away from the login page
     if (isUserLoggedIn() && window.location.pathname.includes("index.html")) {
-        window.location.href = "userDashboard.html";
+        window.location.href = "news.html";
     }
 });
 
