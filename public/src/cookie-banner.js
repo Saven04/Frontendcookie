@@ -1,7 +1,20 @@
 // Function to generate a short unique consent ID
+// Ensure you have the js-cookie library included in your project if you're using it
+// Example: <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+
 function generateShortUUID() {
-    return Math.random().toString(36).substring(2, 10);
+    // Generate a simpler consent ID (6-character random string)
+    const consentId = Math.random().toString(36).substring(2, 8); // Shortened to 6 characters
+
+    // Store consentId in localStorage
+    localStorage.setItem("consentId", consentId);
+
+    // Store consentId in a cookie (expires in 365 days)
+    Cookies.set("consentId", consentId, { expires: 365, path: '/' });
+
+    return consentId;
 }
+
 
 // Document Ready Event
 document.addEventListener("DOMContentLoaded", async () => {
@@ -24,10 +37,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         const nameEq = `${name}=`;
         return document.cookie.split("; ").find((c) => c.startsWith(nameEq))?.split("=")[1] || null;
     }
-
-    function deleteCookie(name) {
-        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;secure;samesite=strict`;
-    }
+    const consentIdFromStorage = localStorage.getItem("consentId");
+    console.log("Consent ID from localStorage:", consentIdFromStorage);
+    
 
     // Handle Cookie Consent Logic
     let consentId = getCookie("consentId");
