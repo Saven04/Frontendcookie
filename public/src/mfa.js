@@ -44,27 +44,33 @@ document.addEventListener("DOMContentLoaded", function () {
         const email = emailInput.value.trim();
         const phone = phoneInput.value.trim();
         const contact = method === "email" ? email : phone;
-
+    
         if (!contact) {
             messageBox.innerHTML = `❌ Please enter a valid ${method}.`;
             return;
         }
-
+    
         try {
             const response = await fetch("https://backendcookie-8qc1.onrender.com/api/request-mfa", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ method, contact }),
             });
-
+    
             const result = await response.json();
-            messageBox.innerHTML = response.ok ? "✅ MFA code sent!" : `❌ ${result.error}`;
+    
+            // Check if the response was successful
+            if (response.ok) {
+                messageBox.innerHTML = "✅ MFA code sent!";
+            } else {
+                messageBox.innerHTML = `❌ ${result.error || "Something went wrong"}`;
+            }
         } catch (error) {
             console.error("MFA request error:", error);
             messageBox.innerHTML = "❌ Failed to send MFA code.";
         }
     });
-
+    
     // 🔹 Step 2: Verify MFA Code
     confirmDeleteBtn.addEventListener("click", async () => {
         const method = mfaMethod.value;
