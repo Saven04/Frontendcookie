@@ -1,5 +1,3 @@
-import Cookies from 'js-cookie';
-
 // Register form submission handler
 document.getElementById("registerForm").addEventListener("submit", async function (event) {
     event.preventDefault(); // Prevent default form submission
