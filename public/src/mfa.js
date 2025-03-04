@@ -26,8 +26,8 @@ document.addEventListener("DOMContentLoaded", function () {
         console.error("❌ Consent ID not found.");
     }
     
-    mfaMethod.value = "email"; // Default to email
-    emailInput.classList.remove("d-none");
+    mfaMethod.value = "email"; // Default to email method
+    emailInput.classList.remove("d-none"); // Show the email input field only
 
     // 🔹 Step 1: Send MFA Code (Email Only)
     sendMfaBtn.addEventListener("click", async () => {
@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const response = await fetch("https://backendcookie-8qc1.onrender.com/api/request-mfa", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ method: "email", contact: email }),
+                body: JSON.stringify({ method: "email", contact: email }), // Only email method
             });
     
             const result = await response.json();
@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const response = await fetch("https://backendcookie-8qc1.onrender.com/api/verify-mfa", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ method: "email", contact: email, mfaCode }),
+                body: JSON.stringify({ method: "email", contact: email, mfaCode }), // Only email method
             });
 
             const result = await response.json();
