@@ -6,7 +6,7 @@ async function fetchNews(category = "general") {
     const userId = localStorage.getItem("userId"); // Retrieve userId stored after login
 
     try {
-        const response = await fetch(`http://localhost:5000/api/news?category=${category}&userId=${userId}`);
+        const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/news?category=${category}&userId=${userId}`);
         const articles = await response.json();
         displayNews(articles);
     } catch (error) {
