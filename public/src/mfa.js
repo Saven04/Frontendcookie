@@ -25,13 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
     } else {
         console.error("❌ Consent ID not found.");
     }
-
-    // Initially, hide phone input and show only email input
-    const phoneInput = document.getElementById("mfaPhone");
-    phoneInput.classList.add("d-none"); // Hide phone input
-
-    // Remove mfaMethod change listener since we only support email now
-    // This keeps only email input visible
+    
     mfaMethod.value = "email"; // Default to email
     emailInput.classList.remove("d-none");
 
