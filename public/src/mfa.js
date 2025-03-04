@@ -7,59 +7,43 @@ document.addEventListener("DOMContentLoaded", function () {
     const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
     const messageBox = document.getElementById("mfaMessage");
 
-    async function getConsentId() {
+    let consentId = null; // Store consentId globally
+
+    // 🔹 Fetch Consent ID
+    async function fetchConsentId() {
         try {
             const response = await fetch("https://backendcookie-8qc1.onrender.com/api/get-consent-id", {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${localStorage.getItem("token")}` // Send JWT token
+                    "Authorization": `Bearer ${localStorage.getItem("token")}`
                 },
             });
-    
+
             const result = await response.json();
             if (response.ok) {
-                return result.consentId; // Fetch the consent ID from DB
+                consentId = result.consentId;
+                console.log("✅ Consent ID:", consentId);
             } else {
                 console.error("❌ Error fetching Consent ID:", result.error);
-                return null;
             }
         } catch (error) {
             console.error("❌ Failed to fetch Consent ID:", error);
-            return null;
         }
     }
-    
-    // Use the function to get consentId
-    getConsentId().then(consentId => {
-        if (consentId) {
-            console.log("✅ Consent ID:", consentId);
-        } else {
-            console.error("❌ Consent ID not found.");
-        }
-    });
 
+    fetchConsentId(); // Fetch Consent ID on page load
 
-
-
-
-    // Toggle Email/Phone Input Fields
+    // 🔹 Toggle Email/Phone Input Fields
     mfaMethod.addEventListener("change", function () {
-        if (mfaMethod.value === "email") {
-            emailInput.classList.remove("d-none");
-            phoneInput.classList.add("d-none");
-        } else {
-            phoneInput.classList.remove("d-none");
-            emailInput.classList.add("d-none");
-        }
+        emailInput.classList.toggle("d-none", mfaMethod.value !== "email");
+        phoneInput.classList.toggle("d-none", mfaMethod.value === "email");
     });
 
     // 🔹 Step 1: Send MFA Code (Email or Phone)
     sendMfaBtn.addEventListener("click", async () => {
         const method = mfaMethod.value;
-        const email = emailInput.value.trim();
-        const phone = phoneInput.value.trim();
-        const contact = method === "email" ? email : phone;
+        const contact = method === "email" ? emailInput.value.trim() : phoneInput.value.trim();
 
         if (!contact) {
             messageBox.innerHTML = `❌ Please enter a valid ${method}.`;
@@ -69,7 +53,10 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
             const response = await fetch("https://backendcookie-8qc1.onrender.com/api/request-mfa", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem("token")}`
+                },
                 body: JSON.stringify({ method, contact }),
             });
 
@@ -81,7 +68,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // 🔹 Step 2: Verify MFA Code
+    // 🔹 Step 2: Verify MFA Code & Delete Account
     confirmDeleteBtn.addEventListener("click", async () => {
         const method = mfaMethod.value;
         const contact = method === "email" ? emailInput.value.trim() : phoneInput.value.trim();
@@ -95,14 +82,17 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
             const response = await fetch("https://backendcookie-8qc1.onrender.com/api/verify-mfa", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem("token")}`
+                },
                 body: JSON.stringify({ method, contact, mfaCode }),
             });
 
             const result = await response.json();
             if (response.ok) {
                 messageBox.innerHTML = "✅ MFA Verified. Deleting account...";
-                deleteAccount(consentId, mfaCode);
+                await deleteAccount();
             } else {
                 messageBox.innerHTML = `❌ ${result.error}`;
             }
@@ -113,23 +103,26 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // 🔹 Step 3: Delete Account After MFA Verification
-    async function deleteAccount(consentId, mfaCode) {
+    async function deleteAccount() {
         if (!consentId) {
             alert("❌ Consent ID missing. Please log in again.");
             return;
         }
 
         try {
-            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/delete-account", {
+            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/delete-data", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ consentId, mfaCode }),
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem("token")}`
+                },
+                body: JSON.stringify({ consentId }),
             });
 
             const result = await response.json();
             if (response.ok) {
                 alert("✅ Your account has been deleted.");
-                localStorage.clear(); // Clear user data
+                localStorage.clear();
                 window.location.href = "/"; // Redirect to homepage
             } else {
                 alert(`❌ ${result.error}`);
