@@ -1,3 +1,6 @@
+import Cookies from 'js-cookie';
+
+
 document.getElementById("registerForm").addEventListener("submit", async function (event) {
     event.preventDefault(); // Prevent default form submission
 
@@ -103,7 +106,8 @@ function showModal(message, type) {
 }
 
 // Utility functions for handling cookies
-const Cookies = require('js-cookie');
+
+
 
 // Function to generate a short unique consent ID
 function generateShortUUID() {
