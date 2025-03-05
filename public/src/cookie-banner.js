@@ -154,7 +154,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 ? { userId, preferences }
                 : { consentId, preferences };
 
-            const response = await fetch("https://backendcookie-8qc1.onrender.com/save", {
+            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/save", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body),
