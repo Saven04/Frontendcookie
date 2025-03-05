@@ -98,18 +98,8 @@ function showModal(message, type) {
 
 // Utility functions for handling cookies
 function generateShortUUID() {
-    // Generate a simpler consent ID (6-character random string)
-    const consentId = Math.random().toString(36).substring(2, 8); // Shortened to 6 characters
-
-    // Store consentId in localStorage
-    localStorage.setItem("consentId", consentId);
-
-    // Store consentId in a cookie (expires in 365 days)
-    Cookies.set("consentId", consentId, { expires: 365, path: '/' });
-
-    return consentId;
+    return Math.random().toString(36).substring(2, 10); // Generates a short unique ID
 }
-
 
 function setCookie(name, value, days) {
     const date = new Date();

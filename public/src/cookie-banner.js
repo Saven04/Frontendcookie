@@ -1,19 +1,6 @@
-// Make sure the js-cookie library is included in your project
-// Example: <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
-// For module-based setup (npm, bundlers), ensure js-cookie is installed via npm
-
 // Function to generate a short unique consent ID
 function generateShortUUID() {
-    // Generate a simpler consent ID (6-character random string)
-    const consentId = Math.random().toString(36).substring(2, 8); // Shortened to 6 characters
-
-    // Store consentId in localStorage
-    localStorage.setItem("consentId", consentId);
-
-    // Store consentId in a cookie (expires in 365 days)
-    Cookies.set("consentId", consentId, { expires: 365, path: '/' });
-
-    return consentId;
+    return Math.random().toString(36).substring(2, 10);
 }
 
 // Document Ready Event
@@ -38,6 +25,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         return document.cookie.split("; ").find((c) => c.startsWith(nameEq))?.split("=")[1] || null;
     }
 
+    function deleteCookie(name) {
+        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;secure;samesite=strict`;
+    }
+
     // Handle Cookie Consent Logic
     let consentId = getCookie("consentId");
     let cookiesAccepted = getCookie("cookiesAccepted");
@@ -48,13 +39,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Accept Cookies Button
-    acceptCookiesButton?.addEventListener("click", () => handleCookieConsent(true));
+    acceptCookiesButton.addEventListener("click", () => handleCookieConsent(true));
 
     // Reject Cookies Button
-    rejectCookiesButton?.addEventListener("click", () => handleCookieConsent(false));
+    rejectCookiesButton.addEventListener("click", () => handleCookieConsent(false));
 
     // Customize Cookies Button
-    customizeCookiesButton?.addEventListener("click", (event) => {
+    customizeCookiesButton.addEventListener("click", (event) => {
         event.preventDefault();
         cookiePreferencesModal.classList.add("show");
         document.getElementById("strictlyNecessary").checked = true;
@@ -62,7 +53,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     // Save Preferences Button
-    savePreferencesButton?.addEventListener("click", () => {
+    savePreferencesButton.addEventListener("click", () => {
         if (!consentId) {
             consentId = generateShortUUID();
             setCookie("consentId", consentId, 365);
@@ -72,10 +63,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const preferences = {
             strictlyNecessary: true,
-            performance: document.getElementById("performance")?.checked,
-            functional: document.getElementById("functional")?.checked,
-            advertising: document.getElementById("advertising")?.checked,
-            socialMedia: document.getElementById("socialMedia")?.checked,
+            performance: document.getElementById("performance").checked,
+            functional: document.getElementById("functional").checked,
+            advertising: document.getElementById("advertising").checked,
+            socialMedia: document.getElementById("socialMedia").checked,
         };
 
         setCookie("cookiesAccepted", "true", 365);
@@ -88,7 +79,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     // Cancel Preferences Button
-    cancelPreferencesButton?.addEventListener("click", () => {
+    cancelPreferencesButton.addEventListener("click", () => {
         cookiePreferencesModal.classList.remove("show");
     });
 
@@ -190,6 +181,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         registerForm.addEventListener("submit", async (event) => {
             event.preventDefault();
 
+            // Check if cookies have been accepted or rejected
+            if (!getCookie("cookiesAccepted")) {
+                alert("Please make a choice regarding cookies before proceeding.");
+                cookieBanner.classList.add("show"); // Ensure the banner is visible
+                return;
+            }
+
+            // Proceed with registration logic
             const usernameField = document.getElementById("username");
             const passwordField = document.getElementById("password");
 
