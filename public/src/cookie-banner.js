@@ -1,4 +1,4 @@
-// Function to generate a short unique consent ID
+// Function to generate a short unique ID
 function generateShortUUID() {
     return Math.random().toString(36).substring(2, 10);
 }
@@ -29,12 +29,20 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;secure;samesite=strict`;
     }
 
-    // Handle Cookie Consent Logic
+    // Check for sessionId
+    let sessionId = getCookie("sessionId");
     let consentId = getCookie("consentId");
-    let cookiesAccepted = getCookie("cookiesAccepted");
 
-    // Show consent banner if no choice has been made
-    if (!cookiesAccepted) {
+    if (sessionId) {
+        console.log("📌 Session ID found:", sessionId);
+        if (consentId) {
+            console.log("📌 Consent ID found:", consentId);
+            loadPreferences(consentId);
+        }
+    } else {
+        console.log("🚨 No session found. Creating new session...");
+        sessionId = generateShortUUID();
+        setCookie("sessionId", sessionId, 1);
         setTimeout(() => cookieBanner.classList.add("show"), 500);
     }
 
@@ -89,6 +97,23 @@ document.addEventListener("DOMContentLoaded", async () => {
         setTimeout(() => {
             cookieBanner.classList.remove("show", "hide");
         }, 500);
+    }
+
+    // Load Saved Preferences
+    async function loadPreferences(consentId) {
+        try {
+            const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/getPreferences?consentId=${consentId}`);
+            if (!response.ok) throw new Error("Failed to fetch preferences.");
+
+            const data = await response.json();
+            console.log("✅ Loaded Preferences:", data);
+
+            setCookie("cookiesAccepted", "true", 365);
+            setCookie("cookiePreferences", JSON.stringify(data.preferences), 365);
+        } catch (error) {
+            console.error("❌ Error loading preferences:", error);
+            setTimeout(() => cookieBanner.classList.add("show"), 500);
+        }
     }
 
     // Send Preferences to Backend
@@ -173,56 +198,5 @@ document.addEventListener("DOMContentLoaded", async () => {
         sendPreferencesToDB(consentId, preferences);
         saveLocationData(consentId);
         hideBanner();
-    }
-
-    // Block Registration Until Consent
-    const registerForm = document.getElementById("registerForm");
-    if (registerForm) {
-        registerForm.addEventListener("submit", async (event) => {
-            event.preventDefault();
-
-            // Check if cookies have been accepted or rejected
-            if (!getCookie("cookiesAccepted")) {
-                alert("Please make a choice regarding cookies before proceeding.");
-                cookieBanner.classList.add("show"); // Ensure the banner is visible
-                return;
-            }
-
-            // Proceed with registration logic
-            const usernameField = document.getElementById("username");
-            const passwordField = document.getElementById("password");
-
-            if (!usernameField || !passwordField) {
-                alert("Error: Missing input fields in the DOM.");
-                return;
-            }
-
-            const username = usernameField.value.trim();
-            const password = passwordField.value.trim();
-
-            if (!username || !password) {
-                alert("Please enter both username and password.");
-                return;
-            }
-
-            try {
-                const response = await fetch("https://backendcookie-8qc1.onrender.com/api/register", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ username, password }),
-                });
-
-                const data = await response.json();
-                if (response.ok) {
-                    alert("Registration successful!");
-                    window.location.href = "index.html"; // Redirect to login page
-                } else {
-                    alert(data.message || "Registration failed. Please try again.");
-                }
-            } catch (error) {
-                console.error("❌ Error during registration:", error);
-                alert("An unexpected error occurred. Please try again later.");
-            }
-        });
     }
 });
