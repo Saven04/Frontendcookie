@@ -152,19 +152,30 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Save Preferences to Backend
     async function savePreferencesToDB(userId, preferences, sessionId = null, consentId = null) {
         try {
+            // Construct the request body based on whether the user is authenticated or not
             const body = userId
-                ? { userId, preferences, sessionId }
-                : { consentId, preferences };
-
-            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/save", { // Use relative URL
+                ? { userId, preferences, sessionId } // For authenticated users
+                : { consentId, preferences }; // For unauthenticated users
+    
+            // Use a relative URL for the API endpoint
+            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/save", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body),
             });
-
-            console.log("✅ Preferences saved:", await response.json());
+    
+            // Parse the response
+            const data = await response.json();
+    
+            // Check if the response is OK (status code 200-299)
+            if (!response.ok) {
+                throw new Error(data.message || "Failed to save preferences.");
+            }
+    
+            console.log("✅ Preferences saved successfully:", data);
         } catch (error) {
-            console.error("❌ Error saving preferences:", error);
+            console.error("❌ Error saving preferences:", error.message);
+            showModal("Failed to save preferences. Please try again.", "error");
         }
     }
 
