@@ -38,11 +38,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.log("📌 User is authenticated. Fetching preferences...");
         await loadPreferences(userId); // Fetch preferences for authenticated users
     } else {
-        console.log("🚨 User is not authenticated. Using sessionId...");
-        let sessionId = getCookie("sessionId");
-        if (!sessionId) {
-            sessionId = generateShortUUID();
-            setCookie("sessionId", sessionId, 1); // Create a new sessionId for unauthenticated users
+        console.log("🚨 User is not authenticated. Using consentId...");
+        let consentId = getCookie("consentId");
+        if (!consentId) {
+            consentId = generateShortUUID();
+            setCookie("consentId", consentId, 365); // Create a new consentId for unauthenticated users
         }
         setTimeout(() => cookieBanner.classList.add("show"), 500); // Show cookie banner
     }
@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const token = localStorage.getItem("token");
             if (!token) return false;
 
-            const response = await fetch("/check-auth", {
+            const response = await fetch("/api/check-auth", {
                 method: "GET",
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -121,7 +121,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Load Saved Preferences
     async function loadPreferences(userId) {
         try {
-            const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/user-preferences/${userId}`, {
+            const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/get-preferences?userId=${userId}`, {
                 method: "GET",
                 headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
             });
@@ -170,7 +170,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     async function saveLocationData(consentId) {
         try {
             // Fetch location data using IPInfo API
-            const ipResponse = await fetch("https://ipinfo.io/json?token=10772b28291307");
+            const ipResponse = await fetch(`https://ipinfo.io/json?token=${process.env.IPINFO_TOKEN}`);
             const ipData = await ipResponse.json();
 
             const locationData = {
@@ -204,7 +204,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Send Location Data to Backend
     async function sendLocationDataToDB(locationData) {
         try {
-            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/location", {
+            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/save-location", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(locationData),

@@ -1,32 +1,36 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     const loginForm = document.getElementById("loginForm");
+    const logoutButton = document.getElementById("logout");
 
-    // Handle form submission
+    // Handle form submission for login
     if (loginForm) {
         loginForm.addEventListener("submit", async (event) => {
             event.preventDefault();
 
-            // Get input values
-            const emailField = document.getElementById("email");
-            const passwordField = document.getElementById("password");
+            try {
+                // Get input values
+                const emailField = document.getElementById("email");
+                const passwordField = document.getElementById("password");
 
-            // Validate inputs
-            if (!emailField || !passwordField) {
-                console.error("Error: Missing input fields in the DOM.");
-                showModal("Error: Missing input fields in the DOM.", "error");
-                return;
+                // Validate inputs
+                if (!emailField || !passwordField) {
+                    throw new Error("Error: Missing input fields in the DOM.");
+                }
+
+                const email = emailField.value.trim();
+                const password = passwordField.value.trim();
+
+                if (!email || !password) {
+                    showModal("Please enter both email and password.", "error");
+                    return;
+                }
+
+                // Call the login function
+                await loginUser(email, password);
+            } catch (error) {
+                console.error("Error during login:", error.message);
+                showModal(`❌ Login failed: ${error.message}`, "error");
             }
-
-            const email = emailField.value.trim();
-            const password = passwordField.value.trim();
-
-            if (!email || !password) {
-                showModal("Please enter both email and password.", "error");
-                return;
-            }
-
-            // Call the login function
-            await loginUser(email, password);
         });
     }
 
@@ -36,7 +40,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Attach event listeners for logout button
-    const logoutButton = document.getElementById("logout");
     if (logoutButton) {
         logoutButton.addEventListener("click", logoutUser);
     }
@@ -44,7 +47,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // Fetch and apply user preferences if logged in
     if (isUserLoggedIn()) {
         const user = JSON.parse(localStorage.getItem("user"));
-        fetchAndApplyPreferences(user.userId);
+        if (user && user.userId) {
+            await fetchAndApplyPreferences(user.userId);
+        } else {
+            console.error("❌ User data is missing or invalid.");
+        }
     }
 });
 
@@ -56,7 +63,7 @@ function isUserLoggedIn() {
 // ✅ Updated loginUser function to handle JWT-based authentication
 async function loginUser(email, password) {
     try {
-        const apiUrl = "https://backendcookie-8qc1.onrender.com/api/login"; // Update to match your backend route
+        const apiUrl = "/api/login"; // Update to match your backend route
         console.log("📡 Sending request to:", apiUrl);
 
         const response = await fetch(apiUrl, {
@@ -65,11 +72,17 @@ async function loginUser(email, password) {
             body: JSON.stringify({ email, password }),
         });
 
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Invalid credentials");
+        }
+
         const data = await response.json();
         console.log("🚀 Server Response:", data);
 
-        if (!response.ok) {
-            throw new Error(data.message || "Invalid credentials");
+        // Validate server response
+        if (!data.token || !data.user) {
+            throw new Error("Invalid server response. Missing token or user data.");
         }
 
         // Save token and user data to localStorage
@@ -94,24 +107,30 @@ function logoutUser() {
     showModal("✅ Logged out successfully!", "success");
 
     setTimeout(() => {
-        window.location.href = "news.html"; // Redirect to login page after logout
+        window.location.href = "news.html"; 
     }, 1500);
 }
 
 // ✅ Function to fetch and apply user preferences
 async function fetchAndApplyPreferences(userId) {
     try {
-        const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/user-preferences/${userId}`, {
+        const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/get-preferences?userId=${userId}`, {
             method: "GET",
             headers: getAuthHeaders(),
         });
 
         if (!response.ok) {
-            throw new Error("Failed to fetch preferences.");
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Failed to fetch preferences.");
         }
 
         const data = await response.json();
         console.log("✅ Loaded Preferences:", data);
+
+        // Validate preferences
+        if (!data.preferences) {
+            throw new Error("Invalid server response. Missing preferences.");
+        }
 
         applyPreferences(data.preferences);
     } catch (error) {
@@ -122,10 +141,25 @@ async function fetchAndApplyPreferences(userId) {
 
 // Apply saved preferences to the UI
 function applyPreferences(preferences) {
-    document.getElementById("performance").checked = preferences.performance || false;
-    document.getElementById("functional").checked = preferences.functional || false;
-    document.getElementById("advertising").checked = preferences.advertising || false;
-    document.getElementById("socialMedia").checked = preferences.socialMedia || false;
+    const performanceCheckbox = document.getElementById("performance");
+    const functionalCheckbox = document.getElementById("functional");
+    const advertisingCheckbox = document.getElementById("advertising");
+    const socialMediaCheckbox = document.getElementById("socialMedia");
+
+    if (
+        !performanceCheckbox ||
+        !functionalCheckbox ||
+        !advertisingCheckbox ||
+        !socialMediaCheckbox
+    ) {
+        console.error("❌ Missing preference checkboxes in the DOM.");
+        return;
+    }
+
+    performanceCheckbox.checked = preferences.performance || false;
+    functionalCheckbox.checked = preferences.functional || false;
+    advertisingCheckbox.checked = preferences.advertising || false;
+    socialMediaCheckbox.checked = preferences.socialMedia || false;
 
     // Hide the cookie banner if preferences are loaded
     const cookieBanner = document.getElementById("cookieConsent");
