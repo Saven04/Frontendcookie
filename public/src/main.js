@@ -214,8 +214,17 @@ function getUserId() {
 }
 
 // ✅ Function to fetch and apply user preferences
-async function fetchAndApplyPreferences(userId) {
+async function fetchAndApplyPreferences() {
     try {
+        const userId = getUserId(); // Retrieve userId from localStorage
+
+        // Validate userId
+        if (!userId) {
+            console.error("❌ User ID is missing or invalid.");
+            showModal("Failed to load preferences. Please log in again.", "error");
+            return;
+        }
+
         const apiUrl = `https://backendcookie-8qc1.onrender.com/api/get-preferences?userId=${userId}`; // Use relative URL
         const response = await fetch(apiUrl, {
             method: "GET",
