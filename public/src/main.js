@@ -72,11 +72,13 @@ async function loginUser(email, password) {
             body: JSON.stringify({ email, password }),
         });
 
+        // Check if the response is OK (status code 200-299)
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || "Invalid credentials");
+            const errorData = await response.text(); // Try to read the response as text
+            throw new Error(errorData || "Invalid credentials");
         }
 
+        // Parse the response as JSON
         const data = await response.json();
         console.log("🚀 Server Response:", data);
 
@@ -138,7 +140,6 @@ async function fetchAndApplyPreferences(userId) {
         showModal("Failed to load preferences. Please try again.", "error");
     }
 }
-
 // Apply saved preferences to the UI
 function applyPreferences(preferences) {
     const performanceCheckbox = document.getElementById("performance");
