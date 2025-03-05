@@ -56,7 +56,7 @@ function isUserLoggedIn() {
 // ✅ Updated loginUser function to handle JWT-based authentication
 async function loginUser(email, password) {
     try {
-        const apiUrl = "https://backendcookie-8qc1.onrender.com/login"; // Update to match your backend route
+        const apiUrl = "https://backendcookie-8qc1.onrender.com/api/login"; // Update to match your backend route
         console.log("📡 Sending request to:", apiUrl);
 
         const response = await fetch(apiUrl, {
@@ -94,14 +94,14 @@ function logoutUser() {
     showModal("✅ Logged out successfully!", "success");
 
     setTimeout(() => {
-        window.location.href = "index.html"; // Redirect to login page after logout
+        window.location.href = "news.html"; // Redirect to login page after logout
     }, 1500);
 }
 
 // ✅ Function to fetch and apply user preferences
 async function fetchAndApplyPreferences(userId) {
     try {
-        const response = await fetch(`/api/user-preferences/${userId}`, {
+        const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/user-preferences/${userId}`, {
             method: "GET",
             headers: getAuthHeaders(),
         });
