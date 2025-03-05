@@ -236,7 +236,7 @@
                     await loginUser(email, password);
                 });
             }
-            
+
             const signupForm = document.getElementById("signupForm");
 
     if (signupForm) {
@@ -256,7 +256,7 @@
 
             try {
                 // Call the backend /register API
-                const response = await fetch("/api/register", { // Use relative URL for flexibility
+                const response = await fetch("https://backendcookie-8qc1.onrender.com/api/register", { // Use relative URL for flexibility
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
