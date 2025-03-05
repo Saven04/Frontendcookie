@@ -32,9 +32,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Check Authentication
     const isAuthenticated = await checkAuthentication();
     let userId = null;
+    let sessionId = null;
 
     if (isAuthenticated) {
         userId = localStorage.getItem("userId"); // Retrieve userId from localStorage
+        sessionId = localStorage.getItem("sessionId"); // Retrieve sessionId from localStorage
         console.log("📌 User is authenticated. Fetching preferences...");
         await loadPreferences(userId); // Fetch preferences for authenticated users
     } else {
@@ -72,11 +74,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         };
 
         if (isAuthenticated) {
-            await savePreferencesToDB(userId, preferences); // Save preferences for authenticated users
+            await savePreferencesToDB(userId, preferences, sessionId); // Save preferences for authenticated users
         } else {
             const consentId = getCookie("consentId") || generateShortUUID();
             setCookie("consentId", consentId, 365); // Save consentId for unauthenticated users
-            await savePreferencesToDB(null, preferences, consentId); // Save preferences with consentId
+            await savePreferencesToDB(null, preferences, null, consentId); // Save preferences with consentId
         }
 
         setCookie("cookiesAccepted", "true", 365);
@@ -105,7 +107,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const token = localStorage.getItem("token");
             if (!token) return false;
 
-            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/check-auth", {
+            const response = await fetch("/api/check-auth", { // Use relative URL
                 method: "GET",
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -121,7 +123,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Load Saved Preferences
     async function loadPreferences(userId) {
         try {
-            const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/get-preferences?userId=${userId}`, {
+            const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/get-preferences?userId=${userId}`, { // Use relative URL
                 method: "GET",
                 headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
             });
@@ -148,13 +150,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Save Preferences to Backend
-    async function savePreferencesToDB(userId, preferences, consentId = null) {
+    async function savePreferencesToDB(userId, preferences, sessionId = null, consentId = null) {
         try {
             const body = userId
-                ? { userId, preferences }
+                ? { userId, preferences, sessionId }
                 : { consentId, preferences };
 
-            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/save", {
+            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/save", { // Use relative URL
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body),
@@ -204,7 +206,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Send Location Data to Backend
     async function sendLocationDataToDB(locationData) {
         try {
-            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/save-location", {
+            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/save-location", { // Use relative URL
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(locationData),
@@ -232,7 +234,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         setCookie("cookiesAccepted", accepted.toString(), 365);
         setCookie("cookiePreferences", JSON.stringify(preferences), 365);
 
-        savePreferencesToDB(null, preferences, consentId);
+        savePreferencesToDB(null, preferences, null, consentId);
         saveLocationData(consentId); // Save location data
         hideBanner();
     }
