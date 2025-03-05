@@ -52,33 +52,34 @@
         </div>
     </div>
 
-     <div id="cookiePreferencesModal" class="cookie-preferences-modal">
+    <!-- Cookie Preferences Modal -->
+    <div id="cookiePreferencesModal" class="cookie-preferences-modal">
         <div class="modal-content">
             <h1>Customize Your Preferences</h1>
             <br>
             <div class="cookie-category">
                 <input type="checkbox" id="strictlyNecessary" checked disabled>
-                <label for="strictlyNecessary" class="cookie-label" data-cookie-type="strictlyNecessary" data-info="Strictly necessary cookies are essential for the website's basic functionalities. These cookies ensure the site functions properly. <a href= cookie-policy.html target='_blank'>Learn More</a>">Strictly Necessary Cookies (Required for website functionality)</label>
+                <label for="strictlyNecessary" class="cookie-label" data-cookie-type="strictlyNecessary" data-info="Strictly necessary cookies are essential for the website's basic functionalities. These cookies ensure the site functions properly. <a href='cookie-policy.html' target='_blank'>Learn More</a>">Strictly Necessary Cookies (Required for website functionality)</label>
             </div>
             <br>
             <div class="cookie-category">
                 <input type="checkbox" id="performance">
-                <label for="performance" class="cookie-label" data-cookie-type="performance" data-info="Performance cookies help us understand how visitors interact with our website. These cookies are used to improve website performance and functionality. <a href= cookie-policy.html target='_blank'>Learn More</a>">Performance (Analytical) Cookies</label>
+                <label for="performance" class="cookie-label" data-cookie-type="performance" data-info="Performance cookies help us understand how visitors interact with our website. These cookies are used to improve website performance and functionality. <a href='cookie-policy.html' target='_blank'>Learn More</a>">Performance (Analytical) Cookies</label>
             </div>
             <br>
             <div class="cookie-category">
                 <input type="checkbox" id="functional">
-                <label for="functional" class="cookie-label" data-cookie-type="functional" data-info="Functional cookies allow the website to remember your preferences and personalize the user experience. <a href= cookie-policy.html target='_blank'>Learn More</a>">Functional Cookies (Preferences)</label>
+                <label for="functional" class="cookie-label" data-cookie-type="functional" data-info="Functional cookies allow the website to remember your preferences and personalize the user experience. <a href='cookie-policy.html' target='_blank'>Learn More</a>">Functional Cookies (Preferences)</label>
             </div>
             <br>
             <div class="cookie-category">
                 <input type="checkbox" id="advertising">
-                <label for="advertising" class="cookie-label" data-cookie-type="advertising" data-info="Advertising cookies help us provide you with personalized ads based on your interests and browsing history. <a href= cookie-policy.html target='_blank'>Learn More</a>">Advertising (Targeting) Cookies</label>
+                <label for="advertising" class="cookie-label" data-cookie-type="advertising" data-info="Advertising cookies help us provide you with personalized ads based on your interests and browsing history. <a href='cookie-policy.html' target='_blank'>Learn More</a>">Advertising (Targeting) Cookies</label>
             </div>
             <br>
             <div class="cookie-category">
                 <input type="checkbox" id="socialMedia">
-                <label for="socialMedia" class="cookie-label" data-cookie-type="socialMedia" data-info="Social Media cookies allow you to share content and interact with social media platforms like Facebook and Twitter. <a href= cookie-policy.html target='_blank'>Learn More</a>">Social Media Cookies</label>
+                <label for="socialMedia" class="cookie-label" data-cookie-type="socialMedia" data-info="Social Media cookies allow you to share content and interact with social media platforms like Facebook and Twitter. <a href='cookie-policy.html' target='_blank'>Learn More</a>">Social Media Cookies</label>
             </div>
             <br>
             <div class="modal-buttons">
@@ -88,14 +89,13 @@
         </div>
     </div>
 
-     <!-- Cookie Info Modal (For showing explanations about cookies) -->
-     <div id="cookieInfoModal" class="cookie-info-modal">
+    <!-- Cookie Info Modal -->
+    <div id="cookieInfoModal" class="cookie-info-modal">
         <div class="modal-content">
             <p id="cookieInfoText"></p>
             <button id="closeModalButton" class="close-modal-button">Close</button>
         </div>
     </div>
-               
 
     <!-- News Categories -->
     <div class="container mt-3">
@@ -126,7 +126,7 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            // Ensure elements exist before adding event listeners
+            // Handle cookie policy modal links
             document.querySelectorAll('.cookie-label').forEach(label => {
                 label.addEventListener('click', function () {
                     const infoText = this.getAttribute('data-info');
@@ -142,18 +142,24 @@
                 });
             }
 
-            // Handle cookie policy modal link
-            document.querySelectorAll("a[href='cookie-policy.html']").forEach(link => {
-                link.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    document.getElementById('cookiePolicyModal').classList.add('show');
-                });
-            });
+            // Attach event listeners for navbar links
+            const loginSignupLink = document.getElementById('loginSignup');
+            const logoutLink = document.getElementById('logout');
+            const cookieSettingsLink = document.getElementById('cookieSettings');
 
-            const closeCookiePolicyModal = document.getElementById('closeCookiePolicyModal');
-            if (closeCookiePolicyModal) {
-                closeCookiePolicyModal.addEventListener('click', function () {
-                    document.getElementById('cookiePolicyModal').classList.remove('show');
+            if (loginSignupLink) {
+                loginSignupLink.addEventListener('click', () => {
+                    window.location.href = 'index.html'; // Redirect to login page
+                });
+            }
+
+            if (logoutLink) {
+                logoutLink.addEventListener('click', logoutUser); // Call logout function
+            }
+
+            if (cookieSettingsLink) {
+                cookieSettingsLink.addEventListener('click', () => {
+                    document.getElementById('cookiePreferencesModal').classList.add('show'); // Open cookie settings modal
                 });
             }
         });

@@ -1,6 +1,3 @@
-// Import cookie functions (if using ES6 modules)
-// import { setCookie, getCookie } from './cookieSettings.js';
-
 document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("loginForm");
 
@@ -37,6 +34,18 @@ document.addEventListener("DOMContentLoaded", () => {
     if (isUserLoggedIn() && window.location.pathname.includes("index.html")) {
         window.location.href = "news.html";
     }
+
+    // Attach event listeners for logout button
+    const logoutButton = document.getElementById("logout");
+    if (logoutButton) {
+        logoutButton.addEventListener("click", logoutUser);
+    }
+
+    // Fetch and apply user preferences if logged in
+    if (isUserLoggedIn()) {
+        const user = JSON.parse(localStorage.getItem("user"));
+        fetchAndApplyPreferences(user.userId);
+    }
 });
 
 // Function to check if the user is logged in
@@ -44,10 +53,10 @@ function isUserLoggedIn() {
     return localStorage.getItem("token") !== null;
 }
 
-// ✅ Updated loginUser function to handle both JWT and session-based logins
+// ✅ Updated loginUser function to handle JWT-based authentication
 async function loginUser(email, password) {
     try {
-        const apiUrl = "https://backendcookie-8qc1.onrender.com/api/login";
+        const apiUrl = "https://backendcookie-8qc1.onrender.com/login"; // Update to match your backend route
         console.log("📡 Sending request to:", apiUrl);
 
         const response = await fetch(apiUrl, {
@@ -63,12 +72,14 @@ async function loginUser(email, password) {
             throw new Error(data.message || "Invalid credentials");
         }
 
+        // Save token and user data to localStorage
         localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("user", JSON.stringify(data.user)); // Assuming backend returns user object
+
         showModal("✅ Login successful!", "success");
 
         setTimeout(() => {
-            window.location.href = "/news.html";
+            window.location.href = "news.html"; // Redirect to news page after login
         }, 1500);
     } catch (error) {
         console.error("Login error:", error);
@@ -76,41 +87,57 @@ async function loginUser(email, password) {
     }
 }
 
+// ✅ Logout function
+function logoutUser() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    showModal("✅ Logged out successfully!", "success");
+
+    setTimeout(() => {
+        window.location.href = "index.html"; // Redirect to login page after logout
+    }, 1500);
+}
+
+// ✅ Function to fetch and apply user preferences
+async function fetchAndApplyPreferences(userId) {
+    try {
+        const response = await fetch(`/api/user-preferences/${userId}`, {
+            method: "GET",
+            headers: getAuthHeaders(),
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch preferences.");
+        }
+
+        const data = await response.json();
+        console.log("✅ Loaded Preferences:", data);
+
+        applyPreferences(data.preferences);
+    } catch (error) {
+        console.error("❌ Error fetching preferences:", error);
+        showModal("Failed to load preferences. Please try again.", "error");
+    }
+}
+
+// Apply saved preferences to the UI
+function applyPreferences(preferences) {
+    document.getElementById("performance").checked = preferences.performance || false;
+    document.getElementById("functional").checked = preferences.functional || false;
+    document.getElementById("advertising").checked = preferences.advertising || false;
+    document.getElementById("socialMedia").checked = preferences.socialMedia || false;
+
+    // Hide the cookie banner if preferences are loaded
+    const cookieBanner = document.getElementById("cookieConsent");
+    if (cookieBanner) {
+        cookieBanner.style.display = "none";
+    }
+}
+
 // ✅ Function to attach JWT token to API requests
 function getAuthHeaders() {
     const token = localStorage.getItem("token");
     return token ? { Authorization: `Bearer ${token}` } : {};
-}
-
-// ✅ Example function to fetch user data using JWT
-async function fetchUserData() {
-    try {
-        const response = await fetch("https://backendcookie-8qc1.onrender.com/api/user", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                ...getAuthHeaders(), // Attach token to request
-            },
-        });
-
-        if (!response.ok) {
-            throw new Error(`Failed to fetch user data: ${response.status}`);
-        }
-
-        const userData = await response.json();
-        console.log("✅ User data:", userData);
-    } catch (error) {
-        console.error("❌ Error fetching user data:", error);
-    }
-}
-
-// ✅ Logout function
-function logoutUser() {
-    localStorage.removeItem("token");
-    showModal("✅ Logged out successfully!", "success");
-    setTimeout(() => {
-        window.location.href = "index.html";
-    }, 1500);
 }
 
 // ✅ Function to show a custom modal
