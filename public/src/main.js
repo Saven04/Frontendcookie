@@ -1,9 +1,10 @@
 document.addEventListener("DOMContentLoaded", async () => {
     const loginForm = document.getElementById("loginForm");
+    const signupForm = document.getElementById("signupForm");
     const logoutButton = document.getElementById("logout");
 
     // Redirect logged-in users away from the login page
-    if (isUserLoggedIn() && window.location.pathname.includes("news.html")) {
+    if (isUserLoggedIn() && window.location.pathname.includes("index.html")) {
         window.location.href = "news.html";
         return;
     }
@@ -34,8 +35,58 @@ document.addEventListener("DOMContentLoaded", async () => {
                 // Call the login function
                 await loginUser(email, password);
             } catch (error) {
-                console.error("Error during login:", error.message);
+                console.error("❌ Error during login:", error.message);
                 showModal(`❌ Login failed: ${error.message}`, "error");
+            }
+        });
+    }
+
+    // Handle form submission for registration
+    if (signupForm) {
+        signupForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            try {
+                // Get input values
+                const usernameField = document.getElementById("signupUsername");
+                const emailField = document.getElementById("signupEmail");
+                const passwordField = document.getElementById("signupPassword");
+
+                // Validate inputs
+                if (!usernameField || !emailField || !passwordField) {
+                    throw new Error("Error: Missing input fields in the DOM.");
+                }
+
+                const username = usernameField.value.trim();
+                const email = emailField.value.trim();
+                const password = passwordField.value.trim();
+
+                if (!username || !email || !password) {
+                    showModal("Please fill in all fields.", "error");
+                    return;
+                }
+
+                // Get selected preferences
+                const preferences = {
+                    strictlyNecessary: true, // Always required
+                    performance: document.getElementById("performance").checked,
+                    functional: document.getElementById("functional").checked,
+                    advertising: document.getElementById("advertising").checked,
+                    socialMedia: document.getElementById("socialMedia").checked,
+                };
+
+                // Call the register function
+                await registerUser(username, email, password, preferences);
+
+                // Show success message
+                showModal("✅ Registration successful! Please log in.", "success");
+
+                // Switch to the login tab using Bootstrap's Tab API
+                const loginTab = new bootstrap.Tab(document.getElementById("login-tab"));
+                loginTab.show();
+            } catch (error) {
+                console.error("❌ Error during registration:", error.message);
+                showModal(`❌ Registration failed: ${error.message}`, "error");
             }
         });
     }
@@ -98,8 +149,42 @@ async function loginUser(email, password) {
             window.location.href = "news.html"; // Redirect to news page after login
         }, 1500);
     } catch (error) {
-        console.error("Login error:", error);
+        console.error("❌ Login error:", error.message);
         showModal(`❌ Login failed: ${error.message}`, "error");
+    }
+}
+
+// ✅ Register a new user
+async function registerUser(username, email, password, preferences) {
+    try {
+        const apiUrl = "https://backendcookie-8qc1.onrender.com/api/register"; // Use relative URL for flexibility
+        console.log("📡 Sending request to:", apiUrl);
+
+        const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, email, password, preferences }),
+        });
+
+        // Check if the response is OK (status code 200-299)
+        if (!response.ok) {
+            const errorData = await response.text(); // Try to read the response as text
+            throw new Error(errorData || "Registration failed.");
+        }
+
+        // Parse the response as JSON
+        const data = await response.json();
+        console.log("🚀 Server Response:", data);
+
+        // Validate server response
+        if (!data.message) {
+            throw new Error("Invalid server response.");
+        }
+
+        // Success message will be shown by the caller
+    } catch (error) {
+        console.error("❌ Registration error:", error.message);
+        throw error; // Re-throw the error for the caller to handle
     }
 }
 
