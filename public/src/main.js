@@ -131,7 +131,7 @@ function getUserId() {
 // ✅ Function to fetch and apply user preferences
 async function fetchAndApplyPreferences(userId) {
     try {
-        const apiUrl = `https://backendcookie-8qc1.onrender.com/api/get-preferences?userId=${userId}`; // Use relative URL for flexibility
+        const apiUrl = `https://backendcookie-8qc1.onrender.com/api/get-preferences?userId=${userId}`; // Use relative URL
         const response = await fetch(apiUrl, {
             method: "GET",
             headers: getAuthHeaders(),
