@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const token = localStorage.getItem("token");
             if (!token) return false;
 
-            const response = await fetch("/api/check-auth", { // Use relative URL
+            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/check-auth", { // Use relative URL
                 method: "GET",
                 headers: { Authorization: `Bearer ${token}` },
             });
