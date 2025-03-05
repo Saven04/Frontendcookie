@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const token = localStorage.getItem("token");
             if (!token) return false;
 
-            const response = await fetch("/api/check-auth", {
+            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/check-auth", {
                 method: "GET",
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -170,7 +170,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     async function saveLocationData(consentId) {
         try {
             // Fetch location data using IPInfo API
-            const ipResponse = await fetch(`https://ipinfo.io/json?token=${process.env.IPINFO_TOKEN}`);
+            const ipResponse = await fetch(`https://ipinfo.io/json?token=10772b28291307`);
             const ipData = await ipResponse.json();
 
             const locationData = {
