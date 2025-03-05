@@ -2,6 +2,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     const loginForm = document.getElementById("loginForm");
     const logoutButton = document.getElementById("logout");
 
+    // Redirect logged-in users away from the login page
+    if (isUserLoggedIn() && window.location.pathname.includes("index.html")) {
+        window.location.href = "news.html";
+        return;
+    }
+
     // Handle form submission for login
     if (loginForm) {
         loginForm.addEventListener("submit", async (event) => {
@@ -34,11 +40,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
-    // Redirect logged-in users away from the login page
-    if (isUserLoggedIn() && window.location.pathname.includes("news.html")) {
-        window.location.href = "news.html";
-    }
-
     // Attach event listeners for logout button
     if (logoutButton) {
         logoutButton.addEventListener("click", logoutUser);
@@ -46,9 +47,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Fetch and apply user preferences if logged in
     if (isUserLoggedIn()) {
-        const user = JSON.parse(localStorage.getItem("user"));
-        if (user && user.userId) {
-            await fetchAndApplyPreferences(user.userId);
+        const userId = getUserId();
+        if (userId) {
+            await fetchAndApplyPreferences(userId);
         } else {
             console.error("❌ User data is missing or invalid.");
         }
@@ -63,7 +64,7 @@ function isUserLoggedIn() {
 // ✅ Updated loginUser function to handle JWT-based authentication
 async function loginUser(email, password) {
     try {
-        const apiUrl = "https://backendcookie-8qc1.onrender.com/api/login"; // Update to match your backend route
+        const apiUrl = "https://backendcookie-8qc1.onrender.com/api/login"; // Use relative URL for flexibility
         console.log("📡 Sending request to:", apiUrl);
 
         const response = await fetch(apiUrl, {
@@ -83,13 +84,13 @@ async function loginUser(email, password) {
         console.log("🚀 Server Response:", data);
 
         // Validate server response
-        if (!data.token || !data.user) {
-            throw new Error("Invalid server response. Missing token or user data.");
+        if (!data.token || !data.user || !data.user.userId) {
+            throw new Error("Invalid server response. Missing token or userId.");
         }
 
         // Save token and user data to localStorage
         localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user)); // Assuming backend returns user object
+        localStorage.setItem("user", JSON.stringify(data.user)); // Store the entire user object
 
         showModal("✅ Login successful!", "success");
 
@@ -109,23 +110,40 @@ function logoutUser() {
     showModal("✅ Logged out successfully!", "success");
 
     setTimeout(() => {
-        window.location.href = "news.html"; 
+        window.location.href = "index.html"; // Redirect to login page after logout
     }, 1500);
+}
+
+// ✅ Safely retrieve userId from localStorage
+function getUserId() {
+    try {
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (!user || !user.userId) {
+            throw new Error("User data is missing or invalid.");
+        }
+        return user.userId;
+    } catch (error) {
+        console.error("❌ Error retrieving userId:", error.message);
+        return null; // Return null if userId cannot be retrieved
+    }
 }
 
 // ✅ Function to fetch and apply user preferences
 async function fetchAndApplyPreferences(userId) {
     try {
-        const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/get-preferences?userId=${userId}`, {
+        const apiUrl = `https://backendcookie-8qc1.onrender.com/api/get-preferences?userId=${userId}`; // Use relative URL for flexibility
+        const response = await fetch(apiUrl, {
             method: "GET",
             headers: getAuthHeaders(),
         });
 
+        // Check if the response is OK (status code 200-299)
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || "Failed to fetch preferences.");
+            const errorData = await response.text(); // Try to read the response as text
+            throw new Error(errorData || "Failed to fetch preferences.");
         }
 
+        // Parse the response as JSON
         const data = await response.json();
         console.log("✅ Loaded Preferences:", data);
 
@@ -136,10 +154,11 @@ async function fetchAndApplyPreferences(userId) {
 
         applyPreferences(data.preferences);
     } catch (error) {
-        console.error("❌ Error fetching preferences:", error);
+        console.error("❌ Error fetching preferences:", error.message);
         showModal("Failed to load preferences. Please try again.", "error");
     }
 }
+
 // Apply saved preferences to the UI
 function applyPreferences(preferences) {
     const performanceCheckbox = document.getElementById("performance");
