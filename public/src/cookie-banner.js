@@ -121,7 +121,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Load Saved Preferences
     async function loadPreferences(userId) {
         try {
-            const response = await fetch(`/api/user-preferences/${userId}`, {
+            const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/user-preferences/${userId}`, {
                 method: "GET",
                 headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
             });
@@ -154,7 +154,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 ? { userId, preferences }
                 : { consentId, preferences };
 
-            const response = await fetch("/save-consent", {
+            const response = await fetch("https://backendcookie-8qc1.onrender.com/save", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body),
@@ -163,6 +163,56 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.log("✅ Preferences saved:", await response.json());
         } catch (error) {
             console.error("❌ Error saving preferences:", error);
+        }
+    }
+
+    // Save Location Data to Backend
+    async function saveLocationData(consentId) {
+        try {
+            // Fetch location data using IPInfo API
+            const ipResponse = await fetch("https://ipinfo.io/json?token=10772b28291307");
+            const ipData = await ipResponse.json();
+
+            const locationData = {
+                consentId,
+                ipAddress: ipData.ip,
+                isp: ipData.org,
+                city: ipData.city,
+                country: ipData.country,
+                latitude: null,
+                longitude: null,
+            };
+
+            // Get geolocation coordinates if available
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        locationData.latitude = position.coords.latitude;
+                        locationData.longitude = position.coords.longitude;
+                        sendLocationDataToDB(locationData);
+                    },
+                    () => sendLocationDataToDB(locationData) // Fallback if geolocation fails
+                );
+            } else {
+                sendLocationDataToDB(locationData); // Fallback if geolocation is not supported
+            }
+        } catch (error) {
+            console.error("❌ Error fetching location data:", error);
+        }
+    }
+
+    // Send Location Data to Backend
+    async function sendLocationDataToDB(locationData) {
+        try {
+            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/location", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(locationData),
+            });
+
+            console.log("✅ Location data saved successfully.");
+        } catch (error) {
+            console.error("❌ Error saving location data:", error);
         }
     }
 
@@ -183,6 +233,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         setCookie("cookiePreferences", JSON.stringify(preferences), 365);
 
         savePreferencesToDB(null, preferences, consentId);
+        saveLocationData(consentId); // Save location data
         hideBanner();
     }
 });
