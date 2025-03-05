@@ -1,23 +1,99 @@
 document.addEventListener("DOMContentLoaded", async () => {
-    // Check if the user is logged in
-    if (!isUserLoggedIn() && window.location.pathname.includes("news.html")) {
-        alert("Please log in to view the news page.");
-        window.location.href = "index.html"; // Redirect to login page
+    const loginForm = document.getElementById("loginForm");
+    const signupForm = document.getElementById("signupForm");
+    const logoutButton = document.getElementById("logout");
+
+    // Redirect logged-in users away from the login page
+    if (isUserLoggedIn() && window.location.pathname.includes("index.html")) {
+        window.location.href = "news.html";
         return;
     }
 
-    // Attach event listeners for logout and cookie settings
-    const logoutButton = document.getElementById("logout");
-    const cookieSettingsLink = document.getElementById("cookieSettings");
+    // Handle form submission for login
+    if (loginForm) {
+        loginForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
 
-    if (logoutButton) {
-        logoutButton.addEventListener("click", logoutUser);
+            try {
+                // Get input values
+                const emailField = document.getElementById("email");
+                const passwordField = document.getElementById("password");
+
+                // Validate inputs
+                if (!emailField || !passwordField) {
+                    throw new Error("Error: Missing input fields in the DOM.");
+                }
+
+                const email = emailField.value.trim();
+                const password = passwordField.value.trim();
+
+                if (!email || !password) {
+                    showModal("Please enter both email and password.", "error");
+                    return;
+                }
+
+                // Call the login function
+                await loginUser(email, password);
+            } catch (error) {
+                console.error("❌ Error during login:", error.message);
+                showModal(`❌ Login failed: ${error.message}`, "error");
+            }
+        });
     }
 
-    if (cookieSettingsLink) {
-        cookieSettingsLink.addEventListener("click", () => {
-            document.getElementById("cookiePreferencesModal").classList.add("show"); // Open cookie settings modal
+    // Handle form submission for registration
+    if (signupForm) {
+        signupForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            try {
+                // Get input values
+                const usernameField = document.getElementById("signupUsername");
+                const emailField = document.getElementById("signupEmail");
+                const passwordField = document.getElementById("signupPassword");
+
+                // Validate inputs
+                if (!usernameField || !emailField || !passwordField) {
+                    throw new Error("Error: Missing input fields in the DOM.");
+                }
+
+                const username = usernameField.value.trim();
+                const email = emailField.value.trim();
+                const password = passwordField.value.trim();
+
+                if (!username || !email || !password) {
+                    showModal("Please fill in all fields.", "error");
+                    return;
+                }
+
+                // Get selected preferences
+                const preferences = {
+                    strictlyNecessary: true, // Always required
+                    performance: document.getElementById("performance").checked,
+                    functional: document.getElementById("functional").checked,
+                    advertising: document.getElementById("advertising").checked,
+                    socialMedia: document.getElementById("socialMedia").checked,
+                };
+
+                // Call the register function
+                await registerUser(username, email, password, preferences);
+
+                // Show success message
+                showModal("✅ Registration successful! Please log in.", "success");
+
+                // Switch to the login tab using Bootstrap's Tab API
+                const loginTab = new bootstrap.Tab(document.getElementById("login-tab"));
+                loginTab.show();
+            } catch (error) {
+                console.error("❌ Error during registration:", error.message);
+                showModal(`❌ Registration failed: ${error.message}`, "error");
+            }
         });
+    }
+
+    // Attach event listeners for logout button
+    if (logoutButton) {
+        logoutButton.addEventListener("click", logoutUser);
     }
 
     // Fetch and apply user preferences if logged in
@@ -29,11 +105,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.error("❌ User data is missing or invalid.");
         }
     }
-
-    // Fetch and display news articles
-    if (window.location.pathname.includes("news.html")) {
-        await fetchAndDisplayNews();
-    }
 });
 
 // Function to check if the user is logged in
@@ -41,7 +112,94 @@ function isUserLoggedIn() {
     return localStorage.getItem("token") !== null;
 }
 
-// Function to safely retrieve userId from localStorage
+// ✅ Updated loginUser function to handle JWT-based authentication
+async function loginUser(email, password) {
+    try {
+        const apiUrl = "https://backendcookie-8qc1.onrender.com/api/login"; // Use relative URL for flexibility
+        console.log("📡 Sending request to:", apiUrl);
+
+        const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+        });
+
+        // Check if the response is OK (status code 200-299)
+        if (!response.ok) {
+            const errorData = await response.text(); // Try to read the response as text
+            throw new Error(errorData || "Invalid credentials");
+        }
+
+        // Parse the response as JSON
+        const data = await response.json();
+        console.log("🚀 Server Response:", data);
+
+        // Validate server response
+        if (!data.token || !data.user || !data.user.userId) {
+            throw new Error("Invalid server response. Missing token or userId.");
+        }
+
+        // Save token and user data to localStorage
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user)); // Store the entire user object
+
+        showModal("✅ Login successful!", "success");
+
+        setTimeout(() => {
+            window.location.href = "news.html"; // Redirect to news page after login
+        }, 1500);
+    } catch (error) {
+        console.error("❌ Login error:", error.message);
+        showModal(`❌ Login failed: ${error.message}`, "error");
+    }
+}
+
+// ✅ Register a new user
+async function registerUser(username, email, password, preferences) {
+    try {
+        const apiUrl = "https://backendcookie-8qc1.onrender.com/api/register"; // Use relative URL for flexibility
+        console.log("📡 Sending request to:", apiUrl);
+
+        const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, email, password, preferences }),
+        });
+
+        // Check if the response is OK (status code 200-299)
+        if (!response.ok) {
+            const errorData = await response.text(); // Try to read the response as text
+            throw new Error(errorData || "Registration failed.");
+        }
+
+        // Parse the response as JSON
+        const data = await response.json();
+        console.log("🚀 Server Response:", data);
+
+        // Validate server response
+        if (!data.message) {
+            throw new Error("Invalid server response.");
+        }
+
+        // Success message will be shown by the caller
+    } catch (error) {
+        console.error("❌ Registration error:", error.message);
+        throw error; // Re-throw the error for the caller to handle
+    }
+}
+
+// ✅ Logout function
+function logoutUser() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    showModal("✅ Logged out successfully!", "success");
+
+    setTimeout(() => {
+        window.location.href = "index.html"; // Redirect to login page after logout
+    }, 1500);
+}
+
+// ✅ Safely retrieve userId from localStorage
 function getUserId() {
     try {
         const user = JSON.parse(localStorage.getItem("user"));
@@ -55,23 +213,26 @@ function getUserId() {
     }
 }
 
-// Function to fetch and apply user preferences
+// ✅ Function to fetch and apply user preferences
 async function fetchAndApplyPreferences(userId) {
     try {
-        const apiUrl = `/api/get-preferences?userId=${userId}`; // Use relative URL
+        const apiUrl = `https://backendcookie-8qc1.onrender.com/api/get-preferences?userId=${userId}`; // Use relative URL
         const response = await fetch(apiUrl, {
             method: "GET",
             headers: getAuthHeaders(),
         });
 
+        // Check if the response is OK (status code 200-299)
         if (!response.ok) {
             const errorData = await response.text(); // Try to read the response as text
             throw new Error(errorData || "Failed to fetch preferences.");
         }
 
+        // Parse the response as JSON
         const data = await response.json();
         console.log("✅ Loaded Preferences:", data);
 
+        // Validate preferences
         if (!data.preferences) {
             throw new Error("Invalid server response. Missing preferences.");
         }
@@ -104,99 +265,21 @@ function applyPreferences(preferences) {
     functionalCheckbox.checked = preferences.functional || false;
     advertisingCheckbox.checked = preferences.advertising || false;
     socialMediaCheckbox.checked = preferences.socialMedia || false;
-}
 
-// Function to fetch and display news articles
-async function fetchAndDisplayNews() {
-    try {
-        const apiUrl = "/api/news"; // Replace with your actual API endpoint
-        const response = await fetch(apiUrl, {
-            method: "GET",
-            headers: getAuthHeaders(),
-        });
-
-        if (!response.ok) {
-            const errorData = await response.text(); // Try to read the response as text
-            throw new Error(errorData || "Failed to fetch news articles.");
-        }
-
-        const data = await response.json();
-        console.log("✅ Fetched News Articles:", data);
-
-        if (!Array.isArray(data.articles)) {
-            throw new Error("Invalid server response. Missing articles.");
-        }
-
-        displayNewsArticles(data.articles);
-    } catch (error) {
-        console.error("❌ Error fetching news articles:", error.message);
-        showModal("Failed to load news articles. Please try again.", "error");
+    // Hide the cookie banner if preferences are loaded
+    const cookieBanner = document.getElementById("cookieConsent");
+    if (cookieBanner) {
+        cookieBanner.style.display = "none";
     }
 }
 
-// Display news articles on the page
-function displayNewsArticles(articles) {
-    const newsContainer = document.getElementById("newsArticles");
-    if (!newsContainer) {
-        console.error("❌ News container not found in the DOM.");
-        return;
-    }
-
-    newsContainer.innerHTML = ""; // Clear previous content
-
-    if (articles.length === 0) {
-        newsContainer.innerHTML = "<p>No news articles available.</p>";
-        return;
-    }
-
-    articles.forEach((article) => {
-        const articleDiv = document.createElement("div");
-        articleDiv.classList.add("card", "mb-3");
-
-        const articleBody = document.createElement("div");
-        articleBody.classList.add("card-body");
-
-        const title = document.createElement("h5");
-        title.classList.add("card-title");
-        title.textContent = article.title;
-
-        const description = document.createElement("p");
-        description.classList.add("card-text");
-        description.textContent = article.description;
-
-        const link = document.createElement("a");
-        link.href = article.url;
-        link.target = "_blank";
-        link.textContent = "Read more";
-        link.classList.add("btn", "btn-primary");
-
-        articleBody.appendChild(title);
-        articleBody.appendChild(description);
-        articleBody.appendChild(link);
-        articleDiv.appendChild(articleBody);
-
-        newsContainer.appendChild(articleDiv);
-    });
-}
-
-// Function to attach JWT token to API requests
+// ✅ Function to attach JWT token to API requests
 function getAuthHeaders() {
     const token = localStorage.getItem("token");
     return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
-// Logout function
-function logoutUser() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    showModal("✅ Logged out successfully!", "success");
-
-    setTimeout(() => {
-        window.location.href = "index.html"; // Redirect to login page after logout
-    }, 1500);
-}
-
-// Function to show a custom modal
+// ✅ Function to show a custom modal
 function showModal(message, type) {
     const existingModal = document.getElementById("customModal");
     if (existingModal) {

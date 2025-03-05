@@ -180,6 +180,64 @@
     <script src="./public/src/main.js"></script>
     <script type="module" src="public/src/cookie-banner.js"></script>
 
-
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Handle cookie policy modal links
+            document.querySelectorAll('.cookie-label').forEach(label => {
+                label.addEventListener('click', function () {
+                    const infoText = this.getAttribute('data-info');
+                    document.getElementById('cookieInfoText').innerHTML = infoText;
+                    document.getElementById('cookieInfoModal').classList.add('show');
+                });
+            });
+    
+            const closeModalButton = document.getElementById('closeModalButton');
+            if (closeModalButton) {
+                closeModalButton.addEventListener('click', function () {
+                    document.getElementById('cookieInfoModal').classList.remove('show');
+                });
+            }
+    
+            // Attach event listeners for navbar links
+            const loginSignupLink = document.getElementById('loginSignup');
+            const logoutLink = document.getElementById('logout');
+            const cookieSettingsLink = document.getElementById('cookieSettings');
+    
+            if (loginSignupLink) {
+                loginSignupLink.addEventListener('click', () => {
+                    const loginSignupModal = new bootstrap.Modal(document.getElementById('loginSignupModal'));
+                    loginSignupModal.show(); // Show the login/signup modal
+                });
+            }
+    
+            if (logoutLink) {
+                logoutLink.addEventListener('click', logoutUser); // Call logout function
+            }
+    
+            if (cookieSettingsLink) {
+                cookieSettingsLink.addEventListener('click', () => {
+                    document.getElementById('cookiePreferencesModal').classList.add('show'); // Open cookie settings modal
+                });
+            }
+    
+            // Handle login form submission
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.addEventListener('submit', async (event) => {
+                    event.preventDefault();
+                    const email = document.getElementById('loginEmail').value.trim();
+                    const password = document.getElementById('loginPassword').value.trim();
+    
+                    if (!email || !password) {
+                        alert('Please enter both email and password.');
+                        return;
+                    }
+    
+                    await loginUser(email, password);
+                });
+            }
+        });
+    </script>
+    
 </body>
 </html>
