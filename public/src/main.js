@@ -63,7 +63,7 @@ function isUserLoggedIn() {
 // ✅ Updated loginUser function to handle JWT-based authentication
 async function loginUser(email, password) {
     try {
-        const apiUrl = "/api/login"; // Update to match your backend route
+        const apiUrl = "https://backendcookie-8qc1.onrender.com/api/login"; // Update to match your backend route
         console.log("📡 Sending request to:", apiUrl);
 
         const response = await fetch(apiUrl, {
