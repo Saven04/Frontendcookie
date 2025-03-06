@@ -1,18 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professional Login Page</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>Register</title>
     <link rel="stylesheet" href="public/styles/styles.css">
-    <link rel="stylesheet" href="public/styles/cookie-banner.css">
     <link rel="stylesheet" href="public/styles/customize.css">
-</head>
+    <link rel="stylesheet" href="public/styles/cookie-banner.css">
 
+</head>
 <body>
-    <!-- Cookie Consent Banner -->
+   
     <div id="cookieConsent" class="cookie-banner">
         <div class="cookie-banner-content">
             <p><strong>We value your privacy!</strong><br>  
@@ -115,94 +113,41 @@
         </div>
     </div>
 
-    <!-- Login Page Content -->
+
+
+
+
+    <!-- Registration Form -->
     <div class="login-container">
         <div class="login-card">
             <div class="card-header">
-                <h2>Login to Your Account</h2>
+                <h2>Create an Account</h2>
             </div>
-            <form id="loginForm">
-                <!-- Identifier Input -->
+            <form id="registerForm">
                 <div class="input-group">
-                    <label for="identifier">Email or Username</label>
-                    <input type="text" id="email" placeholder="Enter your email" required />
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Enter your username" required>
                 </div>
-    
-                <!-- Password Input -->
+                <div class="input-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="Enter your email" required>
+                </div>
                 <div class="input-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" placeholder="Enter your password" required />
+                    <input type="password" id="password" placeholder="Enter your password" required>
                 </div>
-    
-                <!-- Login Button -->
-                <button type="submit" class="login-button">Login</button>
-    
-                <!-- Forgot Password Link -->
-                <a href="#" class="forgot-password">Forgot Password?</a>
-    
-                <!-- Register Button -->
-                <button type="button" class="register-button" onclick="window.location.href='register.html'">Register</button>
+                <div class="input-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
+                </div>
+                <button type="submit" class="login-button">Register</button>
             </form>
-    
-            <!-- Social Login Options -->
-            <div class="social-login">
-                <p>Or login with</p>
-                <button class="social-button google-button">
-                    <img src="public/image/google-logo.png" alt="Google Logo"> Google
-                </button>
-                <button class="social-button facebook-button">
-                    <img src="public/image/facebook-logo.png" alt="Facebook Logo"> Facebook
-                </button>
-            </div>
+            <p>Already have an account? <a href="index.html">Login here</a></p>
         </div>
     </div>
+
+    <!-- Include Scripts -->
+    <script src="public/src/cookie-banner.js"></script>
+    <script src="public/src/register.js"></script>
 </body>
-
-
-
-    <!-- Include JavaScript -->
-    <script src="public/src/main.js"></script>
-    <script type="module" src="public/src/cookie-banner.js"></script>
-
-   <script>
-    // Ensure the script runs after the DOM is fully loaded
-    document.addEventListener("DOMContentLoaded", () => {
-        // JavaScript to handle cookie label clicks and show cookie information modal
-        document.querySelectorAll('.cookie-label').forEach(label => {
-            label.addEventListener('click', function () {
-                const infoText = this.getAttribute('data-info');  // Get the description from the data-info attribute
-                document.getElementById('cookieInfoText').innerHTML = infoText; // Update modal text
-                document.getElementById('cookieInfoModal').classList.add('show'); // Show the modal
-            });
-        });
-
-        // Close the cookie info modal (check if the element exists)
-        const closeModalButton = document.getElementById('closeModalButton');
-        if (closeModalButton) {
-            closeModalButton.addEventListener('click', function () {
-                document.getElementById('cookieInfoModal').classList.remove('show'); // Hide the modal
-            });
-        }
-
-        // Open the cookie policy modal when the "Cookie Policy" link is clicked (fixing undefined ID)
-        const cookiePolicyLink = document.getElementById('cookiePolicyLink');
-        if (cookiePolicyLink) {
-            cookiePolicyLink.addEventListener('click', function (e) {
-                e.preventDefault(); // Prevent the default link behavior
-                document.getElementById('cookiePolicyModal').classList.add('show'); // Show the modal
-            });
-        }
-
-        // Close the cookie policy modal
-        const closeCookiePolicyModal = document.getElementById('closeCookiePolicyModal');
-        if (closeCookiePolicyModal) {
-            closeCookiePolicyModal.addEventListener('click', function () {
-                document.getElementById('cookiePolicyModal').classList.remove('show'); // Hide the modal
-            });
-        }
-    });
-</script>
-
-
-
 </html>

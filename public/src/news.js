@@ -5,18 +5,12 @@ const searchInput = document.getElementById("searchInput");
 async function fetchNews(category = "general") {
     try {
         const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/news?category=${category}`);
-        const text = await response.text(); // Get raw response first
-        console.log("Raw API response:", text);
-
-        const articles = JSON.parse(text); // Try parsing JSON
-        console.log("Parsed JSON:", articles);
-
+        const articles = await response.json();
         displayNews(articles);
     } catch (error) {
         console.error("Error fetching news:", error);
     }
 }
-
 
 // Function to display news
 function displayNews(articles) {

@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Latest News</title>
-    <link rel="stylesheet" href="public/styles/cookie-banner.css">
-    <link rel="stylesheet" href="public/styles/customize.css">
+    <link rel="stylesheet" href="news.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 </head>
 <body>
@@ -18,19 +17,17 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item" id="loginSignupNav"><a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Login/Signup</a></li>
-                    <li class="nav-item d-none" id="profileNav"><a class="nav-link" href="#" id="profileLink">Profile</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" id="profileLink">Profile</a></li>
                     <li class="nav-item"><a class="nav-link" href="#" id="themeToggle">Dark Mode</a></li>
                     <li class="nav-item"><a class="nav-link" href="#" id="cookieSettings">Cookie Settings</a></li>
-                    <li class="nav-item d-none" id="logoutNav"><a class="nav-link text-danger" href="#" id="logout">Logout</a></li>
+                    <li class="nav-item"><a class="nav-link text-danger" href="#" id="logout">Logout</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-
-       <!-- News Section -->
-       <div class="container mt-3">
+    <!-- News Categories -->
+    <div class="container mt-3">
         <h2>Latest News</h2>
         <div class="btn-group" role="group">
             <button class="btn btn-primary category-btn" data-category="general">General</button>
@@ -39,237 +36,18 @@
             <button class="btn btn-secondary category-btn" data-category="business">Business</button>
         </div>
     </div>
->
 
-<div class="container mt-3">
-    <input type="text" id="searchInput" class="form-control" placeholder="Search news...">
-</div>
-
-<!-- News Section -->
-<div class="container mt-3">
-    <div id="newsContainer" class="row"></div>
-</div>
-
-    <div id="cookieConsent" class="cookie-banner">
-        <div class="cookie-banner-content">
-            <p><strong>We value your privacy!</strong><br>  
-                We use cookies to enhance your experience, analyze site traffic, and serve personalized content.  
-                By clicking "Accept All", you agree to the use of all cookies.  
-                You can manage your preferences via "Customize". 
-                <br> 
-                Learn more in our  
-                <a href="cookie-policy.html" target="_blank">Cookie Policy</a>,  
-                <a href="privacy-policy.html" target="_blank">Privacy Policy</a>, and  
-                <a href="terms-of-service.html" target="_blank">Terms of Service</a>.
-            </p>
-    
-            <div class="cookie-buttons">
-                <button id="acceptCookies" class="accept-button">Accept All</button>
-                <button id="rejectCookies" class="reject-button">Reject All</button>
-                <button id="customizeCookies" class="customize-button">Customize</button>
-            </div>
-        </div>
+    <!-- Search Bar -->
+    <div class="container mt-3">
+        <input type="text" id="searchInput" class="form-control" placeholder="Search news...">
     </div>
 
-    <div id="cookiePreferencesModal" class="cookie-preferences-modal">
-        <div class="modal-content">
-            <h1>Customize Your Preferences</h1>
-            <br>
-            <div class="cookie-category">
-                <input type="checkbox" id="strictlyNecessary" checked disabled>
-                <label for="strictlyNecessary" class="cookie-label" data-cookie-type="strictlyNecessary" data-info="Strictly necessary cookies are essential for the website's basic functionalities. These cookies ensure the site functions properly. <a href= cookie-policy.html target='_blank'>Learn More</a>">Strictly Necessary Cookies (Required for website functionality)</label>
-            </div>
-            <br>
-            <div class="cookie-category">
-                <input type="checkbox" id="performance">
-                <label for="performance" class="cookie-label" data-cookie-type="performance" data-info="Performance cookies help us understand how visitors interact with our website. These cookies are used to improve website performance and functionality. <a href= cookie-policy.html target='_blank'>Learn More</a>">Performance (Analytical) Cookies</label>
-            </div>
-            <br>
-            <div class="cookie-category">
-                <input type="checkbox" id="functional">
-                <label for="functional" class="cookie-label" data-cookie-type="functional" data-info="Functional cookies allow the website to remember your preferences and personalize the user experience. <a href= cookie-policy.html target='_blank'>Learn More</a>">Functional Cookies (Preferences)</label>
-            </div>
-            <br>
-            <div class="cookie-category">
-                <input type="checkbox" id="advertising">
-                <label for="advertising" class="cookie-label" data-cookie-type="advertising" data-info="Advertising cookies help us provide you with personalized ads based on your interests and browsing history. <a href= cookie-policy.html target='_blank'>Learn More</a>">Advertising (Targeting) Cookies</label>
-            </div>
-            <br>
-            <div class="cookie-category">
-                <input type="checkbox" id="socialMedia">
-                <label for="socialMedia" class="cookie-label" data-cookie-type="socialMedia" data-info="Social Media cookies allow you to share content and interact with social media platforms like Facebook and Twitter. <a href= cookie-policy.html target='_blank'>Learn More</a>">Social Media Cookies</label>
-            </div>
-            <br>
-            <div class="modal-buttons">
-                <button id="savePreferences" class="save-button">Save Preferences</button>
-                <button id="cancelPreferences" class="cancel-button">Cancel</button>
-            </div>
-        </div>
+    <!-- News Section -->
+    <div class="container mt-3">
+        <div id="newsContainer" class="row"></div>
     </div>
 
-    <div id="cookieInfoModal" class="cookie-info-modal">
-        <div class="modal-content">
-            <p id="cookieInfoText"></p>
-            <button id="closeModalButton" class="close-modal-button">Close</button>
-        </div>
-    </div>
-
-
-
-    <!-- Login/Signup Modal -->
-    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitle">Login</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="authForm">
-                        <!-- Username (Only for Sign-Up) -->
-                        <div class="mb-3" id="usernameField" style="display: none;">
-                            <label for="username" class="form-label">Username</label>
-                            <input type="text" class="form-control" id="username" placeholder="Choose a username">
-                        </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
-                        </div>
-                        <!-- Confirm Password (Only for Sign-Up) -->
-                        <div class="mb-3" id="confirmPasswordField" style="display: none;">
-                            <label for="confirmPassword" class="form-label">Confirm Password</label>
-                            <input type="password" class="form-control" id="confirmPassword" placeholder="Re-enter your password">
-                        </div>
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-primary w-100" id="authButton">Login</button>
-                            <p class="mt-2">
-                                <span id="toggleText">Don't have an account?</span> 
-                                <a href="#" id="toggleAuthMode">Sign Up</a>
-                            </p>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    
-    
- 
-
-    <!-- JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="module" src="public/src/news.js"></script>
-    <script type="module" src="public/src/cookie-banner.js"></script>
-    <script type="module" src="public/src/main.js"></script>
-
-    <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const authForm = document.getElementById("authForm");
-    const authButton = document.getElementById("authButton");
-    const toggleAuthMode = document.getElementById("toggleAuthMode");
-    const modalTitle = document.getElementById("modalTitle");
-    const usernameField = document.getElementById("usernameField");
-    const confirmPasswordField = document.getElementById("confirmPasswordField");
-    const toggleText = document.getElementById("toggleText");
-
-    let isSignUp = false; // Default mode is Login
-
-    // Toggle Login/Signup Mode
-    toggleAuthMode.addEventListener("click", function (event) {
-        event.preventDefault();
-        isSignUp = !isSignUp;
-
-        if (isSignUp) {
-            modalTitle.textContent = "Sign Up";
-            authButton.textContent = "Register";
-            toggleText.textContent = "Already have an account?";
-            toggleAuthMode.textContent = "Login";
-            usernameField.style.display = "block"; // Show username field
-            confirmPasswordField.style.display = "block"; // Show confirm password
-        } else {
-            modalTitle.textContent = "Login";
-            authButton.textContent = "Login";
-            toggleText.textContent = "Don't have an account?";
-            toggleAuthMode.textContent = "Sign Up";
-            usernameField.style.display = "none"; // Hide username field
-            confirmPasswordField.style.display = "none"; // Hide confirm password
-        }
-    });
-
-    // Handle Form Submission
-    authForm.addEventListener("submit", async function (event) {
-        event.preventDefault();
-
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value.trim();
-
-        if (isSignUp) {
-            const username = document.getElementById("username").value.trim();
-            const confirmPassword = document.getElementById("confirmPassword").value.trim();
-
-            if (!username || !email || !password || !confirmPassword) {
-                alert("All fields are required!");
-                return;
-            }
-            if (password.length < 6) {
-                alert("Password must be at least 6 characters.");
-                return;
-            }
-            if (password !== confirmPassword) {
-                alert("Passwords do not match!");
-                return;
-            }
-
-            try {
-                const response = await fetch("https://backendcookie-8qc1.onrender.com/api/register", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ username, email, password }),
-                });
-
-                const data = await response.json();
-                if (response.ok) {
-                    alert("✅ Registration successful! Logging you in...");
-                    localStorage.setItem("user", JSON.stringify({ username, email }));
-                    location.reload(); // Refresh UI
-                } else {
-                    alert(`❌ ${data.message || "Registration failed."}`);
-                }
-            } catch (error) {
-                console.error("❌ Error:", error);
-                alert("Registration failed. Please check your internet connection.");
-            }
-        } else {
-            // Handle Login
-            try {
-                const response = await fetch("https://backendcookie-8qc1.onrender.com/api/login", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ email, password }),
-                });
-
-                const data = await response.json();
-                if (response.ok) {
-                    alert("✅ Login successful!");
-                    localStorage.setItem("user", JSON.stringify(data.user));
-                    location.reload(); // Refresh UI
-                } else {
-                    alert(`❌ ${data.message || "Login failed."}`);
-                }
-            } catch (error) {
-                console.error("❌ Error:", error);
-                alert("Login failed. Please check your internet connection.");
-            }
-        }
-    });
-});
- </script>
-
-
+    <script src="./public/src/news.js"></script>
 </body>
 </html>

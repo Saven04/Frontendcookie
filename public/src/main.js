@@ -1,158 +1,101 @@
+// Import cookie functions (if using ES6 modules)
+// import { setCookie, getCookie } from './cookieSettings.js';
+
 document.addEventListener("DOMContentLoaded", () => {
-    const authForm = document.getElementById("authForm");
-    const authButton = document.getElementById("authButton");
-    const toggleAuthMode = document.getElementById("toggleAuthMode");
-    const usernameField = document.getElementById("usernameField");
+    const loginForm = document.getElementById("loginForm");
 
-    let isLoginMode = true;
-
-    if (authForm) {
-        authForm.addEventListener("submit", async (event) => {
+    // Handle form submission
+    if (loginForm) {
+        loginForm.addEventListener("submit", async (event) => {
             event.preventDefault();
 
-            const email = document.getElementById("email")?.value.trim();
-            const password = document.getElementById("password")?.value.trim();
-            const username = document.getElementById("username")?.value.trim();
+            // Get input values
+            const emailField = document.getElementById("email");
+            const passwordField = document.getElementById("password");
 
-            if (!email || !password || (!isLoginMode && !username)) {
-                showModal("Please fill in all required fields.", "error");
+            // Validate inputs
+            if (!emailField || !passwordField) {
+                console.error("Error: Missing input fields in the DOM.");
+                showModal("Error: Missing input fields in the DOM.", "error");
                 return;
             }
 
-            if (isLoginMode) {
-                await loginUser(email, password);
-            } else {
-                await registerUser(username, email, password);
+            const email = emailField.value.trim();
+            const password = passwordField.value.trim();
+
+            if (!email || !password) {
+                showModal("Please enter both email and password.", "error");
+                return;
             }
+
+            // Call the login function
+            await loginUser(email, password);
         });
     }
 
-    if (toggleAuthMode) {
-        toggleAuthMode.addEventListener("click", (event) => {
-            event.preventDefault();
-            isLoginMode = !isLoginMode;
-
-            if (isLoginMode) {
-                authButton.textContent = "Login";
-                usernameField.style.display = "none";
-                toggleAuthMode.innerHTML = "Don't have an account? <a href='#'>Sign Up</a>";
-            } else {
-                authButton.textContent = "Sign Up";
-                usernameField.style.display = "block";
-                toggleAuthMode.innerHTML = "Already have an account? <a href='#'>Login</a>";
-            }
-        });
-    }
-
+    // Redirect logged-in users away from the login page
     if (isUserLoggedIn() && window.location.pathname.includes("index.html")) {
         window.location.href = "news.html";
     }
 });
 
+// Function to check if the user is logged in
 function isUserLoggedIn() {
-    return !!localStorage.getItem("token");
+    return localStorage.getItem("token") !== null;
 }
 
+// ✅ Updated loginUser function to handle both JWT and session-based logins
 async function loginUser(email, password) {
     try {
-        const response = await fetch("https://backendcookie-8qc1.onrender.com/api/login", {
+        const apiUrl = "https://backendcookie-8qc1.onrender.com/api/login";
+        console.log("📡 Sending request to:", apiUrl);
+
+        const response = await fetch(apiUrl, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password }),
         });
 
         const data = await response.json();
-        if (data.success) {
-            localStorage.setItem("token", data.token);
-            showModal("✅ Login successful!", "success");
-            setTimeout(() => window.location.href = "news.html", 1500);
-        } else {
-            showModal(data.message || "Login failed.", "error");
-        }
-    } catch (error) {
-        showModal("❌ Error logging in: " + error.message, "error");
-    }
-}
+        console.log("🚀 Server Response:", data);
 
-async function registerUser(username, email, password) {
-    try {
-        // Generate or retrieve Consent ID
-        let consentId = localStorage.getItem("consentId");
-        if (!consentId) {
-            consentId = self.crypto.randomUUID(); // Generate a unique UUID
-            localStorage.setItem("consentId", consentId); // Store it for future use
-        }
-
-        // Prepare request body
-        const requestBody = { username, email, password, consentId };
-
-        console.log("📩 Sending registration request:", requestBody);
-
-        // Send POST request to backend
-        const response = await fetch("https://backendcookie-8qc1.onrender.com/api/register", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(requestBody),
-        });
-
-        // Parse the response
-        const data = await response.json();
-        console.log("📩 Server response:", data);
-
-        if (response.ok) {
-            showModal("✅ Registration successful! Please log in.", "success");
-            setTimeout(() => window.location.href = "index.html", 1500);
-        } else {
-            showModal(data.message || "❌ Registration failed.", "error");
-        }
-    } catch (error) {
-        console.error("❌ Error in registerUser:", error);
-        showModal("❌ Error registering: " + error.message, "error");
-    }
-}
-
-
-async function getUserPreferences(consentId) {
-    try {
-        const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/getPreferences?consentId=${consentId}`);
         if (!response.ok) {
-            throw new Error("Failed to fetch preferences");
+            throw new Error(data.message || "Invalid credentials");
         }
 
-        const data = await response.json();
-        if (data.success) {
-            console.log("✅ User Preferences:", data.preferences);
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        showModal("✅ Login successful!", "success");
 
-            document.getElementById("performance").checked = data.preferences.performance || false;
-            document.getElementById("functional").checked = data.preferences.functional || false;
-            document.getElementById("advertising").checked = data.preferences.advertising || false;
-            document.getElementById("socialMedia").checked = data.preferences.socialMedia || false;
-        } else {
-            console.error("❌ Error fetching preferences:", data.message);
-        }
+        setTimeout(() => {
+            window.location.href = "/news.html";
+        }, 1500);
     } catch (error) {
-        console.error("❌ Error:", error.message);
+        console.error("Login error:", error);
+        showModal(`❌ Login failed: ${error.message}`, "error");
     }
 }
 
-const storedConsentId = localStorage.getItem("consentId");
-if (storedConsentId) {
-    getUserPreferences(storedConsentId);
-}
-
+// ✅ Function to attach JWT token to API requests
 function getAuthHeaders() {
     const token = localStorage.getItem("token");
     return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
+// ✅ Example function to fetch user data using JWT
 async function fetchUserData() {
     try {
         const response = await fetch("https://backendcookie-8qc1.onrender.com/api/user", {
             method: "GET",
-            headers: { "Content-Type": "application/json", ...getAuthHeaders() },
+            headers: {
+                "Content-Type": "application/json",
+                ...getAuthHeaders(), // Attach token to request
+            },
         });
 
-        if (!response.ok) throw new Error(`Failed to fetch user data: ${response.status}`);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch user data: ${response.status}`);
+        }
 
         const userData = await response.json();
         console.log("✅ User data:", userData);
@@ -161,15 +104,21 @@ async function fetchUserData() {
     }
 }
 
+// ✅ Logout function
 function logoutUser() {
     localStorage.removeItem("token");
     showModal("✅ Logged out successfully!", "success");
-    setTimeout(() => window.location.href = "index.html", 1500);
+    setTimeout(() => {
+        window.location.href = "index.html";
+    }, 1500);
 }
 
+// ✅ Function to show a custom modal
 function showModal(message, type) {
     const existingModal = document.getElementById("customModal");
-    if (existingModal) existingModal.remove();
+    if (existingModal) {
+        existingModal.remove(); // Remove any existing modal to avoid duplicates
+    }
 
     const modalContainer = document.createElement("div");
     modalContainer.id = "customModal";
@@ -184,11 +133,23 @@ function showModal(message, type) {
     const closeButton = document.createElement("button");
     closeButton.textContent = "Close";
     closeButton.classList.add("close-button");
-    closeButton.addEventListener("click", () => document.body.removeChild(modalContainer));
+    closeButton.addEventListener("click", () => {
+        const modal = document.getElementById("customModal");
+        if (modal) {
+            document.body.removeChild(modal);
+        }
+    });
 
-    modalContent.append(messageElement, closeButton);
+    modalContent.appendChild(messageElement);
+    modalContent.appendChild(closeButton);
     modalContainer.appendChild(modalContent);
     document.body.appendChild(modalContainer);
 
-    setTimeout(() => document.body.removeChild(modalContainer), 3000);
-} 
+    // Automatically close the modal after 3 seconds
+    setTimeout(() => {
+        const modal = document.getElementById("customModal");
+        if (modal) {
+            document.body.removeChild(modal);
+        }
+    }, 3000);
+}
