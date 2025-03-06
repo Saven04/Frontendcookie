@@ -159,31 +159,43 @@
     <script type="module" src="public/src/cookie-banner.js"></script>
     <script type="module" src="public/src/main.js"></script>
     <script>
-    document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
     const loginSignupNav = document.getElementById("loginSignupNav");
     const profileNav = document.getElementById("profileNav");
     const logoutNav = document.getElementById("logoutNav");
     const authForm = document.getElementById("authForm");
     const toggleAuthMode = document.getElementById("toggleAuthMode");
     const authButton = document.getElementById("authButton");
-    const usernameField = document.getElementById("usernameField");
     let isSignUpMode = false;
 
     // Check if user is logged in
-    const storedUser = localStorage.getItem("user");
-    const user = storedUser ? JSON.parse(storedUser) : null;
-
-    if (user) {
-        updateUIOnLogin(user);
+    const storedUser = JSON.parse(localStorage.getItem("user"));  
+    if (storedUser) {
+        loginSignupNav.classList.add("d-none");
+        profileNav.classList.remove("d-none");
+        logoutNav.classList.remove("d-none");
     }
 
     // Toggle between Login & Signup
     toggleAuthMode.addEventListener("click", (e) => {
         e.preventDefault();
         isSignUpMode = !isSignUpMode;
-        usernameField.style.display = isSignUpMode ? "block" : "none";
         authButton.textContent = isSignUpMode ? "Sign Up" : "Login";
         toggleAuthMode.textContent = isSignUpMode ? "Already have an account? Login" : "Don't have an account? Sign Up";
+
+        // Add a username field dynamically for signup
+        if (isSignUpMode) {
+            const usernameField = document.createElement("div");
+            usernameField.classList.add("mb-3");
+            usernameField.innerHTML = `
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="username" placeholder="Enter your username" required>
+            `;
+            authForm.insertBefore(usernameField, authForm.firstChild);
+        } else {
+            const usernameInput = document.getElementById("username");
+            if (usernameInput) usernameInput.parentElement.remove();
+        }
     });
 
     // Handle Login/Signup
@@ -191,25 +203,24 @@
         e.preventDefault();
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
-        const username = document.getElementById("username") ? document.getElementById("username").value : "";
+        const username = document.getElementById("username") ? document.getElementById("username").value : null;
 
         if (isSignUpMode) {
             if (!username) {
-                alert("Please enter a username.");
+                alert("Please enter a username!");
                 return;
             }
-            // Store user in localStorage (Simulating a database)
-            const newUser = { username, email };
-            localStorage.setItem("user", JSON.stringify(newUser));
             alert("Signup successful! Now log in.");
-            resetToLoginMode();
+            isSignUpMode = false;
+            authButton.textContent = "Login";
+            toggleAuthMode.textContent = "Don't have an account? Sign Up";
         } else {
-            if (!user || user.email !== email) {
-                alert("Invalid login credentials!");
-                return;
-            }
+            const user = { email: email, username: username || "Guest" };
+            localStorage.setItem("user", JSON.stringify(user));
             alert("Login successful!");
-            updateUIOnLogin(user);
+            loginSignupNav.classList.add("d-none");
+            profileNav.classList.remove("d-none");
+            logoutNav.classList.remove("d-none");
             bootstrap.Modal.getInstance(document.getElementById("loginModal")).hide();
         }
     });
@@ -222,23 +233,8 @@
         profileNav.classList.add("d-none");
         logoutNav.classList.add("d-none");
     });
-
-    // Update UI after login
-    function updateUIOnLogin(user) {
-        loginSignupNav.classList.add("d-none");
-        profileNav.classList.remove("d-none");
-        logoutNav.classList.remove("d-none");
-        document.getElementById("profileName").textContent = user.username || "Profile";
-    }
-
-    // Reset to login mode after signup
-    function resetToLoginMode() {
-        isSignUpMode = false;
-        usernameField.style.display = "none";
-        authButton.textContent = "Login";
-        toggleAuthMode.textContent = "Don't have an account? Sign Up";
-    }
 });
+
 
     </script>
 </body>
