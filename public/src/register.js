@@ -11,22 +11,25 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     const confirmPassword = document.getElementById("confirmPassword").value.trim();
 
     // Retrieve the consentId from cookies
-    const consentId = getCookie("consentId") || generateShortUUID(); // Generate one if it doesn't exist
-    setCookie("consentId", consentId, 365); // Ensure the consentId is stored in cookies
+    let consentId = getCookie("consentId");
+    if (!consentId) {
+        consentId = generateShortUUID(); // Generate one if it doesn't exist
+        setCookie("consentId", consentId, 365); // Store it for 1 year
+    }
 
     // Validate inputs
     if (!username || !email || !password || !confirmPassword) {
-        showModal("All fields are required!", "error");
+        showModal("⚠️ All fields are required!", "error");
         resetButton();
         return;
     }
     if (password.length < 6) {
-        showModal("Password must be at least 6 characters long.", "error");
+        showModal("⚠️ Password must be at least 6 characters long.", "error");
         resetButton();
         return;
     }
     if (password !== confirmPassword) {
-        showModal("Passwords do not match!", "error");
+        showModal("⚠️ Passwords do not match!", "error");
         resetButton();
         return;
     }
@@ -40,18 +43,21 @@ document.getElementById("registerForm").addEventListener("submit", async functio
 
         const data = await response.json();
         if (response.ok) {
-            showModal("✅ Registration successful! Redirecting to login...", "success");
+            // Store user details in localStorage
+            localStorage.setItem("user", JSON.stringify({ username, email, consentId }));
+
+            showModal("✅ Registration successful! Redirecting...", "success");
             setTimeout(() => {
                 document.getElementById("registerForm").reset(); // Reset form
-                window.location.href = "index.html"; // Redirect to login page
-            }, 1500);
+                window.location.href = "news.html"; // Redirect to news page
+            }, 2000);
         } else {
             showModal(`❌ ${data.message || "Registration failed."}`, "error");
+            resetButton();
         }
     } catch (error) {
         console.error("❌ Error:", error);
-        showModal("Registration failed. Please check your internet connection and try again.", "error");
-    } finally {
+        showModal("❌ Registration failed. Check your internet connection and try again.", "error");
         resetButton();
     }
 });
@@ -65,6 +71,10 @@ function resetButton() {
 
 // Function to show a custom modal
 function showModal(message, type) {
+    // Remove existing modal if present
+    const existingModal = document.getElementById("customModal");
+    if (existingModal) document.body.removeChild(existingModal);
+
     const modalContainer = document.createElement("div");
     modalContainer.id = "customModal";
     modalContainer.classList.add("modal", type);
@@ -85,7 +95,6 @@ function showModal(message, type) {
     modalContent.appendChild(messageElement);
     modalContent.appendChild(closeButton);
     modalContainer.appendChild(modalContent);
-
     document.body.appendChild(modalContainer);
 
     // Automatically close the modal after 3 seconds
@@ -108,6 +117,10 @@ function setCookie(name, value, days) {
 }
 
 function getCookie(name) {
-    const nameEq = `${name}=`;
-    return document.cookie.split("; ").find((c) => c.startsWith(nameEq))?.split("=")[1] || null;
+    const cookies = document.cookie.split("; ");
+    for (let cookie of cookies) {
+        let [key, value] = cookie.split("=");
+        if (key === name) return value;
+    }
+    return null;
 }
