@@ -104,6 +104,11 @@
                 </div>
                 <div class="modal-body">
                     <form id="authForm">
+                        <!-- Username (Visible only in Sign-Up mode) -->
+                        <div class="mb-3" id="usernameField" style="display: none;">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" placeholder="Choose a username">
+                        </div>
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
                             <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
@@ -114,14 +119,16 @@
                         </div>
                         <div class="text-center">
                             <button type="submit" class="btn btn-primary w-100" id="authButton">Login</button>
-                            <p class="mt-2">Don't have an account? <a href="#" id="toggleAuthMode">Sign Up</a></p>
+                            <p class="mt-2">
+                                Don't have an account? <a href="#" id="toggleAuthMode">Sign Up</a>
+                            </p>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-
+    
     <!-- News Section -->
     <div class="container mt-3">
         <h2>Latest News</h2>
@@ -138,60 +145,84 @@
     <script type="module" src="public/src/cookie-banner.js"></script>
     <script type="module" src="public/src/main.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const loginSignupNav = document.getElementById("loginSignupNav");
-            const profileNav = document.getElementById("profileNav");
-            const logoutNav = document.getElementById("logoutNav");
-            const authForm = document.getElementById("authForm");
-            const toggleAuthMode = document.getElementById("toggleAuthMode");
-            const authButton = document.getElementById("authButton");
-            let isSignUpMode = false;
+     document.addEventListener("DOMContentLoaded", () => {
+    const loginSignupNav = document.getElementById("loginSignupNav");
+    const profileNav = document.getElementById("profileNav");
+    const logoutNav = document.getElementById("logoutNav");
+    const authForm = document.getElementById("authForm");
+    const toggleAuthMode = document.getElementById("toggleAuthMode");
+    const authButton = document.getElementById("authButton");
+    const usernameField = document.getElementById("usernameField");
+    let isSignUpMode = false;
 
-            // Check if user is logged in
-            if (localStorage.getItem("user")) {
-                loginSignupNav.classList.add("d-none");
-                profileNav.classList.remove("d-none");
-                logoutNav.classList.remove("d-none");
+    // Check if user is logged in
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user) {
+        updateUIOnLogin(user);
+    }
+
+    // Toggle between Login & Signup
+    toggleAuthMode.addEventListener("click", (e) => {
+        e.preventDefault();
+        isSignUpMode = !isSignUpMode;
+        usernameField.style.display = isSignUpMode ? "block" : "none";
+        authButton.textContent = isSignUpMode ? "Sign Up" : "Login";
+        toggleAuthMode.textContent = isSignUpMode ? "Already have an account? Login" : "Don't have an account? Sign Up";
+    });
+
+    // Handle Login/Signup
+    authForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        const username = document.getElementById("username") ? document.getElementById("username").value : "";
+
+        if (isSignUpMode) {
+            if (!username) {
+                alert("Please enter a username.");
+                return;
             }
+            // Store user in localStorage (Simulating a database)
+            const newUser = { username, email };
+            localStorage.setItem("user", JSON.stringify(newUser));
+            alert("Signup successful! Now log in.");
+            resetToLoginMode();
+        } else {
+            if (!user || user.email !== email) {
+                alert("Invalid login credentials!");
+                return;
+            }
+            alert("Login successful!");
+            updateUIOnLogin(user);
+            bootstrap.Modal.getInstance(document.getElementById("loginModal")).hide();
+        }
+    });
 
-            // Toggle between Login & Signup
-            toggleAuthMode.addEventListener("click", (e) => {
-                e.preventDefault();
-                isSignUpMode = !isSignUpMode;
-                authButton.textContent = isSignUpMode ? "Sign Up" : "Login";
-                toggleAuthMode.textContent = isSignUpMode ? "Already have an account? Login" : "Don't have an account? Sign Up";
-            });
+    // Handle Logout
+    document.getElementById("logout").addEventListener("click", () => {
+        localStorage.removeItem("user");
+        alert("Logged out!");
+        loginSignupNav.classList.remove("d-none");
+        profileNav.classList.add("d-none");
+        logoutNav.classList.add("d-none");
+    });
 
-            // Handle Login/Signup
-            authForm.addEventListener("submit", (e) => {
-                e.preventDefault();
-                const email = document.getElementById("email").value;
-                const password = document.getElementById("password").value;
+    // Update UI after login
+    function updateUIOnLogin(user) {
+        loginSignupNav.classList.add("d-none");
+        profileNav.classList.remove("d-none");
+        logoutNav.classList.remove("d-none");
+        document.getElementById("profileName").textContent = user.username || "Profile";
+    }
 
-                if (isSignUpMode) {
-                    alert("Signup successful! Now log in.");
-                    isSignUpMode = false;
-                    authButton.textContent = "Login";
-                    toggleAuthMode.textContent = "Don't have an account? Sign Up";
-                } else {
-                    localStorage.setItem("user", email);
-                    alert("Login successful!");
-                    loginSignupNav.classList.add("d-none");
-                    profileNav.classList.remove("d-none");
-                    logoutNav.classList.remove("d-none");
-                    bootstrap.Modal.getInstance(document.getElementById("loginModal")).hide();
-                }
-            });
-
-            // Handle Logout
-            document.getElementById("logout").addEventListener("click", () => {
-                localStorage.removeItem("user");
-                alert("Logged out!");
-                loginSignupNav.classList.remove("d-none");
-                profileNav.classList.add("d-none");
-                logoutNav.classList.add("d-none");
-            });
-        });
+    // Reset to login mode after signup
+    function resetToLoginMode() {
+        isSignUpMode = false;
+        usernameField.style.display = "none";
+        authButton.textContent = "Login";
+        toggleAuthMode.textContent = "Don't have an account? Sign Up";
+    }
+});
     </script>
 </body>
 </html>
