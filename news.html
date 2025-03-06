@@ -146,7 +146,7 @@
     <script type="module" src="public/src/cookie-banner.js"></script>
     <script type="module" src="public/src/main.js"></script>
     <script>
-     document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", () => {
     const loginSignupNav = document.getElementById("loginSignupNav");
     const profileNav = document.getElementById("profileNav");
     const logoutNav = document.getElementById("logoutNav");
@@ -157,7 +157,9 @@
     let isSignUpMode = false;
 
     // Check if user is logged in
-    const user = JSON.parse(localStorage.getItem("user"));
+    const storedUser = localStorage.getItem("user");
+    const user = storedUser ? JSON.parse(storedUser) : null;
+
     if (user) {
         updateUIOnLogin(user);
     }
@@ -224,6 +226,7 @@
         toggleAuthMode.textContent = "Don't have an account? Sign Up";
     }
 });
+
     </script>
 </body>
 </html>
