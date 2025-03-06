@@ -28,6 +28,34 @@
         </div>
     </nav>
 
+
+       <!-- News Section -->
+       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="news.html">News Portal</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a href="#" class="nav-link category-btn" data-category="general">General</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link category-btn" data-category="business">Business</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link category-btn" data-category="technology">Technology</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link category-btn" data-category="sports">Sports</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link category-btn" data-category="entertainment">Entertainment</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-3">
+        <input type="text" id="searchInput" class="form-control" placeholder="Search news...">
+    </div>
+
+    <!-- News Container -->
+    <div class="container mt-4">
+        <div class="row" id="newsContainer">
+            <!-- News articles will be inserted here by news.js -->
+        </div>
+    </div>
+
     <div id="cookieConsent" class="cookie-banner">
         <div class="cookie-banner-content">
             <p><strong>We value your privacy!</strong><br>  
@@ -129,16 +157,7 @@
         </div>
     </div>
     
-    <!-- News Section -->
-    <div class="container mt-3">
-        <h2>Latest News</h2>
-        <div class="btn-group" role="group">
-            <button class="btn btn-primary category-btn" data-category="general">General</button>
-            <button class="btn btn-secondary category-btn" data-category="technology">Technology</button>
-            <button class="btn btn-secondary category-btn" data-category="sports">Sports</button>
-            <button class="btn btn-secondary category-btn" data-category="business">Business</button>
-        </div>
-    </div>
+ 
 
     <!-- JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
