@@ -1,19 +1,46 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const loginForm = document.getElementById("loginForm");
+    const authForm = document.getElementById("authForm");
+    const authButton = document.getElementById("authButton");
+    const toggleAuthMode = document.getElementById("toggleAuthMode");
+    const usernameField = document.getElementById("usernameField");
 
-    if (loginForm) {
-        loginForm.addEventListener("submit", async (event) => {
+    let isLoginMode = true;
+
+    if (authForm) {
+        authForm.addEventListener("submit", async (event) => {
             event.preventDefault();
 
             const email = document.getElementById("email")?.value.trim();
             const password = document.getElementById("password")?.value.trim();
+            const username = document.getElementById("username")?.value.trim();
 
-            if (!email || !password) {
-                showModal("Please enter both email and password.", "error");
+            if (!email || !password || (!isLoginMode && !username)) {
+                showModal("Please fill in all required fields.", "error");
                 return;
             }
 
-            await loginUser(email, password);
+            if (isLoginMode) {
+                await loginUser(email, password);
+            } else {
+                await registerUser(username, email, password);
+            }
+        });
+    }
+
+    if (toggleAuthMode) {
+        toggleAuthMode.addEventListener("click", (event) => {
+            event.preventDefault();
+            isLoginMode = !isLoginMode;
+
+            if (isLoginMode) {
+                authButton.textContent = "Login";
+                usernameField.style.display = "none";
+                toggleAuthMode.innerHTML = "Don't have an account? <a href='#'>Sign Up</a>";
+            } else {
+                authButton.textContent = "Sign Up";
+                usernameField.style.display = "block";
+                toggleAuthMode.innerHTML = "Already have an account? <a href='#'>Login</a>";
+            }
         });
     }
 
@@ -35,16 +62,35 @@ async function loginUser(email, password) {
         });
 
         const data = await response.json();
-        if (!response.ok) throw new Error(data.message || "Invalid credentials");
-
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
-
-        showModal("✅ Login successful!", "success");
-        setTimeout(() => window.location.href = "/news.html", 1500);
+        if (data.success) {
+            localStorage.setItem("token", data.token);
+            showModal("✅ Login successful!", "success");
+            setTimeout(() => window.location.href = "news.html", 1500);
+        } else {
+            showModal(data.message || "Login failed.", "error");
+        }
     } catch (error) {
-        console.error("Login error:", error);
-        showModal(`❌ Login failed: ${error.message}`, "error");
+        showModal("❌ Error logging in: " + error.message, "error");
+    }
+}
+
+async function registerUser(username, email, password) {
+    try {
+        const response = await fetch("https://backendcookie-8qc1.onrender.com/api/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, email, password }),
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            showModal("✅ Registration successful! Please log in.", "success");
+            setTimeout(() => window.location.href = "index.html", 1500);
+        } else {
+            showModal(data.message || "Registration failed.", "error");
+        }
+    } catch (error) {
+        showModal("❌ Error registering: " + error.message, "error");
     }
 }
 
@@ -56,11 +102,9 @@ async function getUserPreferences(consentId) {
         }
 
         const data = await response.json();
-        
         if (data.success) {
             console.log("✅ User Preferences:", data.preferences);
 
-            // Populate UI with preferences
             document.getElementById("performance").checked = data.preferences.performance || false;
             document.getElementById("functional").checked = data.preferences.functional || false;
             document.getElementById("advertising").checked = data.preferences.advertising || false;
@@ -73,8 +117,7 @@ async function getUserPreferences(consentId) {
     }
 }
 
-// Call this function when needed, passing the stored consentId
-const storedConsentId = localStorage.getItem("consentId"); // Assuming consentId is stored in localStorage
+const storedConsentId = localStorage.getItem("consentId");
 if (storedConsentId) {
     getUserPreferences(storedConsentId);
 }
@@ -130,4 +173,4 @@ function showModal(message, type) {
     document.body.appendChild(modalContainer);
 
     setTimeout(() => document.body.removeChild(modalContainer), 3000);
-}
+} 
