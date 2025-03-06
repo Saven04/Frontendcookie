@@ -12,42 +12,43 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="news.html">News Portal</a>
+            <a class="navbar-brand" href="#">News Portal</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <!-- News Categories -->
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item"><a href="#" class="nav-link category-btn" data-category="general">General</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link category-btn" data-category="business">Business</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link category-btn" data-category="technology">Technology</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link category-btn" data-category="sports">Sports</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link category-btn" data-category="entertainment">Entertainment</a></li>
-                </ul>
-    
-                <!-- Authentication & Settings -->
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item" id="loginSignupNav">
-                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Login/Signup</a>
-                    </li>
-                    <li class="nav-item d-none" id="profileNav">
-                        <a class="nav-link" href="#" id="profileLink">Profile</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" id="themeToggle">Dark Mode</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" id="cookieSettings">Cookie Settings</a>
-                    </li>
-                    <li class="nav-item d-none" id="logoutNav">
-                        <a class="nav-link text-danger" href="#" id="logout">Logout</a>
-                    </li>
+                    <li class="nav-item" id="loginSignupNav"><a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Login/Signup</a></li>
+                    <li class="nav-item d-none" id="profileNav"><a class="nav-link" href="#" id="profileLink">Profile</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" id="themeToggle">Dark Mode</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" id="cookieSettings">Cookie Settings</a></li>
+                    <li class="nav-item d-none" id="logoutNav"><a class="nav-link text-danger" href="#" id="logout">Logout</a></li>
                 </ul>
             </div>
         </div>
     </nav>
-    
+
+
+       <!-- News Section -->
+       <div class="container mt-3">
+        <h2>Latest News</h2>
+        <div class="btn-group" role="group">
+            <button class="btn btn-primary category-btn" data-category="general">General</button>
+            <button class="btn btn-secondary category-btn" data-category="technology">Technology</button>
+            <button class="btn btn-secondary category-btn" data-category="sports">Sports</button>
+            <button class="btn btn-secondary category-btn" data-category="business">Business</button>
+        </div>
+    </div>
+>
+
+<div class="container mt-3">
+    <input type="text" id="searchInput" class="form-control" placeholder="Search news...">
+</div>
+
+<!-- News Section -->
+<div class="container mt-3">
+    <div id="newsContainer" class="row"></div>
+</div>
 
     <div id="cookieConsent" class="cookie-banner">
         <div class="cookie-banner-content">
