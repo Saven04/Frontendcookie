@@ -1,22 +1,6 @@
-// Function to generate a short unique ID
+// Function to generate a short unique consent ID
 function generateShortUUID() {
     return Math.random().toString(36).substring(2, 10);
-}
-
-// Cookie Utility Functions
-function setCookie(name, value, days) {
-    const date = new Date();
-    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-    document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/;secure;samesite=strict`;
-}
-
-function getCookie(name) {
-    const nameEq = `${name}=`;
-    return document.cookie.split("; ").find((c) => c.startsWith(nameEq))?.split("=")[1] || null;
-}
-
-function deleteCookie(name) {
-    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;secure;samesite=strict`;
 }
 
 // Document Ready Event
@@ -29,24 +13,29 @@ document.addEventListener("DOMContentLoaded", async () => {
     const cancelPreferencesButton = document.getElementById("cancelPreferences");
     const cookiePreferencesModal = document.getElementById("cookiePreferencesModal");
 
-    // Check Authentication
-    const isAuthenticated = await checkAuthentication();
-    let userId = null;
-    let sessionId = null;
+    // Cookie Utility Functions
+    function setCookie(name, value, days) {
+        const date = new Date();
+        date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+        document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/;secure;samesite=strict`;
+    }
 
-    if (isAuthenticated) {
-        userId = localStorage.getItem("userId"); // Retrieve userId from localStorage
-        sessionId = localStorage.getItem("sessionId"); // Retrieve sessionId from localStorage
-        console.log("📌 User is authenticated. Fetching preferences...");
-        await loadPreferences(userId); // Fetch preferences for authenticated users
-    } else {
-        console.log("🚨 User is not authenticated. Using consentId...");
-        let consentId = getCookie("consentId");
-        if (!consentId) {
-            consentId = generateShortUUID();
-            setCookie("consentId", consentId, 365); // Create a new consentId for unauthenticated users
-        }
-        setTimeout(() => cookieBanner.classList.add("show"), 500); // Show cookie banner
+    function getCookie(name) {
+        const nameEq = `${name}=`;
+        return document.cookie.split("; ").find((c) => c.startsWith(nameEq))?.split("=")[1] || null;
+    }
+
+    function deleteCookie(name) {
+        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;secure;samesite=strict`;
+    }
+
+    // Handle Cookie Consent Logic
+    let consentId = getCookie("consentId");
+    let cookiesAccepted = getCookie("cookiesAccepted");
+
+    // Show consent banner if no choice has been made
+    if (!cookiesAccepted) {
+        setTimeout(() => cookieBanner.classList.add("show"), 500);
     }
 
     // Accept Cookies Button
@@ -64,7 +53,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     // Save Preferences Button
-    savePreferencesButton.addEventListener("click", async () => {
+    savePreferencesButton.addEventListener("click", () => {
+        if (!consentId) {
+            consentId = generateShortUUID();
+            setCookie("consentId", consentId, 365);
+        }
+
+        console.log("📌 Using Consent ID:", consentId);
+
         const preferences = {
             strictlyNecessary: true,
             performance: document.getElementById("performance").checked,
@@ -73,17 +69,11 @@ document.addEventListener("DOMContentLoaded", async () => {
             socialMedia: document.getElementById("socialMedia").checked,
         };
 
-        if (isAuthenticated) {
-            await savePreferencesToDB(userId, preferences, sessionId); // Save preferences for authenticated users
-        } else {
-            const consentId = getCookie("consentId") || generateShortUUID();
-            setCookie("consentId", consentId, 365); // Save consentId for unauthenticated users
-            await savePreferencesToDB(null, preferences, null, consentId); // Save preferences with consentId
-        }
-
         setCookie("cookiesAccepted", "true", 365);
         setCookie("cookiePreferences", JSON.stringify(preferences), 365);
 
+        sendPreferencesToDB(consentId, preferences);
+        saveLocationData(consentId);
         hideBanner();
         cookiePreferencesModal.classList.remove("show");
     });
@@ -101,102 +91,35 @@ document.addEventListener("DOMContentLoaded", async () => {
         }, 500);
     }
 
-    // Check Authentication
-    async function checkAuthentication() {
+    // Send Preferences to Backend
+    async function sendPreferencesToDB(consentId, preferences) {
         try {
-            const token = localStorage.getItem("token");
-            if (!token) return false;
-
-            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/check-auth", { // Use relative URL
-                method: "GET",
-                headers: { Authorization: `Bearer ${token}` },
-            });
-
-            const data = await response.json();
-            return data.authenticated;
-        } catch (error) {
-            console.error("❌ Error checking authentication:", error);
-            return false;
-        }
-    }
-
-    // Load Saved Preferences
-    async function loadPreferences(userId) {
-        try {
-            const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/get-preferences?userId=${userId}`, { // Use relative URL
-                method: "GET",
-                headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-            });
-
-            if (!response.ok) throw new Error("Failed to fetch preferences.");
-
-            const data = await response.json();
-            console.log("✅ Loaded Preferences:", data);
-
-            applyPreferences(data.preferences);
-            hideBanner();
-        } catch (error) {
-            console.error("❌ Error loading preferences:", error);
-            setTimeout(() => cookieBanner.classList.add("show"), 500);
-        }
-    }
-
-    // Apply Saved Preferences to UI
-    function applyPreferences(preferences) {
-        document.getElementById("performance").checked = preferences.performance || false;
-        document.getElementById("functional").checked = preferences.functional || false;
-        document.getElementById("advertising").checked = preferences.advertising || false;
-        document.getElementById("socialMedia").checked = preferences.socialMedia || false;
-    }
-
-    // Save Preferences to Backend
-    async function savePreferencesToDB(userId, preferences, sessionId = null, consentId = null) {
-        try {
-            // Construct the request body based on whether the user is authenticated or not
-            const body = userId
-                ? { userId, preferences, sessionId } // For authenticated users
-                : { consentId, preferences }; // For unauthenticated users
-    
-            // Use a relative URL for the API endpoint
             const response = await fetch("https://backendcookie-8qc1.onrender.com/api/save", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(body),
+                body: JSON.stringify({ consentId, preferences }),
             });
-    
-            // Parse the response
-            const data = await response.json();
-    
-            // Check if the response is OK (status code 200-299)
-            if (!response.ok) {
-                throw new Error(data.message || "Failed to save preferences.");
-            }
-    
-            console.log("✅ Preferences saved successfully:", data);
+            console.log("✅ Preferences saved:", await response.json());
         } catch (error) {
-            console.error("❌ Error saving preferences:", error.message);
-            showModal("Failed to save preferences. Please try again.", "error");
+            console.error("❌ Error saving preferences:", error);
         }
     }
 
-    // Save Location Data to Backend
+    // Save Location Data
     async function saveLocationData(consentId) {
         try {
-            // Fetch location data using IPInfo API
-            const ipResponse = await fetch(`https://ipinfo.io/json?token=10772b28291307`);
-            const ipData = await ipResponse.json();
-
+            const response = await fetch("https://ipinfo.io/json?token=10772b28291307");
+            const data = await response.json();
             const locationData = {
                 consentId,
-                ipAddress: ipData.ip,
-                isp: ipData.org,
-                city: ipData.city,
-                country: ipData.country,
+                ipAddress: data.ip,
+                isp: data.org,
+                city: data.city,
+                country: data.country,
                 latitude: null,
                 longitude: null,
             };
 
-            // Get geolocation coordinates if available
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
@@ -204,25 +127,23 @@ document.addEventListener("DOMContentLoaded", async () => {
                         locationData.longitude = position.coords.longitude;
                         sendLocationDataToDB(locationData);
                     },
-                    () => sendLocationDataToDB(locationData) // Fallback if geolocation fails
+                    () => sendLocationDataToDB(locationData)
                 );
             } else {
-                sendLocationDataToDB(locationData); // Fallback if geolocation is not supported
+                sendLocationDataToDB(locationData);
             }
         } catch (error) {
             console.error("❌ Error fetching location data:", error);
         }
     }
 
-    // Send Location Data to Backend
     async function sendLocationDataToDB(locationData) {
         try {
-            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/save-location", { // Use relative URL
+            await fetch("https://backendcookie-8qc1.onrender.com/api/location", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(locationData),
             });
-
             console.log("✅ Location data saved successfully.");
         } catch (error) {
             console.error("❌ Error saving location data:", error);
@@ -231,6 +152,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Handle Cookie Consent
     function handleCookieConsent(accepted) {
+        if (!consentId) {
+            consentId = generateShortUUID();
+            setCookie("consentId", consentId, 365);
+        }
+
+        console.log("📌 Using Consent ID:", consentId);
+
         const preferences = {
             strictlyNecessary: true,
             performance: accepted,
@@ -239,14 +167,62 @@ document.addEventListener("DOMContentLoaded", async () => {
             socialMedia: accepted,
         };
 
-        const consentId = getCookie("consentId") || generateShortUUID();
-        setCookie("consentId", consentId, 365);
-
         setCookie("cookiesAccepted", accepted.toString(), 365);
         setCookie("cookiePreferences", JSON.stringify(preferences), 365);
 
-        savePreferencesToDB(null, preferences, null, consentId);
-        saveLocationData(consentId); // Save location data
+        sendPreferencesToDB(consentId, preferences);
+        saveLocationData(consentId);
         hideBanner();
+    }
+
+    // Block Registration Until Consent
+    const registerForm = document.getElementById("registerForm");
+    if (registerForm) {
+        registerForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            // Check if cookies have been accepted or rejected
+            if (!getCookie("cookiesAccepted")) {
+                alert("Please make a choice regarding cookies before proceeding.");
+                cookieBanner.classList.add("show"); // Ensure the banner is visible
+                return;
+            }
+
+            // Proceed with registration logic
+            const usernameField = document.getElementById("username");
+            const passwordField = document.getElementById("password");
+
+            if (!usernameField || !passwordField) {
+                alert("Error: Missing input fields in the DOM.");
+                return;
+            }
+
+            const username = usernameField.value.trim();
+            const password = passwordField.value.trim();
+
+            if (!username || !password) {
+                alert("Please enter both username and password.");
+                return;
+            }
+
+            try {
+                const response = await fetch("https://backendcookie-8qc1.onrender.com/api/register", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, password }),
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    alert("Registration successful!");
+                    window.location.href = "index.html"; // Redirect to login page
+                } else {
+                    alert(data.message || "Registration failed. Please try again.");
+                }
+            } catch (error) {
+                console.error("❌ Error during registration:", error);
+                alert("An unexpected error occurred. Please try again later.");
+            }
+        });
     }
 });

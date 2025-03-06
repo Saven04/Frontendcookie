@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Login Page</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.956d002c.css">
+    <link rel="stylesheet" href="/cookie-banner.f8eb2079.css"> <!-- Include the cookie banner CSS -->
+    <style>/* Cookie Info Modal Styles */
+        .cookie-info-modal {
+            display: none; /* Initially hidden */
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .cookie-info-modal.show {
+            display: flex; /* Show modal when class is added */
+        }
+
+        .modal-content {
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 100%;
+            text-align: left;
+        }
+
+        .close-modal-button {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .close-modal-button:hover {
+            background-color: #d32f2f;
+        }
+
+        .cookie-label {
+            cursor: pointer;
+            color: #f34421;
+            text-decoration: underline;
+        }</style>
+<script src="/styles.956d002c.js"></script><script src="/cookie-banner.f8eb2079.js"></script></head>
+
+<body>
+    <!-- Cookie Consent Banner -->
+    <div id="cookieConsent" class="cookie-banner">
+        <div class="cookie-banner-content">
+            <p><strong>We use cookies to improve your experience!</strong><br>By using our website, you agree to our cookie policy. Cookies help us analyze web traffic, personalize content, and provide relevant ads. <a href="#">Learn more</a>.</p>
+            <!-- Buttons -->
+            <div class="cookie-buttons">
+                <button id="acceptCookies" class="accept-button" aria-label="Accept all cookies">Accept All</button>
+                <button id="rejectCookies" class="reject-button" aria-label="Reject all cookies">Reject All</button>
+                <button id="customizeCookies" class="customize-button" aria-label="Customize cookie preferences">Customize</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cookie Preferences Modal -->
+    <div id="cookiePreferencesModal" class="cookie-preferences-modal">
+        <div class="modal-content">
+            <h2>Customize Your Preferences</h2>
+            <div class="cookie-category">
+                <input type="checkbox" id="strictlyNecessary" checked="" disabled="">
+                <label for="strictlyNecessary" class="cookie-label" data-cookie-type="strictlyNecessary" data-info="Strictly necessary cookies are essential for the website's basic functionalities. These cookies ensure the site functions properly. <a href='/cookie-details' target='_blank'>Learn More</a>">Strictly Necessary Cookies (Required for website functionality)</label>
+            </div>
+            <div class="cookie-category">
+                <input type="checkbox" id="performance">
+                <label for="performance" class="cookie-label" data-cookie-type="performance" data-info="Performance cookies help us understand how visitors interact with our website. These cookies are used to improve website performance and functionality. <a href='/cookie-details' target='_blank'>Learn More</a>">Performance (Analytical) Cookies</label>
+            </div>
+            <div class="cookie-category">
+                <input type="checkbox" id="functional">
+                <label for="functional" class="cookie-label" data-cookie-type="functional" data-info="Functional cookies allow the website to remember your preferences and personalize the user experience. <a href='/cookie-details' target='_blank'>Learn More</a>">Functional Cookies (Preferences)</label>
+            </div>
+            <div class="cookie-category">
+                <input type="checkbox" id="advertising">
+                <label for="advertising" class="cookie-label" data-cookie-type="advertising" data-info="Advertising cookies help us provide you with personalized ads based on your interests and browsing history. <a href='/cookie-details' target='_blank'>Learn More</a>">Advertising (Targeting) Cookies</label>
+            </div>
+            <div class="cookie-category">
+                <input type="checkbox" id="socialMedia">
+                <label for="socialMedia" class="cookie-label" data-cookie-type="socialMedia" data-info="Social Media cookies allow you to share content and interact with social media platforms like Facebook and Twitter. <a href='/cookie-details' target='_blank'>Learn More</a>">Social Media Cookies</label>
+            </div>
+
+            <div class="modal-buttons">
+                <button id="savePreferences" class="save-button">Save Preferences</button>
+                <button id="cancelPreferences" class="cancel-button">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cookie Info Modal (For showing explanations about cookies) -->
+    <div id="cookieInfoModal" class="cookie-info-modal">
+        <div class="modal-content">
+            <p id="cookieInfoText"></p>
+            <button id="closeModalButton" class="close-modal-button">Close</button>
+        </div>
+    </div>
+
+    <!-- Login Page Content -->
+    <div class="login-container">
+        <div class="login-card">
+            <div class="card-header">
+                <h2>Login to Your Account</h2>
+            </div>
+            <form id="loginForm">
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Enter your username">
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter your password">
+                </div>
+                <button type="submit" class="login-button">Login</button>
+                <a href="#" class="forgot-password">Forgot Password?</a>
+            </form>
+            <div class="social-login">
+                <p>Or login with</p>
+                <button class="social-button google-button">
+                    <img src="/google-logo.141003ca.png" alt="Google Logo"> Google
+                </button>
+                <button class="social-button facebook-button">
+                    <img src="/facebook-logo.8a4e899b.png" alt="Facebook Logo"> Facebook
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include JavaScript -->
+    <script src="/main.1e43358e.js"></script>
+    <!-- Add the uuid library import as a module -->
+    <script type="module" src="/cookie-banner.90ebf1ea.js"></script>
+
+    <script>// JavaScript to handle cookie label clicks and show cookie information modal
+document.querySelectorAll('.cookie-label').forEach(function (label) {
+  label.addEventListener('click', function () {
+    var infoText = this.getAttribute('data-info'); // Get the description from the data-info attribute
+    document.getElementById('cookieInfoText').innerHTML = infoText; // Update modal text
+    document.getElementById('cookieInfoModal').classList.add('show'); // Show the modal
+  });
+});
+
+// Close the modal
+document.getElementById('closeModalButton').addEventListener('click', function () {
+  document.getElementById('cookieInfoModal').classList.remove('show'); // Hide the modal
+});</script>
+</body>
+
+</html>
