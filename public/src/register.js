@@ -2,8 +2,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     event.preventDefault(); // Prevent default form submission
 
     const registerButton = document.querySelector(".login-button");
-    registerButton.disabled = true; // Disable button to prevent multiple clicks
-    registerButton.textContent = "Registering...";
+    registerButton.textContent = "Register";
 
     const username = document.getElementById("username").value.trim();
     const email = document.getElementById("email").value.trim();
