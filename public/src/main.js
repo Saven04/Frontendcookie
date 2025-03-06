@@ -76,14 +76,21 @@ async function loginUser(email, password) {
 
 async function registerUser(username, email, password) {
     try {
+        // Generate a Consent ID if not already stored
+        let consentId = localStorage.getItem("consentId");
+        if (!consentId) {
+            consentId = crypto.randomUUID(); // Generate UUID
+            localStorage.setItem("consentId", consentId); // Store it for future use
+        }
+
         const response = await fetch("https://backendcookie-8qc1.onrender.com/api/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, email, password }),
+            body: JSON.stringify({ username, email, password, consentId }),
         });
 
         const data = await response.json();
-        if (data.success) {
+        if (response.ok) {
             showModal("✅ Registration successful! Please log in.", "success");
             setTimeout(() => window.location.href = "index.html", 1500);
         } else {
