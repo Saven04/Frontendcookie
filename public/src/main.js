@@ -76,30 +76,41 @@ async function loginUser(email, password) {
 
 async function registerUser(username, email, password) {
     try {
-        // Generate a Consent ID if not already stored
+        // Generate or retrieve Consent ID
         let consentId = localStorage.getItem("consentId");
         if (!consentId) {
-            consentId = crypto.randomUUID(); // Generate UUID
+            consentId = self.crypto.randomUUID(); // Generate a unique UUID
             localStorage.setItem("consentId", consentId); // Store it for future use
         }
 
+        // Prepare request body
+        const requestBody = { username, email, password, consentId };
+
+        console.log("📩 Sending registration request:", requestBody);
+
+        // Send POST request to backend
         const response = await fetch("https://backendcookie-8qc1.onrender.com/api/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, email, password, consentId }),
+            body: JSON.stringify(requestBody),
         });
 
+        // Parse the response
         const data = await response.json();
+        console.log("📩 Server response:", data);
+
         if (response.ok) {
             showModal("✅ Registration successful! Please log in.", "success");
             setTimeout(() => window.location.href = "index.html", 1500);
         } else {
-            showModal(data.message || "Registration failed.", "error");
+            showModal(data.message || "❌ Registration failed.", "error");
         }
     } catch (error) {
+        console.error("❌ Error in registerUser:", error);
         showModal("❌ Error registering: " + error.message, "error");
     }
 }
+
 
 async function getUserPreferences(consentId) {
     try {
