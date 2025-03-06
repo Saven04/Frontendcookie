@@ -48,6 +48,37 @@ async function loginUser(email, password) {
     }
 }
 
+async function getUserPreferences(consentId) {
+    try {
+        const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/getPreferences?consentId=${consentId}`);
+        if (!response.ok) {
+            throw new Error("Failed to fetch preferences");
+        }
+
+        const data = await response.json();
+        
+        if (data.success) {
+            console.log("✅ User Preferences:", data.preferences);
+
+            // Populate UI with preferences
+            document.getElementById("performance").checked = data.preferences.performance || false;
+            document.getElementById("functional").checked = data.preferences.functional || false;
+            document.getElementById("advertising").checked = data.preferences.advertising || false;
+            document.getElementById("socialMedia").checked = data.preferences.socialMedia || false;
+        } else {
+            console.error("❌ Error fetching preferences:", data.message);
+        }
+    } catch (error) {
+        console.error("❌ Error:", error.message);
+    }
+}
+
+// Call this function when needed, passing the stored consentId
+const storedConsentId = localStorage.getItem("consentId"); // Assuming consentId is stored in localStorage
+if (storedConsentId) {
+    getUserPreferences(storedConsentId);
+}
+
 function getAuthHeaders() {
     const token = localStorage.getItem("token");
     return token ? { Authorization: `Bearer ${token}` } : {};
