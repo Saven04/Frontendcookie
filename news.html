@@ -53,26 +53,61 @@
                 </div>
                 <div class="modal-body">
                     <form id="profileForm">
+                        <!-- Username Field -->
                         <div class="mb-3">
                             <label class="form-label">Username</label>
                             <input type="text" class="form-control" id="username">
                         </div>
+    
+                        <!-- Email Field -->
                         <div class="mb-3">
                             <label class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email">
+                            <div class="input-group">
+                                <input type="email" class="form-control" id="email">
+                                <button class="btn btn-outline-secondary" type="button" id="verifyEmailBtn">Verify Email</button>
+                            </div>
+                            <small class="text-muted">An OTP will be sent to your email for verification.</small>
+                            <div class="mt-2 d-none" id="emailOtpSection">
+                                <label class="form-label">Enter OTP</label>
+                                <input type="text" class="form-control" id="emailOtp" placeholder="Enter OTP">
+                            </div>
                         </div>
+    
+                        <!-- New Password Field -->
                         <div class="mb-3">
                             <label class="form-label">New Password</label>
-                            <input type="password" class="form-control" id="newPassword">
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="newPassword">
+                                <button class="btn btn-outline-secondary" type="button" id="verifyPasswordBtn">Verify Identity</button>
+                            </div>
+                            <small class="text-muted">An OTP will be sent to your email for verification.</small>
+                            <div class="mt-2 d-none" id="passwordOtpSection">
+                                <label class="form-label">Enter OTP</label>
+                                <input type="text" class="form-control" id="passwordOtp" placeholder="Enter OTP">
+                            </div>
                         </div>
+    
+                        <!-- Profile Picture Field -->
                         <div class="mb-3">
                             <label class="form-label">Profile Picture</label>
                             <input type="file" class="form-control" id="profilePicUpload">
                         </div>
-                        <div class="d-flex justify-content-between">
-                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+    
+                        <!-- Delete Account Section -->
+                        <div class="mb-3">
+                            <button type="button" class="btn btn-danger w-100" id="deleteAccountBtn">
                                 Delete Account
                             </button>
+                            <small class="text-muted d-block mt-2">Deleting your account requires MFA verification.</small>
+                            <div class="mt-2 d-none" id="deleteAccountOtpSection">
+                                <label class="form-label">Enter OTP</label>
+                                <input type="text" class="form-control" id="deleteAccountOtp" placeholder="Enter OTP">
+                                <button class="btn btn-danger mt-2 w-100" id="confirmDeleteAccountBtn">Confirm Deletion</button>
+                            </div>
+                        </div>
+    
+                        <!-- Save Changes Button -->
+                        <div class="d-flex justify-content-end">
                             <button type="submit" class="btn btn-primary">Save Changes</button>
                         </div>
                     </form>
@@ -171,20 +206,38 @@
     </div>
 
     <!-- Delete Data Modal -->
-    <div class="modal fade" id="deleteDataModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-danger">Delete My Data</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+ <!-- Delete Data Modal -->
+<div class="modal fade" id="deleteDataModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger">Delete My Data</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete all your data? This action is irreversible.</p>
+
+                <!-- Email Input -->
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" id="deleteCookieEmail" placeholder="Enter your email">
                 </div>
-                <div class="modal-body">
-                    <p>Are you sure you want to delete all your data? This action is irreversible.</p>
-                    <button class="btn btn-danger w-100">Confirm Data Deletion</button>
+
+                <!-- OTP Input -->
+                <div class="mb-3">
+                    <label class="form-label">OTP</label>
+                    <input type="text" class="form-control" id="deleteCookieOTP" placeholder="Enter OTP">
+                    <small class="text-muted d-block mt-2">An OTP has been sent to your email for verification.</small>
                 </div>
+
+                <!-- Confirm Deletion Button -->
+                <button type="button" class="btn btn-danger w-100" id="confirmDeleteCookieDataBtn">
+                    Confirm Data Deletion
+                </button>
             </div>
         </div>
     </div>
+</div>
 
     <!-- Delete Account Modal -->
     <div class="modal fade" id="deleteAccountModal" tabindex="-1">
@@ -196,12 +249,28 @@
                 </div>
                 <div class="modal-body">
                     <p>Are you sure you want to delete your account? All data will be permanently removed.</p>
-                    <button class="btn btn-danger w-100">Confirm Account Deletion</button>
+    
+                    <!-- Email Input -->
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" id="deleteAccountEmail" placeholder="Enter your email">
+                    </div>
+    
+                    <!-- OTP Input -->
+                    <div class="mb-3">
+                        <label class="form-label">OTP</label>
+                        <input type="text" class="form-control" id="deleteAccountOTP" placeholder="Enter OTP">
+                        <small class="text-muted d-block mt-2">An OTP has been sent to your email for verification.</small>
+                    </div>
+    
+                    <!-- Confirm Deletion Button -->
+                    <button type="button" class="btn btn-danger w-100" id="confirmDeleteAccountBtn">
+                        Confirm Account Deletion
+                    </button>
                 </div>
             </div>
         </div>
     </div>
-
     <!-- News Categories -->
     <div class="container mt-3">
         <h2>Latest News</h2>
