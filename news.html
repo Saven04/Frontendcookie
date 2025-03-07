@@ -194,7 +194,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Delete user data from MongoDB (API call)
         try {
-            const response = await fetch("/api/delete-user", {
+            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/delete-user", {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email }),
@@ -240,7 +240,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Delete data from MongoDB (API call)
         try {
-            const response = await fetch("/api/delete-cookie-data", {
+            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/delete-cookie-data", {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email }),
