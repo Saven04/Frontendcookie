@@ -145,55 +145,6 @@
             color: var(--primary-color);
         }
 
-        .social-login {
-            margin-top: 20px;
-        }
-
-        .social-login p {
-            font-size: 14px;
-            margin-bottom: 10px;
-        }
-
-        .social-button {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: 0.3s ease-in-out;
-            margin-bottom: 10px;
-            backdrop-filter: blur(10px);
-            color: white;
-            border: 1px solid var(--glass-border);
-        }
-
-        .social-button img {
-            width: 20px;
-            margin-right: 10px;
-        }
-
-        .google-button {
-            background: rgba(219, 68, 55, 0.7);
-        }
-
-        .google-button:hover {
-            background: rgba(219, 68, 55, 1);
-            transform: translateY(-2px);
-        }
-
-        .facebook-button {
-            background: rgba(24, 119, 242, 0.7);
-        }
-
-        .facebook-button:hover {
-            background: rgba(24, 119, 242, 1);
-            transform: translateY(-2px);
-        }
-
         /* Mobile Responsive */
         @media (max-width: 400px) {
             .login-card {
@@ -209,18 +160,12 @@
                 padding: 10px;
             }
 
-            .social-button {
-                font-size: 14px;
-            }
+            
         }
     </style>
 </head>
 
 <body>
-
-    <h2>Welcome Back!</h2>
-<p>Access the latest news, insights, and exclusive content.</p>
-
     <div class="login-container">
         <div class="login-card">
             <h2>Login to Your Account</h2>
@@ -246,18 +191,7 @@
                 <!-- Register Button -->
                 <button type="button" class="register-button" onclick="window.location.href='register.html'">Register</button>
             </form>
-
-            <!-- Social Login -->
-            <div class="social-login">
-                <p>Or login with</p>
-                <button class="social-button google-button">
-                    <img src="public/image/google-logo.png" alt="Google Logo"> Google
-                </button>
-                <button class="social-button facebook-button">
-                    <img src="public/image/facebook-logo.png" alt="Facebook Logo"> Facebook
-                </button>
-            </div>
-        </div>
+            
     </div>
 
     <!-- Bootstrap JS -->
