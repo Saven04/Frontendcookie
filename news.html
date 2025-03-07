@@ -101,151 +101,146 @@
 
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-    
+
     <script>
-        // Initialize Supabase globally before any other script runs
-        const supabaseUrl = "https://bmudmwtihiaifrodrmyz.supabase.co";
-        const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJtdWRtd3RpaGlhaWZyb2RybXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEzNjE4OTUsImV4cCI6MjA1NjkzNzg5NX0.3tkW9LNFY8XiWaTCYvAK-3hJn32sGChT-i6ktSNlqog";
-    
-        // Ensure Supabase is accessible globally
-        window.supabase = supabase.createClient(supabaseUrl, supabaseAnonKey);
-    
-        document.addEventListener("DOMContentLoaded", () => {
-            // Function to show modals
-            function showModal(modalId) {
-                const modal = new bootstrap.Modal(document.getElementById(modalId));
-                modal.show();
-            }
-    
-            // Helper function to send verification code
-            async function sendVerificationCode(email) {
-                const { error } = await window.supabase.auth.signInWithOtp({ email });
-                if (error) {
-                    alert("Error sending verification code: " + error.message);
-                } else {
-                    alert("Verification code sent to your email.");
-                }
-            }
-    
-            // Change Password
-            document.getElementById("updatePasswordBtn").addEventListener("click", () => {
-                showModal("updatePasswordModal");
+       document.addEventListener("DOMContentLoaded", () => {
+    const supabaseUrl = "https://bmudmwtihiaifrodrmyz.supabase.co";
+    const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJtdWRtd3RpaGlhaWZyb2RybXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEzNjE4OTUsImV4cCI6MjA1NjkzNzg5NX0.3tkW9LNFY8XiWaTCYvAK-3hJn32sGChT-i6ktSNlqog";
+    const supabase = supabase.createClient(supabaseUrl, supabaseAnonKey);
+
+    // Function to show modals
+    function showModal(modalId) {
+        const modalElement = document.getElementById(modalId);
+        if (modalElement) {
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
+        }
+    }
+
+    // Helper function to send verification code
+    async function sendVerificationCode(email) {
+        if (!email) return alert("Email is required.");
+        const { error } = await supabase.auth.signInWithOtp({ email });
+        if (error) {
+            alert("Error sending verification code: " + error.message);
+        } else {
+            alert("Verification code sent to your email.");
+        }
+    }
+
+    // Ensure buttons exist before adding event listeners
+    function addEventListenerIfExists(id, event, handler) {
+        const element = document.getElementById(id);
+        if (element) {
+            element.addEventListener(event, handler);
+        }
+    }
+
+    // Change Password
+    addEventListenerIfExists("updatePasswordBtn", "click", () => showModal("updatePasswordModal"));
+
+    addEventListenerIfExists("confirmUpdatePassword", "click", async () => {
+        const email = document.getElementById("passwordEmail")?.value;
+        const otp = document.getElementById("passwordOTP")?.value;
+        const newPassword = document.getElementById("newPassword")?.value;
+
+        if (!email || !otp || !newPassword) return alert("All fields are required.");
+
+        const { error } = await supabase.auth.verifyOtp({ email, token: otp, type: "email" });
+        if (error) return alert("Verification failed: " + error.message);
+
+        const { error: passwordError } = await supabase.auth.updateUser({ password: newPassword });
+        if (passwordError) {
+            alert("Error updating password: " + passwordError.message);
+        } else {
+            alert("Password updated successfully!");
+            location.reload();
+        }
+    });
+
+    // Change Email
+    addEventListenerIfExists("updateEmailBtn", "click", () => showModal("updateEmailModal"));
+
+    addEventListenerIfExists("confirmUpdateEmail", "click", async () => {
+        const newEmail = document.getElementById("newEmail")?.value;
+        if (!newEmail) return alert("New email is required.");
+
+        const { error } = await supabase.auth.updateUser({ email: newEmail });
+        if (error) return alert("Error updating email: " + error.message);
+
+        alert("Email updated successfully!");
+        location.reload();
+    });
+
+    // Delete Account
+    addEventListenerIfExists("deleteAccountBtn", "click", () => showModal("deleteAccountModal"));
+
+    addEventListenerIfExists("confirmDeleteAccount", "click", async () => {
+        const email = document.getElementById("deleteAccountEmail")?.value;
+        const otp = document.getElementById("deleteAccountOTP")?.value;
+
+        if (!email || !otp) return alert("All fields are required.");
+
+        const { error } = await supabase.auth.verifyOtp({ email, token: otp, type: "email" });
+        if (error) return alert("Verification failed: " + error.message);
+
+        try {
+            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/delete-user", {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email }),
             });
-    
-            document.getElementById("confirmUpdatePassword").addEventListener("click", async () => {
-                const email = document.getElementById("passwordEmail").value;
-                const otp = document.getElementById("passwordOTP").value;
-                const newPassword = document.getElementById("newPassword").value;
-    
-                if (!email || !otp || !newPassword) return alert("All fields are required.");
-    
-                const { error } = await window.supabase.auth.verifyOtp({ email, token: otp, type: "email" });
-    
-                if (error) return alert("Verification failed: " + error.message);
-    
-                const { error: passwordError } = await window.supabase.auth.updateUser({ password: newPassword });
-    
-                if (passwordError) {
-                    alert("Error updating password: " + passwordError.message);
-                } else {
-                    alert("Password updated successfully!");
-                    location.reload();
-                }
-            });
-    
-            // Change Email
-            document.getElementById("updateEmailBtn").addEventListener("click", () => {
-                showModal("updateEmailModal");
-            });
-    
-            document.getElementById("confirmUpdateEmail").addEventListener("click", async () => {
-                const oldEmail = document.getElementById("oldEmail").value;
-                const otp = document.getElementById("emailOTP").value;
-                const newEmail = document.getElementById("newEmail").value;
-    
-                if (!oldEmail || !otp || !newEmail) return alert("All fields are required.");
-    
-                const { error } = await window.supabase.auth.updateUser({ email: newEmail });
-    
-                if (error) return alert("Error updating email: " + error.message);
-    
-                alert("Email updated successfully!");
+
+            const result = await response.json();
+            if (result.success) {
+                alert("Account deleted successfully!");
+                await supabase.auth.signOut();
                 location.reload();
+            } else {
+                alert("Error deleting account.");
+            }
+        } catch (err) {
+            alert("Server error: " + err.message);
+        }
+    });
+
+    // Delete Cookie Data
+    addEventListenerIfExists("deleteMyDataBtn", "click", () => showModal("deleteCookieDataModal"));
+
+    addEventListenerIfExists("confirmDeleteCookies", "click", async () => {
+        const email = document.getElementById("deleteCookieEmail")?.value;
+        const otp = document.getElementById("deleteCookieOTP")?.value;
+
+        if (!email || !otp) return alert("All fields are required.");
+
+        const { error } = await supabase.auth.verifyOtp({ email, token: otp, type: "email" });
+        if (error) return alert("Verification failed: " + error.message);
+
+        // Delete cookies
+        document.cookie = "cookiesAccepted=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        document.cookie = "cookiePreferences=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        document.cookie = "consentId=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+        try {
+            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/delete-cookie-data", {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email }),
             });
-    
-            // Delete Account
-            document.getElementById("deleteAccountBtn").addEventListener("click", () => {
-                showModal("deleteAccountModal");
-            });
-    
-            document.getElementById("confirmDeleteAccount").addEventListener("click", async () => {
-                const email = document.getElementById("deleteAccountEmail").value;
-                const otp = document.getElementById("deleteAccountOTP").value;
-    
-                if (!email || !otp) return alert("All fields are required.");
-    
-                const { error } = await window.supabase.auth.verifyOtp({ email, token: otp, type: "email" });
-    
-                if (error) return alert("Verification failed: " + error.message);
-    
-                try {
-                    const response = await fetch("https://backendcookie-8qc1.onrender.com/api/delete-user", {
-                        method: "DELETE",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ email }),
-                    });
-    
-                    const result = await response.json();
-                    if (result.success) {
-                        alert("Account deleted successfully!");
-                        await window.supabase.auth.signOut();
-                        location.reload();
-                    } else {
-                        alert("Error deleting account.");
-                    }
-                } catch (err) {
-                    alert("Server error: " + err.message);
-                }
-            });
-    
-            // Delete Cookie Data
-            document.getElementById("deleteMyDataBtn").addEventListener("click", () => {
-                showModal("deleteCookieDataModal");
-            });
-    
-            document.getElementById("confirmDeleteCookies").addEventListener("click", async () => {
-                const email = document.getElementById("deleteCookieEmail").value;
-                const otp = document.getElementById("deleteCookieOTP").value;
-    
-                if (!email || !otp) return alert("All fields are required.");
-    
-                const { error } = await window.supabase.auth.verifyOtp({ email, token: otp, type: "email" });
-    
-                if (error) return alert("Verification failed: " + error.message);
-    
-                document.cookie = "cookiesAccepted=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-                document.cookie = "cookiePreferences=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-                document.cookie = "consentId=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    
-                try {
-                    const response = await fetch("https://backendcookie-8qc1.onrender.com/api/delete-cookie-data", {
-                        method: "DELETE",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ email }),
-                    });
-    
-                    const result = await response.json();
-                    if (result.success) {
-                        alert("Your cookie preferences and location data have been deleted.");
-                        location.reload();
-                    } else {
-                        alert("Error deleting cookie data.");
-                    }
-                } catch (err) {
-                    alert("Server error: " + err.message);
-                }
-            });
-        });
+
+            const result = await response.json();
+            if (result.success) {
+                alert("Your cookie preferences and location data have been deleted.");
+                location.reload();
+            } else {
+                alert("Error deleting cookie data.");
+            }
+        } catch (err) {
+            alert("Server error: " + err.message);
+        }
+    });
+});
+
     </script>
     
 <script src="./public/src/news.js"></script>
