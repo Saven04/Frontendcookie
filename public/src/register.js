@@ -73,6 +73,15 @@ function getCookie(name) {
     return null;
 }
 
+// Function to reset the register button after an action
+function resetButton() {
+    const registerButton = document.querySelector(".login-button");
+    if (registerButton) {
+        registerButton.disabled = false;
+        registerButton.textContent = "Register";
+    }
+}
+
 
 // Function to show a custom modal
 function showModal(message, type) {
