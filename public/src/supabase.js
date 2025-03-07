@@ -1,6 +1,12 @@
+// Import Supabase Client
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+// Supabase Credentials
 const supabaseUrl = "https://bmudmwtihiaifrodrmyz.supabase.co";
 const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJtdWRtd3RpaGlhaWZyb2RybXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEzNjE4OTUsImV4cCI6MjA1NjkzNzg5NX0.3tkW9LNFY8XiWaTCYvAK-3hJn32sGChT-i6ktSNlqog";
-const supabase = supabase.createClient(supabaseUrl, supabaseAnonKey);
+
+// Initialize Supabase Client
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Function to send verification code
 async function sendVerificationCode(email) {
