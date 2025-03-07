@@ -63,8 +63,16 @@ async function loginUser(email, password) {
             throw new Error(data.message || "Invalid credentials");
         }
 
+        // Store authentication token and user data in localStorage
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
+
+        // Store cookie preferences in browser cookies
+        document.cookie = `token=${data.token}; path=/; Secure; HttpOnly`;
+        document.cookie = `consentId=${data.consentId}; path=/; Secure`;
+        document.cookie = `cookiePreferences=${JSON.stringify(data.cookiePreferences)}; path=/; Secure`;
+        document.cookie = `cookiesAccepted=true; path=/; Secure`;
+
         showModal("✅ Login successful!", "success");
 
         setTimeout(() => {
@@ -75,6 +83,8 @@ async function loginUser(email, password) {
         showModal(`❌ Login failed: ${error.message}`, "error");
     }
 }
+
+
 
 // ✅ Function to attach JWT token to API requests
 function getAuthHeaders() {
