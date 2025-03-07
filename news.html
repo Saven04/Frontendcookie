@@ -229,62 +229,13 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-    'use strict';
+        'use strict';
 
-    // Elements
-    const newsContainer = document.getElementById('newsContainer');
-    const searchInput = document.getElementById('searchInput');
-    const categoryButtons = document.querySelectorAll('.category-btn');
-    const profileForm = document.getElementById('profileForm');
-    const profilePicNav = document.getElementById('profilePicNav');
-    const themeToggle = document.getElementById('themeToggle');
+        // Profile Update
+        const profileForm = document.getElementById('profileForm');
+        const profilePicNav = document.getElementById('profilePicNav');
 
-    // Sample news data (replace with real API call)
-    const newsData = [
-        {
-            title: "Breaking News",
-            category: "general",
-            image: "https://picsum.photos/400/220?random=1",
-            content: "Lorem ipsum dolor sit amet...",
-            source: "News Source"
-        },
-        {
-            title: "Tech Update",
-            category: "technology",
-            image: "https://picsum.photos/400/220?random=2",
-            content: "Consectetur adipiscing elit...",
-            source: "Tech Daily"
-        },
-        // Add more sample news items
-    ];
-
-    // Initialize
-    renderNews(newsData);
-    setupEventListeners();
-
-    // Functions
-    function setupEventListeners() {
-        // Category filter
-        categoryButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const category = button.dataset.category;
-                const filtered = newsData.filter(item => item.category === category);
-                renderNews(filtered);
-            });
-        });
-
-        // Search
-        searchInput.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase();
-            const filtered = newsData.filter(item => 
-                item.title.toLowerCase().includes(query) || 
-                item.content.toLowerCase().includes(query)
-            );
-            renderNews(filtered);
-        });
-
-        // Profile update
-        profileForm.addEventListener('submit', (e) => {
+        profileForm.addEventListener('submit', function (e) {
             e.preventDefault();
             
             // Update username
@@ -297,50 +248,57 @@
             const profilePicUpload = document.getElementById('profilePicUpload');
             if (profilePicUpload.files.length > 0) {
                 const reader = new FileReader();
-                reader.onload = (e) => {
+                reader.onload = function (e) {
                     profilePicNav.src = e.target.result;
                 };
                 reader.readAsDataURL(profilePicUpload.files[0]);
             }
 
             // Close modal
-            bootstrap.Modal.getInstance(profileForm.closest('.modal')).hide();
+            bootstrap.Modal.getInstance(document.getElementById('profileModal')).hide();
         });
 
-        // Theme toggle
-        if (themeToggle) {
-            themeToggle.addEventListener('change', () => {
-                document.documentElement.setAttribute('data-bs-theme', 
-                    themeToggle.checked ? 'dark' : 'light'
-                );
-                localStorage.setItem('theme', themeToggle.checked ? 'dark' : 'light');
-            });
-        }
-    }
-
-    function renderNews(newsItems) {
-        newsContainer.innerHTML = newsItems.map(item => `
-            <div class="col-md-4 news-card">
-                <img src="${item.image}" class="card-img-top" alt="${item.title}">
-                <div class="card-body">
-                    <h5 class="card-title">${item.title}</h5>
-                    <p class="card-text">${item.content}</p>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <small class="text-muted">${item.source}</small>
-                        <a href="#" class="btn btn-primary">Read More</a>
-                    </div>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    // Initial theme setup
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
+        // Theme System
+        const themeToggle = document.getElementById('themeToggle');
+        
+        // Sync with localStorage
+        const savedTheme = localStorage.getItem('theme') || 'light';
         document.documentElement.setAttribute('data-bs-theme', savedTheme);
         if (themeToggle) themeToggle.checked = savedTheme === 'dark';
-    }
-});
+
+        // Theme change handler
+        if (themeToggle) {
+            themeToggle.addEventListener('change', function () {
+                const newTheme = this.checked ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-bs-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+            });
+        }
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            if (confirm('Are you sure you want to logout?')) {
+                // Add actual logout logic here
+                console.log('User logged out');
+            }
+        });
+
+        // News Categories
+        document.querySelectorAll('.category-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('btn-primary'));
+                button.classList.add('btn-primary');
+                // Add news fetching logic here
+            });
+        });
+
+        // Search
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            // Add search filtering logic here
+        });
+    });
 </script>
 
 <script src="./public/src/news.js"></script>
