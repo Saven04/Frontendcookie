@@ -224,42 +224,44 @@ body {
     <script src="public/src/register.js"></script>
 
     <script>
-        // Ensure the script runs after the DOM is fully loaded
         document.addEventListener("DOMContentLoaded", () => {
-            // JavaScript to handle cookie label clicks and show cookie information modal
-            document.querySelectorAll('.cookie-label').forEach(label => {
-                label.addEventListener('click', function () {
-                    const infoText = this.getAttribute('data-info');  // Get the description from the data-info attribute
-                    document.getElementById('cookieInfoText').innerHTML = infoText; // Update modal text
-                    document.getElementById('cookieInfoModal').classList.add('show'); // Show the modal
-                });
-            });
-    
-            // Close the cookie info modal (check if the element exists)
-            const closeModalButton = document.getElementById('closeModalButton');
-            if (closeModalButton) {
-                closeModalButton.addEventListener('click', function () {
-                    document.getElementById('cookieInfoModal').classList.remove('show'); // Hide the modal
-                });
-            }
-    
-            // Open the cookie policy modal when the "Cookie Policy" link is clicked (fixing undefined ID)
-            const cookiePolicyLink = document.getElementById('cookiePolicyLink');
-            if (cookiePolicyLink) {
-                cookiePolicyLink.addEventListener('click', function (e) {
-                    e.preventDefault(); // Prevent the default link behavior
-                    document.getElementById('cookiePolicyModal').classList.add('show'); // Show the modal
-                });
-            }
-    
-            // Close the cookie policy modal
-            const closeCookiePolicyModal = document.getElementById('closeCookiePolicyModal');
-            if (closeCookiePolicyModal) {
-                closeCookiePolicyModal.addEventListener('click', function () {
-                    document.getElementById('cookiePolicyModal').classList.remove('show'); // Hide the modal
-                });
-            }
+    const cookieInfoModal = document.getElementById('cookieInfoModal');
+    const cookiePolicyModal = document.getElementById('cookiePolicyModal');
+
+    // Event delegation for handling clicks on cookie labels
+    document.body.addEventListener('click', (event) => {
+        if (event.target.classList.contains('cookie-label')) {
+            const infoText = event.target.getAttribute('data-info');
+            document.getElementById('cookieInfoText').innerHTML = infoText;
+            cookieInfoModal.classList.add('show');
+        }
+    });
+
+    // Close Cookie Info Modal
+    document.getElementById('closeModalButton').addEventListener('click', () => {
+        cookieInfoModal.classList.remove('show');
+    });
+
+    // Open Cookie Policy Modal
+    document.querySelectorAll('a[href="cookie-policy.html"]').forEach(link => {
+        link.addEventListener('click', (event) => {
+            event.preventDefault();
+            cookiePolicyModal.classList.add('show');
         });
-    </script>
+    });
+
+    // Close Cookie Policy Modal
+    document.getElementById('closeCookiePolicyModal').addEventListener('click', () => {
+        cookiePolicyModal.classList.remove('show');
+    });
+
+    // Close modal when clicking outside of the modal content
+    document.body.addEventListener('click', (event) => {
+        if (event.target.classList.contains('cookie-info-modal') || event.target.classList.contains('cookie-policy-modal')) {
+            event.target.classList.remove('show');
+        }
+    });
+});
+</script>
 </body>
 </html>
