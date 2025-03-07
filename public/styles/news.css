@@ -33,6 +33,32 @@ body {
     font-weight: bold;
 }
 
+/* Profile Picture & Dropdown */
+#profilePic {
+    border: 2px solid #ffc107;
+    transition: all 0.3s ease-in-out;
+}
+
+#profilePic:hover {
+    transform: scale(1.1);
+    border-color: #ffffff;
+}
+
+.dropdown-menu {
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+.dropdown-item {
+    font-size: 1rem;
+    transition: all 0.3s ease-in-out;
+}
+
+.dropdown-item:hover {
+    background-color: #ffc107;
+    color: #000;
+}
+
 /* News Categories */
 .btn-group {
     display: flex;
@@ -125,6 +151,26 @@ body {
 
 .news-card .btn:hover {
     transform: translateY(-2px);
+}
+
+/* Settings Dropdown */
+.dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-submenu .dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-top: -5px;
+}
+
+.dropdown-toggle::after {
+    content: " ▶";
+    float: right;
+}
+
+.dropdown-menu .text-danger {
+    font-weight: bold;
 }
 
 /* Responsive Design */
