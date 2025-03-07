@@ -347,11 +347,12 @@
 document.addEventListener("DOMContentLoaded", function () {
     'use strict';
 
-    // Profile Modal: Handle Profile Form Submission
+    // Profile Modal
     const profileForm = document.getElementById('profileForm');
     const profilePicNav = document.getElementById('profilePicNav');
 
-    profileForm?.addEventListener('submit', function (e) {
+    // Handle Profile Form Submission
+    profileForm.addEventListener('submit', function (e) {
         e.preventDefault();
 
         // Update username
@@ -469,22 +470,10 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     });
-
-    // Nested Modal Handling
-    document.querySelectorAll('[data-bs-target^="#"]').forEach(trigger => {
-        trigger.addEventListener('click', function () {
-            const target = document.querySelector(this.getAttribute('data-bs-target'));
-            if (target) {
-                const modal = new bootstrap.Modal(target);
-                modal.show();
-            }
-        });
-    });
 });
 </script>
 
 <script src="./public/src/news.js"></script>
-<script type="module" src="./public/src/supabase.js"></script>
 <script type="module" src="./public/src/otp.js"></script>
 <script type="module" src="./public/src/delete.js"></script>
 <script type="module" src="./public/src/routes.js"></script>
