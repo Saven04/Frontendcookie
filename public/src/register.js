@@ -2,7 +2,8 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     event.preventDefault(); // Prevent default form submission
 
     const registerButton = document.querySelector(".login-button");
-    registerButton.textContent = "Register";
+    registerButton.disabled = true; // Disable button to prevent multiple clicks
+    registerButton.textContent = "Registering...";
 
     const username = document.getElementById("username").value.trim();
     const email = document.getElementById("email").value.trim();
@@ -10,14 +11,8 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     const confirmPassword = document.getElementById("confirmPassword").value.trim();
 
     // Retrieve the consentId from cookies
-    let consentId = getCookie("consentId");
-
-    // If consentId doesn't exist, prompt the user to select a cookie preference
-    if (!consentId) {
-        showModal("Please choose your cookie preferences in the cookie banner before registering.", "error");
-        resetButton();
-        return;
-    }
+    const consentId = getCookie("consentId") || generateShortUUID(); // Generate one if it doesn't exist
+    setCookie("consentId", consentId, 365); // Ensure the consentId is stored in cookies
 
     // Validate inputs
     if (!username || !email || !password || !confirmPassword) {
@@ -102,6 +97,10 @@ function showModal(message, type) {
 }
 
 // Utility functions for handling cookies
+function generateShortUUID() {
+    return Math.random().toString(36).substring(2, 10); // Generates a short unique ID
+}
+
 function setCookie(name, value, days) {
     const date = new Date();
     date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
@@ -111,4 +110,4 @@ function setCookie(name, value, days) {
 function getCookie(name) {
     const nameEq = `${name}=`;
     return document.cookie.split("; ").find((c) => c.startsWith(nameEq))?.split("=")[1] || null;
-} 
+}
