@@ -1,7 +1,7 @@
 /* Cookie Consent Banner */
 .cookie-banner {
     position: fixed;
-    bottom: -100px; /* Starts off-screen at the bottom */
+    bottom: -150%; /* Completely off-screen */
     left: 50%;
     transform: translateX(-50%);
     width: 80%;
@@ -169,4 +169,4 @@
 
 .cookie-info-popup.show {
     display: block;
-}
+} 
