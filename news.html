@@ -100,7 +100,7 @@
     <script>
         // Ensure the script runs after DOM loads
 document.addEventListener("DOMContentLoaded", () => {
-    const supabase = supabase.createClient("YOUR_SUPABASE_URL", "YOUR_SUPABASE_ANON_KEY");
+    const supabase = supabase.createClient("https://bmudmwtihiaifrodrmyz.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJtdWRtd3RpaGlhaWZyb2RybXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEzNjE4OTUsImV4cCI6MjA1NjkzNzg5NX0.3tkW9LNFY8XiWaTCYvAK-3hJn32sGChT-i6ktSNlqog");
 
     // Helper function to send verification code
     async function sendVerificationCode(email) {
