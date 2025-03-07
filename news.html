@@ -101,38 +101,95 @@
 
 
 
-    
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
-    <script>
-      document.addEventListener("DOMContentLoaded", function() {
-            const themeToggle = document.getElementById("themeToggle");
-            themeToggle.addEventListener("click", function() {
-                document.body.classList.toggle("bg-dark");
-                document.body.classList.toggle("text-white");
-            });
 
-            // Profile Update Form Submission
-            document.getElementById("profileForm").addEventListener("submit", function(event) {
-                event.preventDefault();
-                alert("Profile updated successfully!");
-                document.getElementById("profileModal").classList.remove("show");
-            });
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    // Handle Profile Update Modal
+    const profileForm = document.getElementById("profileForm");
+    const usernameInput = document.getElementById("username");
+    const profilePicUpload = document.getElementById("profilePicUpload");
+    const profilePic = document.getElementById("profilePic");
 
-            // Logout Functionality
-            document.getElementById("logout").addEventListener("click", function() {
-                alert("Logged out successfully!");
-            });
+    profileForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        const newUsername = usernameInput.value.trim();
+
+        if (newUsername) {
+            document.querySelector("#profileDropdown span").textContent = newUsername;
+        }
+
+        if (profilePicUpload.files.length > 0) {
+            const file = profilePicUpload.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                profilePic.src = e.target.result;
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        // Close the modal
+        const profileModal = new bootstrap.Modal(document.getElementById("profileModal"));
+        profileModal.hide();
+    });
+
+    // Handle Theme Toggle
+    const themeToggle = document.querySelectorAll("#themeToggle");
+
+    themeToggle.forEach(toggle => {
+        toggle.addEventListener("click", function () {
+            document.body.classList.toggle("bg-dark");
+            document.body.classList.toggle("text-light");
+
+            const isDarkMode = document.body.classList.contains("bg-dark");
+            localStorage.setItem("theme", isDarkMode ? "dark" : "light");
         });
+    });
 
+    // Apply saved theme
+    if (localStorage.getItem("theme") === "dark") {
+        document.body.classList.add("bg-dark", "text-light");
+    }
 
-    </script>
-    
+    // Handle News Category Selection
+    const categoryButtons = document.querySelectorAll(".category-btn");
+    categoryButtons.forEach(button => {
+        button.addEventListener("click", function () {
+            categoryButtons.forEach(btn => btn.classList.remove("btn-primary"));
+            this.classList.add("btn-primary");
+
+            fetchNews(this.dataset.category);
+        });
+    });
+
+    // Handle Search
+    document.getElementById("searchInput").addEventListener("input", function () {
+        const query = this.value.toLowerCase();
+        filterNews(query);
+    });
+
+    // Fetch news function
+    function fetchNews(category) {
+        // Placeholder function – integrate with a real API
+        document.getElementById("newsContainer").innerHTML = `<p>Loading ${category} news...</p>`;
+        setTimeout(() => {
+            document.getElementById("newsContainer").innerHTML = `<p>${category} news loaded successfully!</p>`;
+        }, 1000);
+    }
+
+    // Filter news function (Placeholder)
+    function filterNews(query) {
+        console.log("Searching for:", query);
+        // Implement actual search filtering here
+    }
+});
+</script>
 <script src="./public/src/news.js"></script>
 <script src="supabase.js"></script>
 <script src="routes.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-
 </body>
 </html>
