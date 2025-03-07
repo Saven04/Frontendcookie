@@ -1,65 +1,38 @@
-const apiBaseUrl = "https://backendcookie-8qc1.onrender.com/api";
+// Import necessary dependencies
+import { deleteUserAccount } from './news.js';
+import { deleteCookieData } from './news.js';
 
-// Delete user account
-async function deleteUserAccount() {
-    const email = document.getElementById("deleteAccountEmail")?.value;
-    const otp = document.getElementById("deleteAccountOTP")?.value;
+// Define routes for handling actions
+const routes = {
+    'https://backendcookie-8qc1.onrender.com/api/delete-account': deleteUserAccount,
+    'https://backendcookie-8qc1.onrender.com/api/delete-cookie-data': deleteCookieData,
+};
 
-    if (!email || !otp) return alert("All fields are required.");
-
-    const { error } = await supabase.auth.verifyOtp({ email, token: otp, type: "email" });
-    if (error) return alert("Verification failed: " + error.message);
-
-    try {
-        const response = await fetch(`${apiBaseUrl}/delete-user`, {
-            method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email }),
-        });
-
-        const result = await response.json();
-        if (result.success) {
-            alert("Account deleted successfully!");
-            await supabase.auth.signOut();
-            location.reload();
-        } else {
-            alert("Error deleting account.");
-        }
-    } catch (err) {
-        alert("Server error: " + err.message);
+// Function to handle route navigation and execution
+export function handleRoute(route) {
+    const handler = routes[route];
+    if (handler) {
+        handler();
+    } else {
+        console.error(`No handler found for route: ${route}`);
     }
 }
 
-// Delete cookie data
-async function deleteCookieData() {
-    const email = document.getElementById("deleteCookieEmail")?.value;
-    const otp = document.getElementById("deleteCookieOTP")?.value;
-
-    if (!email || !otp) return alert("All fields are required.");
-
-    const { error } = await supabase.auth.verifyOtp({ email, token: otp, type: "email" });
-    if (error) return alert("Verification failed: " + error.message);
-
-    // Delete cookies
-    document.cookie = "cookiesAccepted=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    document.cookie = "cookiePreferences=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    document.cookie = "consentId=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-
-    try {
-        const response = await fetch(`${apiBaseUrl}/delete-cookie-data`, {
-            method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email }),
+// Attach event listeners for route-based actions
+document.addEventListener('DOMContentLoaded', () => {
+    // Delete Account Button
+    const deleteAccountBtn = document.getElementById('confirmDeleteAccountBtn');
+    if (deleteAccountBtn) {
+        deleteAccountBtn.addEventListener('click', () => {
+            handleRoute('/delete-account');
         });
-
-        const result = await response.json();
-        if (result.success) {
-            alert("Your cookie preferences and location data have been deleted.");
-            location.reload();
-        } else {
-            alert("Error deleting cookie data.");
-        }
-    } catch (err) {
-        alert("Server error: " + err.message);
     }
-}
+
+    // Delete Cookie Data Button
+    const deleteCookieDataBtn = document.getElementById('confirmDeleteCookieDataBtn');
+    if (deleteCookieDataBtn) {
+        deleteCookieDataBtn.addEventListener('click', () => {
+            handleRoute('/delete-cookie-data');
+        });
+    }
+});

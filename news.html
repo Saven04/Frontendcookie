@@ -285,18 +285,24 @@
                     <!-- Email Input -->
                     <div class="mb-3">
                         <label class="form-label">Email</label>
-                        <input type="email" class="form-control" id="deleteAccountEmail" placeholder="Enter your email">
+                        <div class="input-group">
+                            <input type="email" class="form-control" id="deleteAccountEmail" placeholder="Enter your email">
+                            <button class="btn btn-outline-secondary" type="button" id="sendOtpBtn">
+                                Send OTP
+                            </button>
+                        </div>
+                        <small class="text-muted d-block mt-2">An OTP will be sent to your email for verification.</small>
                     </div>
     
                     <!-- OTP Input -->
-                    <div class="mb-3">
+                    <div class="mb-3 d-none" id="otpSection">
                         <label class="form-label">OTP</label>
                         <input type="text" class="form-control" id="deleteAccountOTP" placeholder="Enter OTP">
-                        <small class="text-muted d-block mt-2">An OTP has been sent to your email for verification.</small>
+                        <small class="text-muted d-block mt-2">Check your email for the OTP.</small>
                     </div>
     
                     <!-- Confirm Deletion Button -->
-                    <button type="button" class="btn btn-danger w-100" id="confirmDeleteAccountBtn">
+                    <button type="button" class="btn btn-danger w-100 d-none" id="confirmDeleteAccountBtn">
                         Confirm Account Deletion
                     </button>
                 </div>
@@ -326,8 +332,11 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+
+
 <script>
-   document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
     'use strict';
 
     // Profile Modal
@@ -358,37 +367,84 @@
         bootstrap.Modal.getInstance(document.getElementById('profileModal')).hide();
     });
 
-    // Email Verification
-    document.getElementById('verifyEmailBtn')?.addEventListener('click', () => {
-        const email = document.getElementById('email').value.trim();
+    // Email Verification with Send OTP Button
+    const sendEmailOtpBtn = document.getElementById('sendEmailOtpBtn');
+    const emailInput = document.getElementById('email');
+    const emailOtpSection = document.getElementById('emailOtpSection');
+
+    sendEmailOtpBtn?.addEventListener('click', async () => {
+        const email = emailInput.value.trim();
+
         if (!email) {
-            alert('Please enter a valid email.');
+            alert('Please enter a valid email address.');
             return;
         }
-        console.log(`Sending OTP to ${email}`);
-        document.getElementById('emailOtpSection').classList.remove('d-none');
+
+        try {
+            // Simulate sending OTP (replace with actual API call)
+            console.log(`Sending OTP to ${email}`);
+            alert(`An OTP has been sent to ${email}. Please check your inbox.`);
+
+            // Enable OTP input section
+            emailOtpSection.classList.remove('d-none');
+        } catch (error) {
+            alert('Failed to send OTP. Please try again.');
+        }
     });
 
-    // Password Verification
-    document.getElementById('verifyPasswordBtn')?.addEventListener('click', () => {
-        const password = document.getElementById('newPassword').value.trim();
+    // Password Verification with Send OTP Button
+    const sendPasswordOtpBtn = document.getElementById('sendPasswordOtpBtn');
+    const newPasswordInput = document.getElementById('newPassword');
+    const passwordOtpSection = document.getElementById('passwordOtpSection');
+
+    sendPasswordOtpBtn?.addEventListener('click', async () => {
+        const password = newPasswordInput.value.trim();
+
         if (!password) {
             alert('Please enter a new password.');
             return;
         }
-        console.log('Sending OTP for password update');
-        document.getElementById('passwordOtpSection').classList.remove('d-none');
+
+        try {
+            // Simulate sending OTP (replace with actual API call)
+            console.log('Sending OTP for password update');
+            alert('An OTP has been sent to your email. Please check your inbox.');
+
+            // Enable OTP input section
+            passwordOtpSection.classList.remove('d-none');
+        } catch (error) {
+            alert('Failed to send OTP. Please try again.');
+        }
     });
 
-    // Delete Account
-    document.getElementById('deleteAccountBtn')?.addEventListener('click', () => {
-        console.log('Requesting OTP for account deletion');
-        document.getElementById('deleteAccountOtpSection').classList.remove('d-none');
+    // Delete Account with Send OTP Button
+    const sendAccountOtpBtn = document.getElementById('sendAccountOtpBtn');
+    const deleteAccountEmail = document.getElementById('deleteAccountEmail');
+    const deleteAccountOtpSection = document.getElementById('deleteAccountOtpSection');
+
+    sendAccountOtpBtn?.addEventListener('click', async () => {
+        const email = deleteAccountEmail.value.trim();
+
+        if (!email) {
+            alert('Please enter a valid email address.');
+            return;
+        }
+
+        try {
+            // Simulate sending OTP (replace with actual API call)
+            console.log(`Sending OTP to ${email}`);
+            alert(`An OTP has been sent to ${email}. Please check your inbox.`);
+
+            // Enable OTP input section
+            deleteAccountOtpSection.classList.remove('d-none');
+        } catch (error) {
+            alert('Failed to send OTP. Please try again.');
+        }
     });
 
     // Confirm Delete Account
     document.getElementById('confirmDeleteAccountBtn')?.addEventListener('click', async () => {
-        const email = document.getElementById('deleteAccountEmail')?.value.trim();
+        const email = deleteAccountEmail?.value.trim();
         const otp = document.getElementById('deleteAccountOTP')?.value.trim();
 
         if (!email || !otp) {
@@ -397,7 +453,7 @@
         }
 
         try {
-            // Simulate OTP verification
+            // Simulate OTP verification (replace with actual API call)
             console.log(`Verifying OTP for email: ${email}`);
             alert('Account deleted successfully!');
             location.reload(); // Refresh page after deletion
@@ -433,7 +489,7 @@
         }
 
         try {
-            // Simulate OTP verification
+            // Simulate OTP verification (replace with actual API call)
             console.log(`Verifying OTP for email: ${email}`);
             alert('Cookie data deleted successfully!');
             location.reload(); // Refresh page after deletion
