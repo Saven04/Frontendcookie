@@ -14,27 +14,40 @@
 
     <!-- Custom CSS -->
     <style>
+        :root {
+            --primary-color: #007bff;
+            --primary-dark: #0056b3;
+            --success-color: #28a745;
+            --success-dark: #218838;
+            --bg-gradient: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+            --glass-bg: rgba(255, 255, 255, 0.2);
+            --glass-border: rgba(255, 255, 255, 0.3);
+        }
+
         body {
             font-family: 'Roboto', sans-serif;
-            background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+            background: var(--bg-gradient);
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 15px;
         }
 
         .login-container {
             width: 100%;
             max-width: 400px;
-            padding: 20px;
         }
 
         .login-card {
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            background: var(--glass-bg);
+            border-radius: 15px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
             padding: 30px;
             text-align: center;
+            border: 1px solid var(--glass-border);
+            color: white;
         }
 
         .login-card h2 {
@@ -54,55 +67,66 @@
 
         .input-group input {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
             font-size: 16px;
+            outline: none;
+            transition: 0.3s ease;
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
         }
 
-        .login-button {
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .input-group input:focus {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid white;
+        }
+
+        .login-button, .register-button {
             width: 100%;
-            padding: 10px;
-            background: #007bff;
-            color: #fff;
+            padding: 12px;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             font-size: 18px;
             cursor: pointer;
             transition: 0.3s;
         }
 
+        .login-button {
+            background: var(--primary-color);
+            color: #fff;
+        }
+
         .login-button:hover {
-            background: #0056b3;
+            background: var(--primary-dark);
+        }
+
+        .register-button {
+            background: var(--success-color);
+            color: #fff;
+            margin-top: 10px;
+        }
+
+        .register-button:hover {
+            background: var(--success-dark);
         }
 
         .forgot-password {
             display: block;
             margin-top: 10px;
-            color: #007bff;
+            color: white;
             text-decoration: none;
             font-size: 14px;
+            transition: 0.3s;
         }
 
         .forgot-password:hover {
             text-decoration: underline;
-        }
-
-        .register-button {
-            width: 100%;
-            padding: 10px;
-            background: #28a745;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            font-size: 18px;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: 0.3s;
-        }
-
-        .register-button:hover {
-            background: #218838;
+            color: var(--primary-color);
         }
 
         .social-login {
@@ -116,9 +140,9 @@
 
         .social-button {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             font-size: 16px;
             display: flex;
             align-items: center;
@@ -126,6 +150,9 @@
             cursor: pointer;
             transition: 0.3s;
             margin-bottom: 10px;
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 1px solid var(--glass-border);
         }
 
         .social-button img {
@@ -134,21 +161,39 @@
         }
 
         .google-button {
-            background: #db4437;
-            color: white;
+            background: rgba(219, 68, 55, 0.7);
         }
 
         .google-button:hover {
-            background: #c1351c;
+            background: rgba(219, 68, 55, 1);
         }
 
         .facebook-button {
-            background: #1877f2;
-            color: white;
+            background: rgba(24, 119, 242, 0.7);
         }
 
         .facebook-button:hover {
-            background: #125abe;
+            background: rgba(24, 119, 242, 1);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 400px) {
+            .login-card {
+                padding: 20px;
+            }
+
+            .input-group input {
+                font-size: 14px;
+            }
+
+            .login-button, .register-button {
+                font-size: 16px;
+                padding: 10px;
+            }
+
+            .social-button {
+                font-size: 14px;
+            }
         }
     </style>
 </head>
