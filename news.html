@@ -24,48 +24,25 @@
                             <span class="ms-2">User</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="#" id="profileLink">Profile</a></li>
-                            <li><a class="dropdown-item" href="#" id="themeToggle">Dark Mode</a></li>
+                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileModal">Update Profile</a></li>
+                            <li><a class="dropdown-item" href="#" id="themeToggle">Toggle Theme</a></li>
                             <li><a class="dropdown-item" href="#" id="cookieSettings">Cookie Settings</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item text-danger" href="#" id="logout">Logout</a></li>
                         </ul>
                     </li>
-    
+
                     <!-- Settings Dropdown -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="settingsDropdown" role="button" data-bs-toggle="dropdown">
                             ⚙️ Settings
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <!-- Profile -->
-                            <li class="dropdown-submenu">
-                                <a class="dropdown-item dropdown-toggle" href="#">Profile</a>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#" id="updateUsername">Update Username</a></li>
-                                    <li><a class="dropdown-item" href="#" id="updateEmail">Update Email</a></li>
-                                    <li><a class="dropdown-item" href="#" id="updatePassword">Update Password</a></li>
-                                    <li><a class="dropdown-item" href="#" id="updateProfilePic">Update Profile Picture</a></li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item text-danger" href="#" id="deleteAccount">Delete Account</a></li>
-                                </ul>
-                            </li>
-    
-                            <!-- Theme -->
+                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileModal">Update Profile</a></li>
+                            <li><a class="dropdown-item" href="#" id="updateEmail">Update Email</a></li>
+                            <li><a class="dropdown-item" href="#" id="updatePassword">Update Password</a></li>
                             <li><a class="dropdown-item" href="#" id="themeToggle">Theme</a></li>
-    
-                            <!-- Cookies -->
-                            <li class="dropdown-submenu">
-                                <a class="dropdown-item dropdown-toggle" href="#">Cookies</a>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#" id="readPolicies">Read Policies</a></li>
-                                    <li><a class="dropdown-item" href="#" id="updateCookiePreferences">Update Preferences</a></li>
-                                    <li><a class="dropdown-item text-danger" href="#" id="deleteMyData">Delete My Data</a></li>
-                                </ul>
-                            </li>
-    
                             <li><hr class="dropdown-divider"></li>
-                            <!-- Logout -->
                             <li><a class="dropdown-item text-danger" href="#" id="logout">Logout</a></li>
                         </ul>
                     </li>
@@ -73,6 +50,32 @@
             </div>
         </div>
     </nav>
+
+    <!-- Profile Update Modal -->
+    <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="profileModalLabel">Update Profile</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="profileForm">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username">
+                        </div>
+                        <div class="mb-3">
+                            <label for="profilePicUpload" class="form-label">Profile Picture</label>
+                            <input type="file" class="form-control" id="profilePicUpload">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     
     <!-- News Categories -->
     <div class="container mt-3">
@@ -98,152 +101,36 @@
 
 
 
-
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
     <script>
-       document.addEventListener("DOMContentLoaded", () => {
-    const supabaseUrl = "https://bmudmwtihiaifrodrmyz.supabase.co";
-    const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJtdWRtd3RpaGlhaWZyb2RybXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEzNjE4OTUsImV4cCI6MjA1NjkzNzg5NX0.3tkW9LNFY8XiWaTCYvAK-3hJn32sGChT-i6ktSNlqog";
-    const supabase = supabase.createClient(supabaseUrl, supabaseAnonKey);
-
-    // Function to show modals
-    function showModal(modalId) {
-        const modalElement = document.getElementById(modalId);
-        if (modalElement) {
-            const modal = new bootstrap.Modal(modalElement);
-            modal.show();
-        }
-    }
-
-    // Helper function to send verification code
-    async function sendVerificationCode(email) {
-        if (!email) return alert("Email is required.");
-        const { error } = await supabase.auth.signInWithOtp({ email });
-        if (error) {
-            alert("Error sending verification code: " + error.message);
-        } else {
-            alert("Verification code sent to your email.");
-        }
-    }
-
-    // Ensure buttons exist before adding event listeners
-    function addEventListenerIfExists(id, event, handler) {
-        const element = document.getElementById(id);
-        if (element) {
-            element.addEventListener(event, handler);
-        }
-    }
-
-    // Change Password
-    addEventListenerIfExists("updatePasswordBtn", "click", () => showModal("updatePasswordModal"));
-
-    addEventListenerIfExists("confirmUpdatePassword", "click", async () => {
-        const email = document.getElementById("passwordEmail")?.value;
-        const otp = document.getElementById("passwordOTP")?.value;
-        const newPassword = document.getElementById("newPassword")?.value;
-
-        if (!email || !otp || !newPassword) return alert("All fields are required.");
-
-        const { error } = await supabase.auth.verifyOtp({ email, token: otp, type: "email" });
-        if (error) return alert("Verification failed: " + error.message);
-
-        const { error: passwordError } = await supabase.auth.updateUser({ password: newPassword });
-        if (passwordError) {
-            alert("Error updating password: " + passwordError.message);
-        } else {
-            alert("Password updated successfully!");
-            location.reload();
-        }
-    });
-
-    // Change Email
-    addEventListenerIfExists("updateEmailBtn", "click", () => showModal("updateEmailModal"));
-
-    addEventListenerIfExists("confirmUpdateEmail", "click", async () => {
-        const newEmail = document.getElementById("newEmail")?.value;
-        if (!newEmail) return alert("New email is required.");
-
-        const { error } = await supabase.auth.updateUser({ email: newEmail });
-        if (error) return alert("Error updating email: " + error.message);
-
-        alert("Email updated successfully!");
-        location.reload();
-    });
-
-    // Delete Account
-    addEventListenerIfExists("deleteAccountBtn", "click", () => showModal("deleteAccountModal"));
-
-    addEventListenerIfExists("confirmDeleteAccount", "click", async () => {
-        const email = document.getElementById("deleteAccountEmail")?.value;
-        const otp = document.getElementById("deleteAccountOTP")?.value;
-
-        if (!email || !otp) return alert("All fields are required.");
-
-        const { error } = await supabase.auth.verifyOtp({ email, token: otp, type: "email" });
-        if (error) return alert("Verification failed: " + error.message);
-
-        try {
-            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/delete-user", {
-                method: "DELETE",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email }),
+      document.addEventListener("DOMContentLoaded", function() {
+            const themeToggle = document.getElementById("themeToggle");
+            themeToggle.addEventListener("click", function() {
+                document.body.classList.toggle("bg-dark");
+                document.body.classList.toggle("text-white");
             });
 
-            const result = await response.json();
-            if (result.success) {
-                alert("Account deleted successfully!");
-                await supabase.auth.signOut();
-                location.reload();
-            } else {
-                alert("Error deleting account.");
-            }
-        } catch (err) {
-            alert("Server error: " + err.message);
-        }
-    });
-
-    // Delete Cookie Data
-    addEventListenerIfExists("deleteMyDataBtn", "click", () => showModal("deleteCookieDataModal"));
-
-    addEventListenerIfExists("confirmDeleteCookies", "click", async () => {
-        const email = document.getElementById("deleteCookieEmail")?.value;
-        const otp = document.getElementById("deleteCookieOTP")?.value;
-
-        if (!email || !otp) return alert("All fields are required.");
-
-        const { error } = await supabase.auth.verifyOtp({ email, token: otp, type: "email" });
-        if (error) return alert("Verification failed: " + error.message);
-
-        // Delete cookies
-        document.cookie = "cookiesAccepted=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        document.cookie = "cookiePreferences=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        document.cookie = "consentId=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-
-        try {
-            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/delete-cookie-data", {
-                method: "DELETE",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email }),
+            // Profile Update Form Submission
+            document.getElementById("profileForm").addEventListener("submit", function(event) {
+                event.preventDefault();
+                alert("Profile updated successfully!");
+                document.getElementById("profileModal").classList.remove("show");
             });
 
-            const result = await response.json();
-            if (result.success) {
-                alert("Your cookie preferences and location data have been deleted.");
-                location.reload();
-            } else {
-                alert("Error deleting cookie data.");
-            }
-        } catch (err) {
-            alert("Server error: " + err.message);
-        }
-    });
-});
+            // Logout Functionality
+            document.getElementById("logout").addEventListener("click", function() {
+                alert("Logged out successfully!");
+            });
+        });
+
 
     </script>
     
 <script src="./public/src/news.js"></script>
+<script src="supabase.js"></script>
+<script src="routes.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 
