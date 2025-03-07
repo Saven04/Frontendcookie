@@ -226,12 +226,20 @@
                 <!-- Email Input -->
                 <div class="mb-3">
                     <label for="deleteCookieEmail" class="form-label">Email Address</label>
-                    <input type="email" class="form-control" id="deleteCookieEmail" placeholder="Enter your email" required>
+                    <div class="input-group">
+                        <input type="email" class="form-control" id="deleteCookieEmail" placeholder="Enter your email" required>
+                        <button class="btn btn-outline-secondary" type="button" id="sendOtpBtn">
+                            Send OTP
+                        </button>
+                    </div>
+                    <small class="text-muted d-block mt-2">
+                        An OTP will be sent to your email for verification.
+                    </small>
                     <div id="emailError" class="invalid-feedback">Please enter a valid email address.</div>
                 </div>
 
                 <!-- OTP Input -->
-                <div class="mb-3">
+                <div class="mb-3 d-none" id="otpSection">
                     <label for="deleteCookieOTP" class="form-label">One-Time Password (OTP)</label>
                     <div class="input-group">
                         <input type="text" class="form-control" id="deleteCookieOTP" placeholder="Enter OTP" required>
@@ -240,7 +248,7 @@
                         </button>
                     </div>
                     <small class="text-muted d-block mt-2">
-                        An OTP has been sent to your email. Didn't receive it? Click "Resend OTP".
+                        Didn't receive the OTP? Click "Resend OTP".
                     </small>
                     <div id="otpError" class="invalid-feedback">Please enter a valid OTP.</div>
                 </div>
@@ -263,7 +271,7 @@
             <!-- Modal Footer -->
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger" id="confirmDeleteCookieDataBtn">
+                <button type="button" class="btn btn-danger d-none" id="confirmDeleteCookieDataBtn">
                     Confirm Deletion
                 </button>
             </div>
@@ -287,6 +295,7 @@
                         <label class="form-label">Email</label>
                         <div class="input-group">
                             <input type="email" class="form-control" id="deleteAccountEmail" placeholder="Enter your email">
+
                             <button class="btn btn-outline-secondary" type="button" id="sendOtpBtn">
                                 Send OTP
                             </button>
