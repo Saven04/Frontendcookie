@@ -1,6 +1,6 @@
 // Import necessary dependencies
-import { deleteUserAccount } from './news.js';
-import { deleteCookieData } from './news.js';
+import { deleteUserAccount } from './public/src/delete.js';
+import { deleteCookieData } from './public/src/delete.js';
 
 // Define routes for handling actions
 const routes = {
