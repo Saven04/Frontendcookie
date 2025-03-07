@@ -4,8 +4,8 @@ import { deleteCookieData } from './public/src/delete.js';
 
 // Define routes for handling actions
 const routes = {
-    'https://backendcookie-8qc1.onrender.com/api/delete-account': deleteUserAccount,
-    'https://backendcookie-8qc1.onrender.com/api/delete-cookie-data': deleteCookieData,
+    '/delete-account': deleteUserAccount,
+    '/delete-cookie-data': deleteCookieData,
 };
 
 // Function to handle route navigation and execution
