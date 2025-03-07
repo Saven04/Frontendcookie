@@ -19,19 +19,25 @@
             --primary-dark: #0056b3;
             --success-color: #28a745;
             --success-dark: #218838;
-            --bg-gradient: linear-gradient(to right, #0f2027, #203a43, #2c5364);
-            --glass-bg: rgba(255, 255, 255, 0.2);
+            --glass-bg: rgba(255, 255, 255, 0.15);
             --glass-border: rgba(255, 255, 255, 0.3);
         }
 
         body {
             font-family: 'Roboto', sans-serif;
-            background: var(--bg-gradient);
+            background: linear-gradient(-45deg, #141e30, #243b55, #141e30);
+            background-size: 300% 300%;
+            animation: bg-animation 10s infinite alternate ease-in-out;
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 15px;
+        }
+
+        @keyframes bg-animation {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
         }
 
         .login-container {
@@ -42,8 +48,8 @@
         .login-card {
             background: var(--glass-bg);
             border-radius: 15px;
-            backdrop-filter: blur(12px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
             padding: 30px;
             text-align: center;
             border: 1px solid var(--glass-border);
@@ -53,6 +59,8 @@
         .login-card h2 {
             font-weight: 700;
             margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .input-group {
@@ -72,8 +80,8 @@
             border-radius: 8px;
             font-size: 16px;
             outline: none;
-            transition: 0.3s ease;
-            background: rgba(255, 255, 255, 0.3);
+            transition: 0.3s ease-in-out;
+            background: rgba(255, 255, 255, 0.2);
             color: white;
         }
 
@@ -82,8 +90,9 @@
         }
 
         .input-group input:focus {
-            background: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.3);
             border: 1px solid white;
+            transform: scale(1.02);
         }
 
         .login-button, .register-button {
@@ -92,27 +101,34 @@
             border: none;
             border-radius: 8px;
             font-size: 18px;
+            font-weight: 500;
             cursor: pointer;
-            transition: 0.3s;
+            transition: 0.3s ease-in-out;
         }
 
         .login-button {
             background: var(--primary-color);
             color: #fff;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
         }
 
         .login-button:hover {
             background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 123, 255, 0.4);
         }
 
         .register-button {
             background: var(--success-color);
             color: #fff;
             margin-top: 10px;
+            box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
         }
 
         .register-button:hover {
             background: var(--success-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(40, 167, 69, 0.4);
         }
 
         .forgot-password {
@@ -148,7 +164,7 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: 0.3s;
+            transition: 0.3s ease-in-out;
             margin-bottom: 10px;
             backdrop-filter: blur(10px);
             color: white;
@@ -166,6 +182,7 @@
 
         .google-button:hover {
             background: rgba(219, 68, 55, 1);
+            transform: translateY(-2px);
         }
 
         .facebook-button {
@@ -174,6 +191,7 @@
 
         .facebook-button:hover {
             background: rgba(24, 119, 242, 1);
+            transform: translateY(-2px);
         }
 
         /* Mobile Responsive */
