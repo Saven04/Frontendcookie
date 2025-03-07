@@ -15,153 +15,152 @@
     <!-- Custom CSS -->
     <style>
         :root {
-            --primary-color: #007bff;
-            --primary-dark: #0056b3;
-            --success-color: #28a745;
-            --success-dark: #218838;
-            --glass-bg: rgba(255, 255, 255, 0.15);
-            --glass-border: rgba(255, 255, 255, 0.3);
-        }
+    --primary-color: #007bff;
+    --primary-dark: #0056b3;
+    --success-color: #28a745;
+    --success-dark: #218838;
+    --glass-bg: rgba(255, 255, 255, 0.15);
+    --glass-border: rgba(255, 255, 255, 0.3);
+}
 
-        body {
-            font-family: 'Roboto', sans-serif;
-            background: linear-gradient(-45deg, #141e30, #243b55, #141e30);
-            background-size: 300% 300%;
-            animation: bg-animation 10s infinite alternate ease-in-out;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 15px;
-        }
+body {
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(-45deg, #141e30, #243b55, #141e30);
+    background-size: 300% 300%;
+    animation: bg-animation 10s infinite alternate ease-in-out;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+}
 
-        @keyframes bg-animation {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 100% 50%; }
-        }
+@keyframes bg-animation {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
 
-        .login-container {
-            width: 100%;
-            max-width: 400px;
-        }
+.auth-container {
+    width: 100%;
+    max-width: 400px;
+}
 
-        .login-card {
-            background: var(--glass-bg);
-            border-radius: 15px;
-            backdrop-filter: blur(15px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-            padding: 30px;
-            text-align: center;
-            border: 1px solid var(--glass-border);
-            color: white;
-        }
+.auth-card {
+    background: var(--glass-bg);
+    border-radius: 15px;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    padding: 30px;
+    text-align: center;
+    border: 1px solid var(--glass-border);
+    color: white;
+}
 
-        .login-card h2 {
-            font-weight: 700;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+.auth-card h2 {
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
 
-        .input-group {
-            margin-bottom: 15px;
-            text-align: left;
-        }
+.input-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
 
-        .input-group label {
-            font-weight: 500;
-            margin-bottom: 5px;
-        }
+.input-group label {
+    font-weight: 500;
+    margin-bottom: 5px;
+}
 
-        .input-group input {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            outline: none;
-            transition: 0.3s ease-in-out;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-        }
+.input-group input {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    outline: none;
+    transition: 0.3s ease-in-out;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
 
-        .input-group input::placeholder {
-            color: rgba(255, 255, 255, 0.7);
-        }
+.input-group input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
 
-        .input-group input:focus {
-            background: rgba(255, 255, 255, 0.3);
-            border: 1px solid white;
-            transform: scale(1.02);
-        }
+.input-group input:focus {
+    background: rgba(255, 255, 255, 0.3);
+    border: 1px solid white;
+    transform: scale(1.02);
+}
 
-        .login-button, .register-button {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            font-size: 18px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: 0.3s ease-in-out;
-        }
+.primary-button, .secondary-button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+}
 
-        .login-button {
-            background: var(--primary-color);
-            color: #fff;
-            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
-        }
+.primary-button {
+    background: var(--primary-color);
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+}
 
-        .login-button:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0, 123, 255, 0.4);
-        }
+.primary-button:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 123, 255, 0.4);
+}
 
-        .register-button {
-            background: var(--success-color);
-            color: #fff;
-            margin-top: 10px;
-            box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
-        }
+.secondary-button {
+    background: var(--success-color);
+    color: #fff;
+    margin-top: 10px;
+    box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
+}
 
-        .register-button:hover {
-            background: var(--success-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(40, 167, 69, 0.4);
-        }
+.secondary-button:hover {
+    background: var(--success-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(40, 167, 69, 0.4);
+}
 
-        .forgot-password {
-            display: block;
-            margin-top: 10px;
-            color: white;
-            text-decoration: none;
-            font-size: 14px;
-            transition: 0.3s;
-        }
+.forgot-password {
+    display: block;
+    margin-top: 10px;
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    transition: 0.3s;
+}
 
-        .forgot-password:hover {
-            text-decoration: underline;
-            color: var(--primary-color);
-        }
+.forgot-password:hover {
+    text-decoration: underline;
+    color: var(--primary-color);
+}
 
-        /* Mobile Responsive */
-        @media (max-width: 400px) {
-            .login-card {
-                padding: 20px;
-            }
+/* Mobile Responsive */
+@media (max-width: 400px) {
+    .auth-card {
+        padding: 20px;
+    }
 
-            .input-group input {
-                font-size: 14px;
-            }
+    .input-group input {
+        font-size: 14px;
+    }
 
-            .login-button, .register-button {
-                font-size: 16px;
-                padding: 10px;
-            }
+    .primary-button, .secondary-button {
+        font-size: 16px;
+        padding: 10px;
+    }
+}
 
-            
-        }
     </style>
 </head>
 
