@@ -1,25 +1,36 @@
 /* General Styling */
 body {
     background-color: #f8f9fa;
+    font-family: 'Poppins', sans-serif;
 }
 
 /* Navbar */
 .navbar {
     padding: 15px 20px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .navbar-brand {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     font-weight: bold;
+    letter-spacing: 1px;
+    color: #ffc107 !important;
 }
 
 .navbar-nav .nav-link {
     font-size: 1.1rem;
     margin-right: 15px;
+    transition: all 0.3s ease-in-out;
+    color: #ffffff !important;
 }
 
 .navbar-nav .nav-link:hover {
     text-decoration: underline;
+    color: #ffc107 !important;
+}
+
+.navbar-nav .text-danger {
+    font-weight: bold;
 }
 
 /* News Categories */
@@ -27,16 +38,25 @@ body {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
+    margin-top: 10px;
 }
 
 .category-btn {
     font-size: 1rem;
     font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 50px;
     transition: all 0.3s ease-in-out;
+    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.1);
 }
 
 .category-btn:hover {
     transform: scale(1.1);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.category-btn:focus {
+    box-shadow: 0px 0px 10px rgba(0, 123, 255, 0.5);
 }
 
 /* Search Bar */
@@ -45,6 +65,12 @@ body {
     padding: 12px;
     border: 1px solid #ced4da;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+}
+
+#searchInput:focus {
+    border-color: #007bff;
+    box-shadow: 0px 0px 10px rgba(0, 123, 255, 0.5);
 }
 
 /* News Section */
@@ -58,18 +84,22 @@ body {
 /* News Card */
 .news-card {
     border: none;
+    border-radius: 12px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease-in-out;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    overflow: hidden;
+    background-color: #ffffff;
 }
 
 .news-card:hover {
     transform: scale(1.05);
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
 }
 
 .news-card img {
-    height: 200px;
+    height: 220px;
     object-fit: cover;
-    border-radius: 5px;
+    border-radius: 12px 12px 0 0;
 }
 
 .news-card .card-body {
@@ -77,13 +107,24 @@ body {
 }
 
 .news-card h5 {
-    font-size: 1.25rem;
+    font-size: 1.3rem;
     font-weight: bold;
 }
 
 .news-card p {
     font-size: 1rem;
     color: #555;
+}
+
+/* Buttons inside News Cards */
+.news-card .btn {
+    border-radius: 50px;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+}
+
+.news-card .btn:hover {
+    transform: translateY(-2px);
 }
 
 /* Responsive Design */
@@ -94,5 +135,9 @@ body {
 
     .category-btn {
         width: 100%;
+    }
+
+    .news-card img {
+        height: 180px;
     }
 }
