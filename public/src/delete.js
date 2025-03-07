@@ -21,7 +21,7 @@ export async function deleteUserAccount() {
         }
 
         // Send DELETE request to the backend to delete the user account
-        const response = await fetch(`${apiBaseUrl}/delete-user`, {
+        const response = await fetch(`${apiBaseUrl}/delete-account`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email }),
