@@ -1,4 +1,4 @@
-// Import necessary dependencies
+
 import { deleteUserAccount } from './delete.js';
 import { deleteCookieData } from './delete.js';
 import { sendOtp, verifyOtp } from './otp.js'; // Import OTP functions
