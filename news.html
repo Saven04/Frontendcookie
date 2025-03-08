@@ -24,6 +24,58 @@
         background-color: #333;
         color: white;
     }
+
+      /* Navbar Styling */
+      .navbar .nav-item img {
+        cursor: pointer;
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .navbar .nav-item img:hover {
+        transform: scale(1.1);
+    }
+
+    /* Profile Modal */
+    .modal-body .text-center img {
+        border: 3px solid #007bff;
+        padding: 3px;
+    }
+
+    .modal-body .text-center h5 {
+        font-weight: bold;
+        margin-top: 10px;
+    }
+
+    /* Settings Modal */
+    .list-group-item {
+        transition: background 0.3s ease-in-out;
+        padding: 12px 16px;
+        font-size: 16px;
+    }
+
+    .list-group-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .list-group-item a {
+        text-decoration: none;
+        color: #333;
+        display: block;
+    }
+
+    .list-group-item a:hover {
+        color: #007bff;
+    }
+
+    /* Logout button styling */
+    .list-group-item.text-danger a {
+        color: #dc3545;
+        font-weight: bold;
+    }
+
+    .list-group-item.text-danger a:hover {
+        background-color: #f8d7da;
+    }
 </style>
 </head>
 <body>
@@ -38,7 +90,8 @@
                 <ul class="navbar-nav ms-auto">
                     <!-- Profile Picture with Clickable Profile Modal -->
                     <li class="nav-item d-flex align-items-center">
-                        <img src="profile.jpg" alt="Profile" class="rounded-circle me-2" width="40" height="40">
+                        <img src="profile.jpg" alt="Profile" class="rounded-circle me-2" width="40" height="40"
+                            data-bs-toggle="modal" data-bs-target="#profileModal">
                         <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#profileModal">Profile</a>
                     </li>
     
@@ -59,13 +112,11 @@
                     <h5 class="modal-title" id="profileModalLabel">Profile</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <div class="text-center">
-                        <img src="profile.jpg" alt="Profile Picture" class="rounded-circle" width="100" height="100">
-                        <h5 class="mt-2">John Doe</h5>
-                        <p>Email: johndoe@example.com</p>
-                        <p>Member Since: 2022</p>
-                    </div>
+                <div class="modal-body text-center">
+                    <img src="profile.jpg" alt="Profile Picture" class="rounded-circle" width="100" height="100">
+                    <h5>John Doe</h5>
+                    <p class="text-muted">johndoe@example.com</p>
+                    <p class="text-muted">Member Since: 2022</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -84,10 +135,18 @@
                 </div>
                 <div class="modal-body">
                     <ul class="list-group">
-                        <li class="list-group-item"><a href="#" id="profileSettings">Profile Settings</a></li>
-                        <li class="list-group-item"><a href="#" id="themeToggle">Toggle Theme</a></li>
-                        <li class="list-group-item"><a href="#" id="cookieSettings">Cookie Settings</a></li>
-                        <li class="list-group-item"><a href="#" class="text-danger" id="logout">Logout</a></li>
+                        <li class="list-group-item list-group-item-action">
+                            <a href="#" id="profileSettings">Profile Settings</a>
+                        </li>
+                        <li class="list-group-item list-group-item-action">
+                            <a href="#" id="themeToggle">Toggle Theme</a>
+                        </li>
+                        <li class="list-group-item list-group-item-action">
+                            <a href="#" id="cookieSettings">Cookie Settings</a>
+                        </li>
+                        <li class="list-group-item text-danger list-group-item-action">
+                            <a href="#" id="logout">Logout</a>
+                        </li>
                     </ul>
                 </div>
             </div>
