@@ -40,18 +40,52 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Send OTP Button
-    const sendOtpBtn = document.getElementById('sendOtpBtn'); // Assuming this is the ID of the "Send OTP" button
-    if (sendOtpBtn) {
-        sendOtpBtn.addEventListener('click', () => {
-            handleRoute('/send-otp');
-        });
-    }
+
+    document.getElementById('sendDeleteDataOtpBtn')?.addEventListener('click', async () => {
+        const email = document.getElementById('deleteCookieEmail').value.trim();
+    
+        if (!email) {
+            alert('Please enter a valid email address.');
+            return;
+        }
+    
+        try {
+            const result = await sendOtp(email);
+            if (result.success) {
+                alert(`An OTP has been sent to ${email}. Please check your inbox.`);
+                document.getElementById('otpSection').classList.remove('d-none'); // Show OTP input section
+            } else {
+                alert('Failed to send OTP: ' + result.message);
+            }
+        } catch (error) {
+            alert('Error sending OTP: ' + error.message);
+        }
+    });
 
     // Verify OTP Button
-    const verifyOtpBtn = document.getElementById('verifyOtpBtn'); // Assuming this is the ID of the "Verify OTP" button
-    if (verifyOtpBtn) {
-        verifyOtpBtn.addEventListener('click', () => {
-            handleRoute('/verify-otp');
-        });
+ 
+document.getElementById('confirmDeleteCookieDataBtn')?.addEventListener('click', async () => {
+    const email = document.getElementById('deleteCookieEmail').value.trim();
+    const otp = document.getElementById('deleteCookieOTP').value.trim();
+
+    if (!email || !otp) {
+        alert('All fields are required.');
+        return;
     }
+
+    try {
+        const result = await verifyOtp(email, otp);
+        if (result.success) {
+            alert('Your data has been deleted successfully!');
+            location.reload(); // Refresh page after deletion
+        } else {
+            alert('Failed to verify OTP: ' + result.message);
+        }
+    } catch (error) {
+        alert('Error verifying OTP: ' + error.message);
+    }
+});
+
+
+
 });

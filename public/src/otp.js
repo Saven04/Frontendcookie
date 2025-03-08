@@ -1,37 +1,57 @@
-// Send OTP Button Click Handler
 // otp.js
 
-// Define the sendOtp function
+/**
+ * Sends an OTP to the user's email address.
+ * @param {string} email - The user's email address.
+ * @returns {Promise<Object>} - The response from the backend.
+ */
 export async function sendOtp(email) {
     try {
+        // Validate email input
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            throw new Error('Please provide a valid email address.');
+        }
+
+        // Call the backend API to send OTP
         const response = await fetch('https://backendcookie-8qc1.onrender.com/send-otp', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email }),
         });
 
+        // Handle non-2xx responses
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(errorData.message || 'Failed to send OTP');
         }
 
+        // Parse successful response
         const result = await response.json();
+        console.log(`OTP sent successfully to ${email}`);
         return result;
     } catch (error) {
         console.error('Error sending OTP:', error.message);
-        throw error;
+        throw error; // Re-throw the error for the caller to handle
     }
 }
 
-// Define other functions (e.g., verifyOtp) if needed
+/**
+ * Verifies the OTP entered by the user.
+ * @param {string} email - The user's email address.
+ * @param {string} otp - The OTP entered by the user.
+ * @returns {Promise<Object>} - The response from the backend.
+ */
 export async function verifyOtp(email, otp) {
     try {
         // Validate inputs
-        if (!email || !otp) {
-            throw new Error('Email and OTP are required.');
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            throw new Error('Please provide a valid email address.');
+        }
+        if (!otp || otp.trim().length === 0) {
+            throw new Error('Please provide a valid OTP.');
         }
 
-        // Call the backend API to verify the OTP
+        // Call the backend API to verify OTP
         const response = await fetch('https://backendcookie-8qc1.onrender.com/verify-otp', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -46,16 +66,10 @@ export async function verifyOtp(email, otp) {
 
         // Parse successful response
         const result = await response.json();
-        if (result.success) {
-            return result; // Return the success response
-        } else {
-            throw new Error(result.message || 'OTP verification failed');
-        }
+        console.log(`OTP verified successfully for ${email}`);
+        return result;
     } catch (error) {
-        // Log and rethrow the error for handling in the calling function
         console.error('Error verifying OTP:', error.message);
-        throw error;
+        throw error; // Re-throw the error for the caller to handle
     }
 }
-
-// Confirm Deletion Button Click Handler
