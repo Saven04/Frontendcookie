@@ -50,6 +50,9 @@ function displayNews(articles) {
     });
 }
 
+    // Load General News on Page Load
+    fetchNews();
+
 // Apply font size settings
 function applyFontSize(size) {
     document.body.style.fontSize = size === 'small' ? '14px' : size === 'large' ? '18px' : '16px';
@@ -129,8 +132,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Load General News on Page Load
-    fetchNews();
+    
 
     
     function getCookie(name) {
