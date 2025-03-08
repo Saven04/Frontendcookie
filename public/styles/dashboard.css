@@ -1,0 +1,203 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #121212; /* Dark theme background */
+    color: #ffffff; /* Light text for contrast */
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: bold;
+    color: #ffffff;
+}
+
+a {
+    text-decoration: none;
+    color: #0dcaf0; /* Bootstrap's info blue */
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+button {
+    cursor: pointer;
+}
+
+/* Navbar Styling */
+.navbar {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+#logoutBtn {
+    background-color: #dc3545; /* Bootstrap's danger red */
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+#logoutBtn:hover {
+    background-color: #bb2d3b; /* Darker red on hover */
+}
+
+/* Card Styling */
+.card {
+    border: none;
+    border-radius: 10px;
+    background-color: #1e1e1e; /* Slightly lighter than body background */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    padding: 20px;
+}
+
+.card h2 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+}
+
+.card p {
+    font-size: 1rem;
+    margin-bottom: 10px;
+}
+
+/* Cookie Preferences Section */
+.form-check {
+    margin-bottom: 10px;
+}
+
+.form-check-input {
+    margin-right: 10px;
+}
+
+.form-check-label {
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.fa-info-circle {
+    margin-left: 5px;
+    color: #0dcaf0; /* Info icon color */
+    transition: color 0.3s ease;
+}
+
+.fa-info-circle:hover {
+    color: #0b97c4; /* Darker info blue on hover */
+}
+
+/* Buttons */
+.btn-success {
+    background-color: #28a745; /* Bootstrap's success green */
+    border: none;
+}
+
+.btn-success:hover {
+    background-color: #218838; /* Darker green on hover */
+}
+
+.btn-warning {
+    background-color: #ffc107; /* Bootstrap's warning yellow */
+    border: none;
+    color: #000; /* Black text for better visibility */
+}
+
+.btn-warning:hover {
+    background-color: #e0a800; /* Darker yellow on hover */
+}
+
+/* Feedback Modal */
+.modal-content {
+    border-radius: 10px;
+    border: none;
+}
+
+.modal-header {
+    border-bottom: none;
+}
+
+.modal-footer {
+    border-top: none;
+}
+
+/* Dropdown Menu */
+#settingsDropdown {
+    width: 250px;
+    padding: 10px;
+    border-radius: 5px;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+#settingsDropdown div {
+    transition: background-color 0.3s ease;
+}
+
+#settingsDropdown div:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Slight highlight on hover */
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .card {
+        padding: 15px;
+    }
+
+    .card h2 {
+        font-size: 1.5rem;
+    }
+
+    .card p {
+        font-size: 0.9rem;
+    }
+
+    #settingsDropdown {
+        width: 100%;
+        right: 0;
+        left: 0;
+        top: 60px;
+    }
+}
+
+/* Alerts */
+.alert {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+    padding: 10px 20px;
+    border-radius: 5px;
+    animation: slideIn 0.5s ease-in-out;
+}
+
+.alert-info {
+    background-color: #0dcaf0;
+    color: #000;
+}
+
+.alert-error {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}

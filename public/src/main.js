@@ -87,38 +87,32 @@ async function loginUser(email, password) {
 
 
 // ✅ Function to attach JWT token to API requests
-async function checkAuth() {
-    try {
-        const token = localStorage.getItem("token"); // Get the stored JWT token
-        if (!token) {
-            console.log("🚫 No token found. User is not authenticated.");
-            return false;
-        }
-
-        const response = await fetch("https://backendcookie-8qc1.onrender.com/api/check-auth", {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer ${token}`, // Send token in headers
-                "Content-Type": "application/json"
-            }
-        });
-
-        const data = await response.json();
-        console.log("🔍 Auth Check Response:", data);
-
-        if (data.authenticated) {
-            console.log("✅ User is authenticated:", data.userId);
-            return true; // User is logged in
-        } else {
-            console.log("🚫 Authentication failed. Redirecting to login...");
-            return false; // User is not logged in
-        }
-    } catch (error) {
-        console.error("❌ Error checking authentication:", error);
-        return false;
-    }
+function getAuthHeaders() {
+    const token = localStorage.getItem("token");
+    return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
+// ✅ Example function to fetch user data using JWT
+async function fetchUserData() {
+    try {
+        const response = await fetch("https://backendcookie-8qc1.onrender.com/api/user", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                ...getAuthHeaders(), // Attach token to request
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch user data: ${response.status}`);
+        }
+
+        const userData = await response.json();
+        console.log("✅ User data:", userData);
+    } catch (error) {
+        console.error("❌ Error fetching user data:", error);
+    }
+}
 
 // ✅ Logout function
 function logoutUser() {
