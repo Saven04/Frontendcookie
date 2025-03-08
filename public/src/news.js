@@ -7,15 +7,24 @@ let mfaEmail = null;
 // Function to fetch news from the backend
 async function fetchNews(category = "general") {
     try {
-        const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/news?category=${category}`);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/news?category=${category}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        if (!response.ok) {
+            const errorData = await response.text(); // Get raw text for debugging
+            throw new Error(`HTTP error! Status: ${response.status}, Response: ${errorData}`);
+        }
         const articles = await response.json();
+        console.log("Fetched news articles:", articles); // Debug log
         displayNews(articles);
     } catch (error) {
         console.error("Error fetching news:", error);
         newsContainer.innerHTML = `
             <div class="col-12 text-center py-4">
-                <p class="text-danger">Failed to load news. Please try again later.</p>
+                <p class="text-danger">Failed to load news: ${error.message}. Please try again later.</p>
             </div>
         `;
     }
@@ -24,7 +33,7 @@ async function fetchNews(category = "general") {
 // Function to display news
 function displayNews(articles) {
     newsContainer.innerHTML = "";
-    if (!articles || articles.length === 0) {
+    if (!articles || !Array.isArray(articles) || articles.length === 0) {
         newsContainer.innerHTML = `
             <div class="col-12 text-center py-4">
                 <p>No news articles available.</p>
@@ -161,12 +170,10 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Load General News on Page Load
-    fetchNews();
-
     // Cookie Preferences Logic (Load on page load)
     const consentId = getCookie("consentId");
     let preferences = {};
+    const cookiePrefs = getCookie("cookiePrefs"); // Define cookiePrefs before using it
 
     if (cookiePrefs) {
         try {
@@ -192,17 +199,21 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .then(data => {
             if (data.preferences) {
-                document.getElementById("performance").checked = data.preferences.performance;
-                document.getElementById("functional").checked = data.preferences.functional;
-                document.getElementById("advertising").checked = data.preferences.advertising;
-                document.getElementById("socialMedia").checked = data.preferences.socialMedia;
-                document.cookie = `cookiePrefs=${JSON.stringify(data.preferences)}; path=/; max-age=${60 * 60 * 24 * 730}`;
+                preferences = data.preferences;
+                document.getElementById("performance").checked = preferences.performance || false;
+                document.getElementById("functional").checked = preferences.functional || false;
+                document.getElementById("advertising").checked = preferences.advertising || false;
+                document.getElementById("socialMedia").checked = preferences.socialMedia || false;
+                document.cookie = `cookiePrefs=${JSON.stringify(preferences)}; path=/; max-age=${60 * 60 * 24 * 730}`;
             }
         })
         .catch(error => console.error("Error loading cookie preferences from DB:", error));
     } else {
         console.log("No consentId or token found, skipping API fetch for cookie preferences");
     }
+
+    // Load General News on Page Load
+    fetchNews();
 
     // Save Cookie Preferences
     document.getElementById("saveCookiePrefs").addEventListener("click", async function() {
@@ -392,7 +403,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 throw new Error(errorData.message || "Invalid code");
             }
 
-            // Preserve consentId in cookies, not localStorage
             const consentId = getCookie("consentId");
             document.cookie.split(";").forEach(cookie => {
                 const [name] = cookie.trim().split("=");
