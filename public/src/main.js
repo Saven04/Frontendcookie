@@ -1,6 +1,3 @@
-// Import cookie functions (if using ES6 modules)
-// import { setCookie, getCookie } from './cookieSettings.js';
-
 document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("loginForm");
 
@@ -41,14 +38,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Function to check if the user is logged in
 function isUserLoggedIn() {
-    return localStorage.getItem("token") !== null;
+    const token = localStorage.getItem("token");
+    if (!token) return false;
+
+    // Optional: Check if token is expired
+    try {
+        const decoded = JSON.parse(atob(token.split(".")[1])); // Decode JWT payload
+        return decoded.exp * 1000 > Date.now();
+    } catch (error) {
+        console.error("Invalid token:", error);
+        return false;
+    }
 }
 
-// ✅ Updated loginUser function to handle both JWT and session-based logins
+// Updated loginUser function
 async function loginUser(email, password) {
     try {
         const apiUrl = "https://backendcookie-8qc1.onrender.com/api/login";
-        console.log("📡 Sending request to:", apiUrl);
+        console.log("📡 Sending login request to:", apiUrl, "with email:", email);
 
         const response = await fetch(apiUrl, {
             method: "POST",
@@ -65,41 +72,42 @@ async function loginUser(email, password) {
 
         // Store authentication token and user data in localStorage
         localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
+        // Only store user data if provided (your backend doesn’t return 'user')
+        if (data.user) {
+            localStorage.setItem("user", JSON.stringify(data.user));
+        }
 
-        // Store cookie preferences in browser cookies
-        document.cookie = `token=${data.token}; path=/; Secure; HttpOnly`;
-        document.cookie = `consentId=${data.consentId}; path=/; Secure`;
-        document.cookie = `cookiePreferences=${JSON.stringify(data.cookiePreferences)}; path=/; Secure`;
-        document.cookie = `cookiesAccepted=true; path=/; Secure`;
+        // Store cookie preferences in browser cookies (adjust based on backend response)
+        document.cookie = `token=${data.token}; path=/; Secure; SameSite=Strict`;
+        document.cookie = `consentId=${data.consentId}; path=/; Secure; SameSite=Strict`;
+        document.cookie = `cookiePreferences=${JSON.stringify(data.cookiePreferences || {})}; path=/; Secure; SameSite=Strict`;
+        document.cookie = `cookiesAccepted=${data.cookiesAccepted || true}; path=/; Secure; SameSite=Strict`;
 
         showModal("✅ Login successful!", "success");
 
         setTimeout(() => {
-            window.location.href = "/news.html";
+            window.location.href = "news.html"; // Adjust path if needed
         }, 1500);
     } catch (error) {
-        console.error("Login error:", error);
+        console.error("Login error:", error.message);
         showModal(`❌ Login failed: ${error.message}`, "error");
     }
 }
 
-
-
-// ✅ Function to attach JWT token to API requests
+// Function to attach JWT token to API requests
 function getAuthHeaders() {
     const token = localStorage.getItem("token");
     return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
-// ✅ Example function to fetch user data using JWT
+// Example function to fetch user data using JWT
 async function fetchUserData() {
     try {
         const response = await fetch("https://backendcookie-8qc1.onrender.com/api/user", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                ...getAuthHeaders(), // Attach token to request
+                ...getAuthHeaders(),
             },
         });
 
@@ -114,20 +122,25 @@ async function fetchUserData() {
     }
 }
 
-// ✅ Logout function
+// Logout function
 function logoutUser() {
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; Secure; SameSite=Strict";
+    document.cookie = "consentId=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; Secure; SameSite=Strict";
+    document.cookie = "cookiePreferences=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; Secure; SameSite=Strict";
+    document.cookie = "cookiesAccepted=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; Secure; SameSite=Strict";
     showModal("✅ Logged out successfully!", "success");
     setTimeout(() => {
         window.location.href = "index.html";
     }, 1500);
 }
 
-// ✅ Function to show a custom modal
+// Function to show a custom modal
 function showModal(message, type) {
     const existingModal = document.getElementById("customModal");
     if (existingModal) {
-        existingModal.remove(); // Remove any existing modal to avoid duplicates
+        existingModal.remove();
     }
 
     const modalContainer = document.createElement("div");
@@ -155,7 +168,6 @@ function showModal(message, type) {
     modalContainer.appendChild(modalContent);
     document.body.appendChild(modalContainer);
 
-    // Automatically close the modal after 3 seconds
     setTimeout(() => {
         const modal = document.getElementById("customModal");
         if (modal) {
