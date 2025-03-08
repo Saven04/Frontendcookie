@@ -161,13 +161,19 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("Please log in first.");
             return;
         }
-
+    
         mfaEmail = document.getElementById("mfaEmail").value.trim();
         if (!mfaEmail || !mfaEmail.includes("@")) {
             alert("Please enter a valid email address.");
             return;
         }
-
+    
+        const consentId = localStorage.getItem("consentId"); // Assuming stored here
+        if (!consentId) {
+            alert("Consent ID not found. Please set preferences first.");
+            return;
+        }
+    
         try {
             const response = await fetch("https://backendcookie-8qc1.onrender.com/api/send-mfa", {
                 method: "POST",
@@ -175,16 +181,15 @@ document.addEventListener("DOMContentLoaded", function () {
                     "Authorization": `Bearer ${token}`,
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ email: mfaEmail })
+                body: JSON.stringify({ email: mfaEmail, consentId: consentId })
             });
-
+    
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(`Failed to send MFA code: ${response.status} - ${errorData.message}`);
             }
-
+    
             console.log("MFA code sent to user's email");
-            // Switch to code input section
             document.getElementById("emailInputSection").classList.add("d-none");
             document.getElementById("codeInputSection").classList.remove("d-none");
             document.getElementById("confirmDeleteCookie").classList.remove("d-none");
