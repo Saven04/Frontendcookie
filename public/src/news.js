@@ -198,6 +198,17 @@ document.addEventListener("DOMContentLoaded", function () {
         cookieSettingsBtn.addEventListener('click', function(e) {
             e.preventDefault(); // Optional with data-bs-toggle
             loadCookiePreferences();
+            // Ensure focus moves to the modal when it opens
+            const cookieModal = document.getElementById('cookieModal');
+            if (cookieModal && typeof bootstrap !== 'undefined') {
+                const modal = new bootstrap.Modal(cookieModal);
+                modal.show();
+                // Move focus to the first focusable element in the modal
+                setTimeout(() => {
+                    const firstFocusable = cookieModal.querySelector('input:not([disabled]), button:not([data-bs-dismiss])');
+                    if (firstFocusable) firstFocusable.focus();
+                }, 100); // Small delay to ensure modal is fully rendered
+            }
         });
     } else {
         console.warn('Element with ID "cookieSettings" not found');
