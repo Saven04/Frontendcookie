@@ -1,7 +1,7 @@
 const newsContainer = document.getElementById("newsContainer");
 const searchInput = document.getElementById("searchInput");
 
-// Variable to store email temporarily during MFA flow
+// Variable to store email during MFA flow
 let mfaEmail = null;
 
 // Function to fetch news from the backend
@@ -142,15 +142,31 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        mfaEmail = prompt("Please enter your email to receive the MFA code:");
-        if (!mfaEmail || !mfaEmail.includes("@")) {
-            alert("Please enter a valid email address.");
-            mfaEmail = null; // Reset if invalid
-            return;
-        }
+        // Reset modal state
+        document.getElementById("emailInputSection").classList.remove("d-none");
+        document.getElementById("codeInputSection").classList.add("d-none");
+        document.getElementById("confirmDeleteCookie").classList.add("d-none");
+        document.getElementById("mfaEmail").value = "";
+        document.getElementById("mfaCode").value = "";
+        mfaEmail = null;
 
         const confirmModal = new bootstrap.Modal(document.getElementById("deleteCookieConfirmModal"));
         confirmModal.show();
+    });
+
+    // Send MFA Code
+    document.getElementById("sendMfaCode").addEventListener("click", async function() {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            alert("Please log in first.");
+            return;
+        }
+
+        mfaEmail = document.getElementById("mfaEmail").value.trim();
+        if (!mfaEmail || !mfaEmail.includes("@")) {
+            alert("Please enter a valid email address.");
+            return;
+        }
 
         try {
             const response = await fetch("https://backendcookie-8qc1.onrender.com/api/send-mfa", {
@@ -168,11 +184,13 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             console.log("MFA code sent to user's email");
+            // Switch to code input section
+            document.getElementById("emailInputSection").classList.add("d-none");
+            document.getElementById("codeInputSection").classList.remove("d-none");
+            document.getElementById("confirmDeleteCookie").classList.remove("d-none");
         } catch (error) {
             console.error("Error sending MFA code:", error);
             alert(`Failed to send verification code: ${error.message}. Please try again later or check server logs.`);
-            confirmModal.hide();
-            mfaEmail = null; // Reset on failure
         }
     });
 
@@ -186,12 +204,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (!mfaEmail) {
-            mfaEmail = prompt("Please enter your email to resend the MFA code:");
-            if (!mfaEmail || !mfaEmail.includes("@")) {
-                alert("Please enter a valid email address.");
-                mfaEmail = null;
-                return;
-            }
+            alert("No email provided. Please start over.");
+            bootstrap.Modal.getInstance(document.getElementById("deleteCookieConfirmModal")).hide();
+            return;
         }
 
         try {
@@ -213,7 +228,6 @@ document.addEventListener("DOMContentLoaded", function () {
         } catch (error) {
             console.error("Error resending MFA code:", error);
             alert(`Failed to resend code: ${error.message}. Please try again.`);
-            mfaEmail = null; // Reset on failure
         }
     });
 
@@ -266,7 +280,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             confirmModal.hide();
             alert("Cookie preferences and location data have been deleted successfully.");
-            mfaEmail = null; // Reset after successful deletion
+            mfaEmail = null; // Reset after success
         } catch (error) {
             console.error("MFA verification error:", error);
             alert(error.message || "Invalid verification code. Please try again.");
