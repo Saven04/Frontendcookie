@@ -129,92 +129,114 @@ document.addEventListener("DOMContentLoaded", function () {
     // Load General News on Page Load
     fetchNews();
 
-    // Inside news.js, within the DOMContentLoaded event listener
-
-// Inside news.js, within DOMContentLoaded event listener
-
-document.getElementById("deleteCookieData").addEventListener("click", async function(e) {
-    e.preventDefault();
-
-    const confirmModal = new bootstrap.Modal(document.getElementById("deleteCookieConfirmModal"));
-    confirmModal.show();
-
-    try {
-        const response = await fetch("https://backendcookie-8qc1.onrender.com/api/send-mfa", {
-            method: "POST",
-            credentials: "include"
-        });
-        if (!response.ok) throw new Error("Failed to send MFA code");
-        console.log("MFA code sent to user's email");
-    } catch (error) {
-        console.error("Error sending MFA code:", error);
-        alert("Failed to send verification code. Please try again later.");
-        confirmModal.hide();
-        return;
-    }
-
-    document.getElementById("resendCode").addEventListener("click", async function(e) {
+    // Delete Cookie Data Functionality
+    document.getElementById("deleteCookieData").addEventListener("click", async function(e) {
         e.preventDefault();
-        try {
-            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/send-mfa", {
-                method: "POST",
-                credentials: "include"
-            });
-            if (!response.ok) throw new Error("Failed to resend MFA code");
-            alert("A new code has been sent to your email.");
-        } catch (error) {
-            console.error("Error resending MFA code:", error);
-            alert("Failed to resend code. Please try again.");
-        }
-    });
 
-    document.getElementById("confirmDeleteCookie").addEventListener("click", async function() {
-        const mfaCode = document.getElementById("mfaCode").value.trim();
-
-        if (!mfaCode || mfaCode.length !== 6 || !/^\d+$/.test(mfaCode)) {
-            alert("Please enter a valid 6-digit code.");
+        const token = localStorage.getItem("token");
+        if (!token) {
+            alert("Please log in first to delete your data.");
             return;
         }
 
+        const confirmModal = new bootstrap.Modal(document.getElementById("deleteCookieConfirmModal"));
+        confirmModal.show();
+
         try {
-            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/verify-mfa", {
+            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/send-mfa", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ code: mfaCode }),
-                credentials: "include"
+                headers: {
+                    "Authorization": `Bearer ${token}`, // Add JWT
+                    "Content-Type": "application/json"
+                }
             });
 
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.message || "Invalid code");
+                throw new Error(errorData.message || `Failed to send MFA code: ${response.status}`);
             }
 
-            // Clear client-side data
-            document.cookie.split(";").forEach(cookie => {
-                const [name] = cookie.split("=");
-                document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
-            });
-            localStorage.clear();
-
-            // Reset UI settings
-            document.getElementById("themeSelect").value = "system";
-            document.getElementById("fontSizeSelect").value = "medium";
-            document.getElementById("notificationSwitch").checked = true;
-            document.getElementById("dataSharingSwitch").checked = true;
-
-            applyTheme("system");
-            applyFontSize("medium");
-
-            confirmModal.hide();
-            alert("Cookie preferences and location data have been deleted successfully.");
+            console.log("MFA code sent to user's email");
         } catch (error) {
-            console.error("MFA verification error:", error);
-            alert(error.message || "Invalid verification code. Please try again.");
-            document.getElementById("mfaCode").value = "";
+            console.error("Error sending MFA code:", error);
+            alert(`Failed to send verification code: ${error.message}. Please try again later.`);
+            confirmModal.hide();
+            return;
         }
-    }, { once: true });
-});
 
+        // Resend Code
+        document.getElementById("resendCode").addEventListener("click", async function(e) {
+            e.preventDefault();
+            try {
+                const response = await fetch("https://backendcookie-8qc1.onrender.com/api/send-mfa", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${token}`, // Add JWT
+                        "Content-Type": "application/json"
+                    }
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || "Failed to resend MFA code");
+                }
+
+                alert("A new code has been sent to your email.");
+            } catch (error) {
+                console.error("Error resending MFA code:", error);
+                alert(`Failed to resend code: ${error.message}. Please try again.`);
+            }
+        });
+
+        // Confirm Deletion
+        document.getElementById("confirmDeleteCookie").addEventListener("click", async function() {
+            const mfaCode = document.getElementById("mfaCode").value.trim();
+
+            if (!mfaCode || mfaCode.length !== 6 || !/^\d+$/.test(mfaCode)) {
+                alert("Please enter a valid 6-digit code.");
+                return;
+            }
+
+            try {
+                const response = await fetch("https://backendcookie-8qc1.onrender.com/api/verify-mfa", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${token}`, // Add JWT
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ code: mfaCode })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || "Invalid code");
+                }
+
+                // Clear client-side data
+                document.cookie.split(";").forEach(cookie => {
+                    const [name] = cookie.split("=");
+                    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+                });
+                localStorage.clear();
+
+                // Reset UI settings
+                document.getElementById("themeSelect").value = "system";
+                document.getElementById("fontSizeSelect").value = "medium";
+                document.getElementById("notificationSwitch").checked = true;
+                document.getElementById("dataSharingSwitch").checked = true;
+
+                applyTheme("system");
+                applyFontSize("medium");
+
+                confirmModal.hide();
+                alert("Cookie preferences and location data have been deleted successfully.");
+            } catch (error) {
+                console.error("MFA verification error:", error);
+                alert(error.message || "Invalid verification code. Please try again.");
+                document.getElementById("mfaCode").value = "";
+            }
+        }, { once: true });
+    });
 });
 
 // Theme Application Function
