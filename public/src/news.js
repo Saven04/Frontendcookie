@@ -1,6 +1,9 @@
 const newsContainer = document.getElementById("newsContainer");
 const searchInput = document.getElementById("searchInput");
 
+// Variable to store email temporarily during MFA flow
+let mfaEmail = null;
+
 // Function to fetch news from the backend
 async function fetchNews(category = "general") {
     try {
@@ -139,6 +142,13 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+        mfaEmail = prompt("Please enter your email to receive the MFA code:");
+        if (!mfaEmail || !mfaEmail.includes("@")) {
+            alert("Please enter a valid email address.");
+            mfaEmail = null; // Reset if invalid
+            return;
+        }
+
         const confirmModal = new bootstrap.Modal(document.getElementById("deleteCookieConfirmModal"));
         confirmModal.show();
 
@@ -149,14 +159,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     "Authorization": `Bearer ${token}`,
                     "Content-Type": "application/json"
                 },
-                // Add body if required by your backend (e.g., email or user ID)
-                // Replace with actual data expected by your API
-                body: JSON.stringify({}) // Example: { email: "user@example.com" }
+                body: JSON.stringify({ email: mfaEmail })
             });
 
             if (!response.ok) {
-                const errorData = await response.text(); // Get raw response for more detail
-                throw new Error(`Failed to send MFA code: ${response.status} - ${errorData}`);
+                const errorData = await response.json();
+                throw new Error(`Failed to send MFA code: ${response.status} - ${errorData.message}`);
             }
 
             console.log("MFA code sent to user's email");
@@ -164,16 +172,26 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error("Error sending MFA code:", error);
             alert(`Failed to send verification code: ${error.message}. Please try again later or check server logs.`);
             confirmModal.hide();
+            mfaEmail = null; // Reset on failure
         }
     });
 
-    // Resend Code (moved outside)
+    // Resend Code
     document.getElementById("resendCode").addEventListener("click", async function(e) {
         e.preventDefault();
         const token = localStorage.getItem("token");
         if (!token) {
             alert("Please log in first.");
             return;
+        }
+
+        if (!mfaEmail) {
+            mfaEmail = prompt("Please enter your email to resend the MFA code:");
+            if (!mfaEmail || !mfaEmail.includes("@")) {
+                alert("Please enter a valid email address.");
+                mfaEmail = null;
+                return;
+            }
         }
 
         try {
@@ -183,22 +201,23 @@ document.addEventListener("DOMContentLoaded", function () {
                     "Authorization": `Bearer ${token}`,
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({}) // Add required data if needed
+                body: JSON.stringify({ email: mfaEmail })
             });
 
             if (!response.ok) {
-                const errorData = await response.text();
-                throw new Error(`Failed to resend MFA code: ${response.status} - ${errorData}`);
+                const errorData = await response.json();
+                throw new Error(`Failed to resend MFA code: ${response.status} - ${errorData.message}`);
             }
 
             alert("A new code has been sent to your email.");
         } catch (error) {
             console.error("Error resending MFA code:", error);
             alert(`Failed to resend code: ${error.message}. Please try again.`);
+            mfaEmail = null; // Reset on failure
         }
     });
 
-    // Confirm Deletion (moved outside)
+    // Confirm Deletion
     document.getElementById("confirmDeleteCookie").addEventListener("click", async function() {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -247,6 +266,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             confirmModal.hide();
             alert("Cookie preferences and location data have been deleted successfully.");
+            mfaEmail = null; // Reset after successful deletion
         } catch (error) {
             console.error("MFA verification error:", error);
             alert(error.message || "Invalid verification code. Please try again.");
@@ -254,6 +274,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+
 // Theme Application Function
 function applyTheme(theme) {
     const body = document.body;
