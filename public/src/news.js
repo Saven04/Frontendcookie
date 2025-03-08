@@ -168,11 +168,10 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Cookie Preferences Logic (Load on page load)
     const consentId = getCookie("consentId");
     let preferences = {};
     const cookiePrefs = getCookie("cookiePrefs");
-
+    
     if (cookiePrefs) {
         try {
             preferences = JSON.parse(cookiePrefs);
@@ -184,7 +183,7 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Error parsing cookiePrefs:", error);
         }
     } else if (consentId && token) {
-        fetch("https://backendcookie-8qc1.onrender.com/api/cookie-prefs", {
+        fetch(`https://backendcookie-8qc1.onrender.com/api/cookie-prefs?consentId=${encodeURIComponent(consentId)}`, {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${token}`,
@@ -209,7 +208,6 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
         console.log("No consentId or token found, skipping API fetch for cookie preferences");
     }
-
 
 
     // Save Cookie Preferences
