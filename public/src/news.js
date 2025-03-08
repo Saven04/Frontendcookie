@@ -14,7 +14,7 @@ async function fetchNews(category = "general") {
             }
         });
         if (!response.ok) {
-            const errorData = await response.text(); // Get raw text for debugging
+            const errorData = await response.text(); // Raw text for debugging
             throw new Error(`HTTP error! Status: ${response.status}, Response: ${errorData}`);
         }
         const articles = await response.json();
@@ -68,7 +68,6 @@ function applyFontSize(size) {
 function applyTheme(theme) {
     const body = document.body;
     body.classList.remove("dark-mode");
-
     if (theme === "dark") {
         body.classList.add("dark-mode");
     } else if (theme === "system") {
@@ -82,12 +81,11 @@ function applyTheme(theme) {
 function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
-        const later = () => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
             clearTimeout(timeout);
             func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
+        }, wait);
     };
 }
 
@@ -100,7 +98,7 @@ function getCookie(name) {
 }
 
 // Single DOMContentLoaded listener
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
     const token = localStorage.getItem("token");
 
     // Category Buttons Event Listeners
@@ -118,7 +116,6 @@ document.addEventListener("DOMContentLoaded", function () {
         searchInput.addEventListener("input", debounce(() => {
             const query = searchInput.value.trim().toLowerCase();
             const cards = document.querySelectorAll(".card");
-
             cards.forEach(card => {
                 const title = card.querySelector(".card-title").textContent.toLowerCase();
                 const description = card.querySelector(".card-text").textContent.toLowerCase();
@@ -135,7 +132,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const savedTheme = localStorage.getItem("theme") || "system";
         themeSelect.value = savedTheme;
         applyTheme(savedTheme);
-
         themeSelect.addEventListener("change", function () {
             const theme = this.value;
             applyTheme(theme);
@@ -146,7 +142,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const savedFontSize = localStorage.getItem("fontSize") || "medium";
         fontSizeSelect.value = savedFontSize;
         applyFontSize(savedFontSize);
-
         fontSizeSelect.addEventListener("change", function () {
             const size = this.value;
             applyFontSize(size);
@@ -173,7 +168,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Cookie Preferences Logic (Load on page load)
     const consentId = getCookie("consentId");
     let preferences = {};
-    const cookiePrefs = getCookie("cookiePrefs"); // Define cookiePrefs before using it
+    const cookiePrefs = getCookie("cookiePrefs");
 
     if (cookiePrefs) {
         try {
@@ -216,7 +211,7 @@ document.addEventListener("DOMContentLoaded", function () {
     fetchNews();
 
     // Save Cookie Preferences
-    document.getElementById("saveCookiePrefs").addEventListener("click", async function() {
+    document.getElementById("saveCookiePrefs").addEventListener("click", async () => {
         const token = localStorage.getItem("token");
         if (!token) {
             alert("Please log in to save cookie preferences.");
@@ -229,18 +224,6 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        const cookiePrefs = getCookie("cookiePrefs");
-        let existingPrefs = {};
-        if (cookiePrefs) {
-            try {
-                existingPrefs = JSON.parse(cookiePrefs);
-                console.log("Existing preferences from cookies:", existingPrefs);
-            } catch (error) {
-                console.error("Error parsing existing cookiePrefs:", error);
-                existingPrefs = { strictlyNecessary: true, performance: false, functional: false, advertising: false, socialMedia: false };
-            }
-        }
-
         const preferences = {
             strictlyNecessary: true,
             performance: document.getElementById("performance").checked,
@@ -251,7 +234,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         try {
             document.cookie = `cookiePrefs=${JSON.stringify(preferences)}; path=/; max-age=${60 * 60 * 24 * 730}`;
-
             const response = await fetch("https://backendcookie-8qc1.onrender.com/api/cookie-prefs", {
                 method: "POST",
                 headers: {
@@ -274,9 +256,8 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // Delete Cookie Data Functionality
-    document.getElementById("deleteCookieData").addEventListener("click", async function(e) {
+    document.getElementById("deleteCookieData").addEventListener("click", async e => {
         e.preventDefault();
-
         if (!token) {
             alert("Please log in first to delete your data.");
             return;
@@ -294,7 +275,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // Send MFA Code
-    document.getElementById("sendMfaCode").addEventListener("click", async function() {
+    document.getElementById("sendMfaCode").addEventListener("click", async () => {
         if (!token) {
             alert("Please log in first.");
             return;
@@ -337,8 +318,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Resend Code
-    document.getElementById("resendCode").addEventListener("click", async function(e) {
+    // Resend MFA Code
+    document.getElementById("resendCode").addEventListener("click", async e => {
         e.preventDefault();
         if (!token) {
             alert("Please log in first.");
@@ -373,8 +354,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Confirm Deletion
-    document.getElementById("confirmDeleteCookie").addEventListener("click", async function() {
+    // Confirm Deletion with MFA
+    document.getElementById("confirmDeleteCookie").addEventListener("click", async () => {
         if (!token) {
             alert("Please log in first.");
             return;
