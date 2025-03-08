@@ -472,7 +472,8 @@
 </div>
 
 <!-- Cookie Preferences Modal (Moved outside settingsModal) -->
-<div class="modal fade" id="cookieModal" tabindex="-1" role="dialog" aria-labelledby="cookieModalLabel" aria-hidden="true">
+<!-- Cookie Preferences Modal -->
+<div class="modal fade" id="cookieModal" tabindex="-1" role="dialog" aria-labelledby="cookieModalLabel">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -509,32 +510,37 @@
         </div>
     </div>
 </div>
-    <!-- New MFA Confirmation Modal -->
-    <div class="modal fade" id="deleteCookieConfirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteCookieConfirmLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteCookieConfirmLabel">Confirm Data Deletion</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+<!-- MFA Confirmation Modal -->
+<div class="modal fade" id="deleteCookieConfirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteCookieConfirmLabel">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteCookieConfirmLabel">Confirm Data Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Warning:</strong> Deleting your cookie data will:</p>
+                <ul class="list-unstyled ms-4">
+                    <li><i class="bi bi-dash"></i> Remove all stored preferences (theme, font size, etc.)</li>
+                    <li><i class="bi bi-dash"></i> Clear location data used for personalized news</li>
+                    <li><i class="bi bi-dash"></i> Reset your session, requiring you to log in again</li>
+                </ul>
+                <p class="mt-3">This action cannot be undone. Please enter your email to receive a verification code, then enter the code to proceed.</p>
+
+                <!-- Email Input Section -->
+                <div class="mb-3" id="emailInputSection">
+                    <label for="mfaEmail" class="form-label">Email Address</label>
+                    <input type="email" class="form-control" id="mfaEmail" placeholder="Enter your email" required>
+                    <button type="button" class="btn btn-primary mt-2" id="sendMfaCode">
+                        <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                        Send Code
+                    </button>
                 </div>
-                <div class="modal-body">
-                    <p><strong>Warning:</strong> Deleting your cookie data will:</p>
-                    <ul class="list-unstyled ms-4">
-                        <li><i class="bi bi-dash"></i> Remove all stored preferences (theme, font size, etc.)</li>
-                        <li><i class="bi bi-dash"></i> Clear location data used for personalized news</li>
-                        <li><i class="bi bi-dash"></i> Reset your session, requiring you to log in again</li>
-                    </ul>
-                    <p class="mt-3">This action cannot be undone. Please enter your email to receive a verification code, then enter the code to proceed.</p>
-    
-                    <!-- Email Input Section -->
-                    <div class="mb-3" id="emailInputSection">
-                        <label for="mfaEmail" class="form-label">Email Address</label>
-                        <input type="email" class="form-control" id="mfaEmail" placeholder="Enter your email" required>
-                        <button type="button" class="btn btn-primary mt-2" id="sendMfaCode">
-                            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                            Send Code
-                        </button>
-                    </div>
+            </div>
+        </div>
+    </div>
+</div>
     
                     <!-- Verification Code Section (hidden initially) -->
                     <div class="mb-3 d-none" id="codeInputSection">
