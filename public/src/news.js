@@ -131,6 +131,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Load General News on Page Load
     fetchNews();
+
+    
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(";").shift();
+        return null;
+    }
     
 
     // Delete Cookie Data Functionality
@@ -201,12 +209,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(";").shift();
-        return null;
-    }
     // Resend Code
     document.getElementById("resendCode").addEventListener("click", async function(e) {
         e.preventDefault();
