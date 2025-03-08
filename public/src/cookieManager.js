@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateDatabasePreferences(preferences) {
         // Simulated API call to update database
-        fetch('/api/update-cookie-prefs', {
+        fetch('https://backendcookie-8qc1.onrender.com/api/update-cookie-prefs', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
