@@ -262,12 +262,22 @@ document.addEventListener("DOMContentLoaded", function () {
                 throw new Error(errorData.message || "Invalid code");
             }
 
-            // Clear client-side data
+            // Preserve consentId from localStorage and cookies
+            const consentId = localStorage.getItem("consentId"); // Assuming consentId is stored here
+
+            // Clear client-side cookies, preserving consentId
             document.cookie.split(";").forEach(cookie => {
-                const [name] = cookie.split("=");
-                document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+                const [name] = cookie.trim().split("=");
+                if (name !== "consentId") { // Skip consentId cookie
+                    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+                }
             });
+
+            // Clear localStorage except for consentId
             localStorage.clear();
+            if (consentId) {
+                localStorage.setItem("consentId", consentId); // Restore consentId
+            }
 
             // Reset UI settings
             document.getElementById("themeSelect").value = "system";
