@@ -32,56 +32,61 @@ function displayNews(articles) {
     });
 }
 
-// Event Listener for Category Buttons
-document.querySelectorAll(".category-btn").forEach(button => {
-    button.addEventListener("click", () => {
-        fetchNews(button.getAttribute("data-category"));
-    });
-});
-
-// Search Functionality
-searchInput.addEventListener("input", () => {
-    const query = searchInput.value.toLowerCase();
-    const cards = document.querySelectorAll(".card");
-
-    cards.forEach(card => {
-        const title = card.querySelector(".card-title").textContent.toLowerCase();
-        card.style.display = title.includes(query) ? "block" : "none";
-    });
-});
-
-
+// Ensure JavaScript runs after DOM is fully loaded
 document.addEventListener("DOMContentLoaded", function () {
+    // Category Buttons Event Listeners
+    document.querySelectorAll(".category-btn").forEach(button => {
+        button.addEventListener("click", () => {
+            fetchNews(button.getAttribute("data-category"));
+        });
+    });
+
+    // Search Functionality
+    if (searchInput) {
+        searchInput.addEventListener("input", () => {
+            const query = searchInput.value.toLowerCase();
+            const cards = document.querySelectorAll(".card");
+
+            cards.forEach(card => {
+                const title = card.querySelector(".card-title").textContent.toLowerCase();
+                card.style.display = title.includes(query) ? "block" : "none";
+            });
+        });
+    }
+
+    // Theme Toggle
     const themeToggleBtn = document.getElementById("themeToggle");
     const body = document.body;
 
-    // Load saved theme preference
-    if (localStorage.getItem("theme") === "dark") {
-        body.classList.add("dark-mode");
+    if (themeToggleBtn) {
+        if (localStorage.getItem("theme") === "dark") {
+            body.classList.add("dark-mode");
+        }
+
+        themeToggleBtn.addEventListener("click", function () {
+            body.classList.toggle("dark-mode");
+            localStorage.setItem("theme", body.classList.contains("dark-mode") ? "dark" : "light");
+        });
     }
 
-    // Toggle theme mode
-    themeToggleBtn.addEventListener("click", function () {
-        body.classList.toggle("dark-mode");
-
-        if (body.classList.contains("dark-mode")) {
-            localStorage.setItem("theme", "dark");
-        } else {
-            localStorage.setItem("theme", "light");
-        }
-    });
-
     // Open Profile Modal
-    document.getElementById("profileLink").addEventListener("click", function () {
-        new bootstrap.Modal(document.getElementById("profileModal")).show();
-    });
+    const profileLink = document.getElementById("profileLink");
+    if (profileLink) {
+        profileLink.addEventListener("click", function () {
+            const profileModal = new bootstrap.Modal(document.getElementById("profileModal"));
+            profileModal.show();
+        });
+    }
 
     // Open Settings Modal
-    document.getElementById("settingsDropdown").addEventListener("click", function () {
-        new bootstrap.Modal(document.getElementById("settingsModal")).show();
-    });
+    const settingsButton = document.querySelector("[data-bs-target='#settingsModal']");
+    if (settingsButton) {
+        settingsButton.addEventListener("click", function () {
+            const settingsModal = new bootstrap.Modal(document.getElementById("settingsModal"));
+            settingsModal.show();
+        });
+    }
+
+    // Load General News on Page Load
+    fetchNews();
 });
-
-
-// Load General News on Page Load
-fetchNews();
