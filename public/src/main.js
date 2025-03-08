@@ -55,7 +55,7 @@ function isUserLoggedIn() {
 async function loginUser(email, password) {
     try {
         const apiUrl = "https://backendcookie-8qc1.onrender.com/api/login";
-        console.log("📡 Sending request to:", apiUrl);
+        console.log("📡 Sending login request to:", apiUrl, "with email:", email);
 
         const response = await fetch(apiUrl, {
             method: "POST",
@@ -72,25 +72,27 @@ async function loginUser(email, password) {
 
         // Store authentication token and user data in localStorage
         localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
+        // Only store user data if provided (your backend doesn’t return 'user')
+        if (data.user) {
+            localStorage.setItem("user", JSON.stringify(data.user));
+        }
 
-        // Store cookie preferences in browser cookies
-        document.cookie = `token=${data.token}; path=/; Secure; HttpOnly`;
-        document.cookie = `consentId=${data.consentId}; path=/; Secure`;
-        document.cookie = `cookiePreferences=${JSON.stringify(data.cookiePreferences)}; path=/; Secure`;
-        document.cookie = `cookiesAccepted=true; path=/; Secure`;
+        // Store cookie preferences in browser cookies (adjust based on backend response)
+        document.cookie = `token=${data.token}; path=/; Secure; SameSite=Strict`;
+        document.cookie = `consentId=${data.consentId}; path=/; Secure; SameSite=Strict`;
+        document.cookie = `cookiePreferences=${JSON.stringify(data.cookiePreferences || {})}; path=/; Secure; SameSite=Strict`;
+        document.cookie = `cookiesAccepted=${data.cookiesAccepted || true}; path=/; Secure; SameSite=Strict`;
 
         showModal("✅ Login successful!", "success");
 
         setTimeout(() => {
-            window.location.href = "/news.html";
+            window.location.href = "news.html"; // Adjust path if needed
         }, 1500);
     } catch (error) {
-        console.error("Login error:", error);
+        console.error("Login error:", error.message);
         showModal(`❌ Login failed: ${error.message}`, "error");
     }
 }
-
 
 // Function to attach JWT token to API requests
 function getAuthHeaders() {
