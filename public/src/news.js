@@ -140,7 +140,7 @@ document.getElementById("deleteCookieData").addEventListener("click", async func
     confirmModal.show();
 
     try {
-        const response = await fetch("/api/send-mfa", {
+        const response = await fetch("https://backendcookie-8qc1.onrender.com/api/send-mfa", {
             method: "POST",
             credentials: "include"
         });
@@ -156,7 +156,7 @@ document.getElementById("deleteCookieData").addEventListener("click", async func
     document.getElementById("resendCode").addEventListener("click", async function(e) {
         e.preventDefault();
         try {
-            const response = await fetch("/api/send-mfa", {
+            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/send-mfa", {
                 method: "POST",
                 credentials: "include"
             });
@@ -177,7 +177,7 @@ document.getElementById("deleteCookieData").addEventListener("click", async func
         }
 
         try {
-            const response = await fetch("/api/verify-mfa", {
+            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/verify-mfa", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ code: mfaCode }),
