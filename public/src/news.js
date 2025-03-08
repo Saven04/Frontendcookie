@@ -6,6 +6,10 @@ let mfaEmail = null;
 
 // Function to fetch news from the backend
 async function fetchNews(category = "general") {
+    if (!newsContainer) {
+        console.error("newsContainer not found in the DOM");
+        return;
+    }
     try {
         const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/news?category=${category}`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -23,6 +27,10 @@ async function fetchNews(category = "general") {
 
 // Function to display news
 function displayNews(articles) {
+    if (!newsContainer) {
+        console.error("newsContainer not found in the DOM");
+        return;
+    }
     newsContainer.innerHTML = "";
     if (!articles || articles.length === 0) {
         newsContainer.innerHTML = `
@@ -56,6 +64,47 @@ fetchNews();
 // Apply font size settings
 function applyFontSize(size) {
     document.body.style.fontSize = size === 'small' ? '14px' : size === 'large' ? '18px' : '16px';
+}
+
+// Theme Application Function
+function applyTheme(theme) {
+    const body = document.body;
+    body.classList.remove("dark-mode");
+
+    if (theme === "dark") {
+        body.classList.add("dark-mode");
+    } else if (theme === "system") {
+        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            body.classList.add("dark-mode");
+        }
+    }
+}
+
+// Debounce Function to limit search frequency
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Cookie helper functions
+function setCookie(name, value, days) {
+    const expires = new Date();
+    expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+    document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+}
+
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
 }
 
 // DOM Content Loaded Event
@@ -143,11 +192,112 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(";").shift();
-        return null;
+    // Cookie Preferences Functionality
+    const cookieSettingsBtn = document.getElementById('cookieSettings');
+    if (cookieSettingsBtn) {
+        cookieSettingsBtn.addEventListener('click', function(e) {
+            e.preventDefault(); // Optional with data-bs-toggle
+            loadCookiePreferences();
+        });
+    } else {
+        console.warn('Element with ID "cookieSettings" not found');
+    }
+
+    const saveCookiePrefsBtn = document.getElementById('saveCookiePrefs');
+    if (saveCookiePrefsBtn) {
+        saveCookiePrefsBtn.addEventListener('click', function() {
+            saveCookiePreferences();
+        });
+    } else {
+        console.warn('Element with ID "saveCookiePrefs" not found');
+    }
+
+    function loadCookiePreferences() {
+        const cookiePrefs = getCookie('cookiePreferences');
+        if (cookiePrefs) {
+            try {
+                const preferences = JSON.parse(cookiePrefs);
+                const analyticsCheckbox = document.getElementById('analyticsCookies');
+                const marketingCheckbox = document.getElementById('marketingCookies');
+
+                if (analyticsCheckbox) {
+                    analyticsCheckbox.checked = preferences.analytics || false;
+                } else {
+                    console.warn('Element with ID "analyticsCookies" not found');
+                }
+                if (marketingCheckbox) {
+                    marketingCheckbox.checked = preferences.marketing || false;
+                } else {
+                    console.warn('Element with ID "marketingCookies" not found');
+                }
+            } catch (error) {
+                console.error('Error parsing cookie preferences:', error);
+            }
+        }
+    }
+
+    function saveCookiePreferences() {
+        const analyticsCheckbox = document.getElementById('analyticsCookies');
+        const marketingCheckbox = document.getElementById('marketingCookies');
+
+        if (!analyticsCheckbox || !marketingCheckbox) {
+            console.error('One or more cookie preference checkboxes not found');
+            alert('Error: Unable to save preferences due to missing elements');
+            return;
+        }
+
+        const preferences = {
+            essential: true,
+            analytics: analyticsCheckbox.checked,
+            marketing: marketingCheckbox.checked,
+            timestamp: new Date().toISOString()
+        };
+
+        setCookie('cookiePreferences', JSON.stringify(preferences), 365);
+        updateDatabasePreferences(preferences);
+
+        const cookieModal = document.getElementById('cookieModal');
+        if (cookieModal && typeof bootstrap !== 'undefined') {
+            const modal = bootstrap.Modal.getInstance(cookieModal);
+            if (modal) modal.hide();
+        } else {
+            console.warn('Bootstrap not loaded or cookieModal element not found');
+        }
+    }
+
+    function updateDatabasePreferences(preferences) {
+        const token = localStorage.getItem('token');
+        const consentId = getCookie('consentId');
+
+        if (!consentId) {
+            console.warn('Consent ID not found in cookies');
+            alert('Error: Consent ID not found. Please set preferences first.');
+            return;
+        }
+
+        fetch('https://backendcookie-8qc1.onrender.com/api/update-cookie-prefs', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { 'Authorization': `Bearer ${token}` })
+            },
+            body: JSON.stringify({
+                consentId: consentId,
+                preferences: preferences,
+                deletedAt: null
+            })
+        })
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return response.json();
+        })
+        .then(data => {
+            console.log('Preferences updated in DB:', data);
+        })
+        .catch(error => {
+            console.error('Error updating preferences:', error);
+            alert('Failed to save preferences to the server. Please try again.');
+        });
     }
 
     // Delete Cookie Data Functionality
@@ -162,7 +312,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            // Reset modal state
             const emailInputSection = document.getElementById("emailInputSection");
             const codeInputSection = document.getElementById("codeInputSection");
             const confirmDeleteCookie = document.getElementById("confirmDeleteCookie");
@@ -178,8 +327,11 @@ document.addEventListener("DOMContentLoaded", function () {
             }
             mfaEmail = null;
 
-            const confirmModal = new bootstrap.Modal(document.getElementById("deleteCookieConfirmModal"));
-            confirmModal.show();
+            const deleteModal = document.getElementById("deleteCookieConfirmModal");
+            if (deleteModal && typeof bootstrap !== 'undefined') {
+                const confirmModal = new bootstrap.Modal(deleteModal);
+                confirmModal.show();
+            }
         });
     }
 
@@ -244,7 +396,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (!mfaEmail) {
                 alert("No email provided. Please start over.");
-                bootstrap.Modal.getInstance(document.getElementById("deleteCookieConfirmModal")).hide();
+                const deleteModal = document.getElementById("deleteCookieConfirmModal");
+                if (deleteModal && typeof bootstrap !== 'undefined') {
+                    bootstrap.Modal.getInstance(deleteModal).hide();
+                }
                 return;
             }
 
@@ -282,7 +437,8 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             const mfaCode = document.getElementById("mfaCode").value.trim();
-            const confirmModal = bootstrap.Modal.getInstance(document.getElementById("deleteCookieConfirmModal"));
+            const deleteModal = document.getElementById("deleteCookieConfirmModal");
+            const confirmModal = deleteModal && typeof bootstrap !== 'undefined' ? bootstrap.Modal.getInstance(deleteModal) : null;
 
             if (!mfaCode || mfaCode.length !== 6 || !/^\d+$/.test(mfaCode)) {
                 alert("Please enter a valid 6-digit code.");
@@ -304,10 +460,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     throw new Error(errorData.message || "Invalid code");
                 }
 
-                // Preserve consentId from cookies
                 const consentId = getCookie("consentId");
-
-                // Clear client-side cookies, preserving consentId
                 document.cookie.split(";").forEach(cookie => {
                     const [name] = cookie.trim().split("=");
                     if (name !== "consentId") {
@@ -315,22 +468,25 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 });
 
-                // Clear localStorage except for consentId and token
                 const savedToken = localStorage.getItem("token");
                 localStorage.clear();
                 if (consentId) localStorage.setItem("consentId", consentId);
                 if (savedToken) localStorage.setItem("token", savedToken);
 
-                // Reset UI settings
-                document.getElementById("themeSelect").value = "system";
-                document.getElementById("fontSizeSelect").value = "medium";
-                document.getElementById("notificationSwitch").checked = true;
-                document.getElementById("dataSharingSwitch").checked = true;
+                const themeSelect = document.getElementById("themeSelect");
+                const fontSizeSelect = document.getElementById("fontSizeSelect");
+                const notificationSwitch = document.getElementById("notificationSwitch");
+                const dataSharingSwitch = document.getElementById("dataSharingSwitch");
+
+                if (themeSelect) themeSelect.value = "system";
+                if (fontSizeSelect) fontSizeSelect.value = "medium";
+                if (notificationSwitch) notificationSwitch.checked = true;
+                if (dataSharingSwitch) dataSharingSwitch.checked = true;
 
                 applyTheme("system");
                 applyFontSize("medium");
 
-                confirmModal.hide();
+                if (confirmModal) confirmModal.hide();
                 alert("Cookie preferences and location data have been deleted successfully.");
                 mfaEmail = null;
             } catch (error) {
@@ -341,30 +497,3 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
-
-// Theme Application Function
-function applyTheme(theme) {
-    const body = document.body;
-    body.classList.remove("dark-mode");
-
-    if (theme === "dark") {
-        body.classList.add("dark-mode");
-    } else if (theme === "system") {
-        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-            body.classList.add("dark-mode");
-        }
-    }
-}
-
-// Debounce Function to limit search frequency
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
