@@ -25,39 +25,37 @@ export async function sendOtp(email) {
 
 // Define other functions (e.g., verifyOtp) if needed
 export async function verifyOtp(email, otp) {
-    // Similar implementation for verifying OTP
-}
-
-// Confirm Deletion Button Click Handler
-document.getElementById('confirmDeleteCookieDataBtn')?.addEventListener('click', async () => {
-    const email = document.getElementById('deleteCookieEmail').value.trim();
-    const otp = document.getElementById('deleteCookieOTP').value.trim();
-
-    if (!email || !otp) {
-        alert('All fields are required.');
-        return;
-    }
-
     try {
+        // Validate inputs
+        if (!email || !otp) {
+            throw new Error('Email and OTP are required.');
+        }
+
+        // Call the backend API to verify the OTP
         const response = await fetch('https://backendcookie-8qc1.onrender.com/verify-otp', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, otp }),
         });
 
+        // Handle non-2xx responses
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(errorData.message || 'Failed to verify OTP');
         }
 
+        // Parse successful response
         const result = await response.json();
         if (result.success) {
-            alert('Your data has been deleted successfully!');
-            location.reload(); // Refresh page after deletion
+            return result; // Return the success response
         } else {
-            alert('Failed to verify OTP: ' + result.message);
+            throw new Error(result.message || 'OTP verification failed');
         }
     } catch (error) {
-        alert('Error verifying OTP: ' + error.message);
+        // Log and rethrow the error for handling in the calling function
+        console.error('Error verifying OTP:', error.message);
+        throw error;
     }
-});
+}
+
+// Confirm Deletion Button Click Handler
