@@ -7,24 +7,15 @@ let mfaEmail = null;
 // Function to fetch news from the backend
 async function fetchNews(category = "general") {
     try {
-        const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/news?category=${category}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
-        if (!response.ok) {
-            const errorData = await response.text(); // Raw text for debugging
-            throw new Error(`HTTP error! Status: ${response.status}, Response: ${errorData}`);
-        }
+        const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/news?category=${category}`);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const articles = await response.json();
-        console.log("Fetched news articles:", articles); // Debug log
         displayNews(articles);
     } catch (error) {
         console.error("Error fetching news:", error);
         newsContainer.innerHTML = `
             <div class="col-12 text-center py-4">
-                <p class="text-danger">Failed to load news: ${error.message}. Please try again later.</p>
+                <p class="text-danger">Failed to load news. Please try again later.</p>
             </div>
         `;
     }
@@ -33,7 +24,7 @@ async function fetchNews(category = "general") {
 // Function to display news
 function displayNews(articles) {
     newsContainer.innerHTML = "";
-    if (!articles || !Array.isArray(articles) || articles.length === 0) {
+    if (!articles || articles.length === 0) {
         newsContainer.innerHTML = `
             <div class="col-12 text-center py-4">
                 <p>No news articles available.</p>
@@ -64,46 +55,8 @@ function applyFontSize(size) {
     document.body.style.fontSize = size === 'small' ? '14px' : size === 'large' ? '18px' : '16px';
 }
 
-// Theme Application Function
-function applyTheme(theme) {
-    const body = document.body;
-    body.classList.remove("dark-mode");
-    if (theme === "dark") {
-        body.classList.add("dark-mode");
-    } else if (theme === "system") {
-        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-            body.classList.add("dark-mode");
-        }
-    }
-}
-
-// Debounce Function to limit search frequency
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => {
-            clearTimeout(timeout);
-            func(...args);
-        }, wait);
-    };
-}
-
-// Helper to get cookie by name
-function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(";").shift();
-    return null;
-}
-
-// Single DOMContentLoaded listener
-document.addEventListener("DOMContentLoaded", () => {
-    const token = localStorage.getItem("token");
-
-    // Load General News on Page Load (moved to top)
-    fetchNews();
-
+// DOM Content Loaded Event
+document.addEventListener("DOMContentLoaded", function () {
     // Category Buttons Event Listeners
     document.querySelectorAll(".category-btn").forEach(button => {
         button.addEventListener("click", () => {
@@ -119,6 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
         searchInput.addEventListener("input", debounce(() => {
             const query = searchInput.value.trim().toLowerCase();
             const cards = document.querySelectorAll(".card");
+
             cards.forEach(card => {
                 const title = card.querySelector(".card-title").textContent.toLowerCase();
                 const description = card.querySelector(".card-text").textContent.toLowerCase();
@@ -131,138 +85,74 @@ document.addEventListener("DOMContentLoaded", () => {
     // Settings Modal Functionality
     const settingsModal = document.getElementById("settingsModal");
     if (settingsModal) {
+        // Theme Selection
         const themeSelect = document.getElementById("themeSelect");
         const savedTheme = localStorage.getItem("theme") || "system";
         themeSelect.value = savedTheme;
         applyTheme(savedTheme);
+
         themeSelect.addEventListener("change", function () {
             const theme = this.value;
             applyTheme(theme);
             localStorage.setItem("theme", theme);
         });
 
+        // Font Size Selection
         const fontSizeSelect = document.getElementById("fontSizeSelect");
         const savedFontSize = localStorage.getItem("fontSize") || "medium";
         fontSizeSelect.value = savedFontSize;
         applyFontSize(savedFontSize);
+
         fontSizeSelect.addEventListener("change", function () {
             const size = this.value;
             applyFontSize(size);
             localStorage.setItem("fontSize", size);
         });
 
+        // Notification Switch
         const notificationSwitch = document.getElementById("notificationSwitch");
         notificationSwitch.checked = localStorage.getItem("notifications") !== "false";
         notificationSwitch.addEventListener("change", function () {
             localStorage.setItem("notifications", this.checked);
         });
 
+        // Data Sharing Switch
         const dataSharingSwitch = document.getElementById("dataSharingSwitch");
         dataSharingSwitch.checked = localStorage.getItem("dataSharing") !== "false";
         dataSharingSwitch.addEventListener("change", function () {
             localStorage.setItem("dataSharing", this.checked);
         });
 
+        // Save Settings Button
         document.getElementById("saveSettings").addEventListener("click", () => {
             bootstrap.Modal.getInstance(settingsModal).hide();
         });
     }
 
-    // Cookie Preferences Logic
-    const consentId = getCookie("consentId");
-    let preferences = {};
-    const cookiePrefs = getCookie("cookiePrefs");
+    // Load General News on Page Load
+    fetchNews();
 
-    if (cookiePrefs) {
-        try {
-            preferences = JSON.parse(cookiePrefs);
-            document.getElementById("performance").checked = preferences.performance || false;
-            document.getElementById("functional").checked = preferences.functional || false;
-            document.getElementById("advertising").checked = preferences.advertising || false;
-            document.getElementById("socialMedia").checked = preferences.socialMedia || false;
-        } catch (error) {
-            console.error("Error parsing cookiePrefs:", error);
-        }
-    } else if (consentId && token) {
-        fetch(`https://backendcookie-8qc1.onrender.com/api/cookie-prefs?consentId=${encodeURIComponent(consentId)}`, {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json"
-            }
-        })
-        .then(response => {
-            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-            return response.json();
-        })
-        .then(data => {
-            if (data.preferences) {
-                preferences = data.preferences;
-                document.getElementById("performance").checked = preferences.performance || false;
-                document.getElementById("functional").checked = preferences.functional || false;
-                document.getElementById("advertising").checked = preferences.advertising || false;
-                document.getElementById("socialMedia").checked = preferences.socialMedia || false;
-                document.cookie = `cookiePrefs=${JSON.stringify(preferences)}; path=/; max-age=${60 * 60 * 24 * 730}`;
-            }
-        })
-        .catch(error => console.error("Error loading cookie preferences from DB:", error));
-    } else {
-        console.log("No consentId or token found, skipping API fetch for cookie preferences");
+    
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(";").shift();
+        return null;
     }
-
-    // Save Cookie Preferences
-    document.getElementById("saveCookiePrefs").addEventListener("click", async () => {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            alert("Please log in to save cookie preferences.");
-            return;
-        }
-
-        const consentId = getCookie("consentId");
-        if (!consentId) {
-            alert("No consent ID found in cookies. Please log in or set initial preferences.");
-            return;
-        }
-
-        const preferences = {
-            strictlyNecessary: true,
-            performance: document.getElementById("performance").checked,
-            functional: document.getElementById("functional").checked,
-            advertising: document.getElementById("advertising").checked,
-            socialMedia: document.getElementById("socialMedia").checked
-        };
-
-        try {
-            document.cookie = `cookiePrefs=${JSON.stringify(preferences)}; path=/; max-age=${60 * 60 * 24 * 730}`;
-            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/cookie-prefs", {
-                method: "POST",
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ consentId, preferences })
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(`Failed to update cookie preferences: ${response.status} - ${errorData.message || "Unknown error"}`);
-            }
-
-            alert("Cookie preferences updated successfully!");
-        } catch (error) {
-            console.error("Error updating cookie preferences:", error);
-            alert(`Failed to update preferences: ${error.message}. Please try again.`);
-        }
-    });
+    
 
     // Delete Cookie Data Functionality
-    document.getElementById("deleteCookieData").addEventListener("click", async e => {
+    document.getElementById("deleteCookieData").addEventListener("click", async function(e) {
         e.preventDefault();
+
+        const token = localStorage.getItem("token");
         if (!token) {
             alert("Please log in first to delete your data.");
             return;
         }
 
+
+        // Reset modal state
         document.getElementById("emailInputSection").classList.remove("d-none");
         document.getElementById("codeInputSection").classList.add("d-none");
         document.getElementById("confirmDeleteCookie").classList.add("d-none");
@@ -275,24 +165,25 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Send MFA Code
-    document.getElementById("sendMfaCode").addEventListener("click", async () => {
+    document.getElementById("sendMfaCode").addEventListener("click", async function() {
+        const token = localStorage.getItem("token");
         if (!token) {
             alert("Please log in first.");
             return;
         }
-
+    
         mfaEmail = document.getElementById("mfaEmail").value.trim();
         if (!mfaEmail || !mfaEmail.includes("@")) {
             alert("Please enter a valid email address.");
             return;
         }
-
-        const consentId = getCookie("consentId");
+    
+        const consentId = getCookie("consentId"); // Fetch from cookies instead of localStorage
         if (!consentId) {
             alert("Consent ID not found. Please set preferences first.");
             return;
         }
-
+    
         try {
             const response = await fetch("https://backendcookie-8qc1.onrender.com/api/send-mfa", {
                 method: "POST",
@@ -300,14 +191,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     "Authorization": `Bearer ${token}`,
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ email: mfaEmail, consentId })
+                body: JSON.stringify({ email: mfaEmail, consentId: consentId })
             });
-
+    
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(`Failed to send MFA code: ${response.status} - ${errorData.message}`);
             }
-
+    
             console.log("MFA code sent to user's email");
             document.getElementById("emailInputSection").classList.add("d-none");
             document.getElementById("codeInputSection").classList.remove("d-none");
@@ -318,9 +209,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Resend MFA Code
-    document.getElementById("resendCode").addEventListener("click", async e => {
+    // Resend Code
+    document.getElementById("resendCode").addEventListener("click", async function(e) {
         e.preventDefault();
+        const token = localStorage.getItem("token");
         if (!token) {
             alert("Please log in first.");
             return;
@@ -354,8 +246,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Confirm Deletion with MFA
-    document.getElementById("confirmDeleteCookie").addEventListener("click", async () => {
+    // Confirm Deletion
+    document.getElementById("confirmDeleteCookie").addEventListener("click", async function() {
+        const token = localStorage.getItem("token");
         if (!token) {
             alert("Please log in first.");
             return;
@@ -384,15 +277,24 @@ document.addEventListener("DOMContentLoaded", () => {
                 throw new Error(errorData.message || "Invalid code");
             }
 
-            const consentId = getCookie("consentId");
+            // Preserve consentId from localStorage and cookies
+            const consentId = localStorage.getItem("consentId"); // Assuming consentId is stored here
+
+            // Clear client-side cookies, preserving consentId
             document.cookie.split(";").forEach(cookie => {
                 const [name] = cookie.trim().split("=");
-                if (name !== "consentId") {
+                if (name !== "consentId") { // Skip consentId cookie
                     document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
                 }
             });
 
+            // Clear localStorage except for consentId
             localStorage.clear();
+            if (consentId) {
+                localStorage.setItem("consentId", consentId); // Restore consentId
+            }
+
+            // Reset UI settings
             document.getElementById("themeSelect").value = "system";
             document.getElementById("fontSizeSelect").value = "medium";
             document.getElementById("notificationSwitch").checked = true;
@@ -403,7 +305,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             confirmModal.hide();
             alert("Cookie preferences and location data have been deleted successfully.");
-            mfaEmail = null;
+            mfaEmail = null; // Reset after success
         } catch (error) {
             console.error("MFA verification error:", error);
             alert(error.message || "Invalid verification code. Please try again.");
@@ -411,3 +313,30 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+
+// Theme Application Function
+function applyTheme(theme) {
+    const body = document.body;
+    body.classList.remove("dark-mode");
+
+    if (theme === "dark") {
+        body.classList.add("dark-mode");
+    } else if (theme === "system") {
+        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            body.classList.add("dark-mode");
+        }
+    }
+}
+
+// Debounce Function to limit search frequency
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}

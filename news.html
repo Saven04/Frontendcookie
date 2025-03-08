@@ -403,83 +403,49 @@
                         </ul>
                     </div>
     
-                    <div class="modal-body">
-                        <div class="settings-section">
-                            <h6 class="text-muted mb-3">Privacy</h6>
-                            <ul class="list-group mb-4">
-                                <li class="list-group-item list-group-item-action">
-                                    <a href="#" id="cookieSettings" data-bs-toggle="collapse" data-bs-target="#cookiePrefsCollapse">Cookie Preferences</a>
-                                    <!-- Collapsible Cookie Preferences Section -->
-                                    <div id="cookiePrefsCollapse" class="collapse mt-2">
-                                        <div class="card card-body bg-dark text-light border-0">
-                                            <h6 class="text-muted">Cookie Types</h6>
-                                            <div class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" id="strictlyNecessary" checked disabled>
-                                                <label class="form-check-label" for="strictlyNecessary">
-                                                    Strictly Necessary <small class="text-muted">(Always Enabled)</small>
-                                                </label>
-                                            </div>
-                                            <div class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" id="performance" name="cookiePref">
-                                                <label class="form-check-label" for="performance">
-                                                    Performance <small class="text-muted">(Analytics)</small>
-                                                </label>
-                                            </div>
-                                            <div class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" id="functional" name="cookiePref">
-                                                <label class="form-check-label" for="functional">
-                                                    Functional <small class="text-muted">(Enhanced Features)</small>
-                                                </label>
-                                            </div>
-                                            <div class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" id="advertising" name="cookiePref">
-                                                <label class="form-check-label" for="advertising">
-                                                    Advertising <small class="text-muted">(Targeted Ads)</small>
-                                                </label>
-                                            </div>
-                                            <div class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" id="socialMedia" name="cookiePref">
-                                                <label class="form-check-label" for="socialMedia">
-                                                    Social Media <small class="text-muted">(Sharing)</small>
-                                                </label>
-                                            </div>
-                                            <button class="btn btn-sm btn-primary mt-3" id="saveCookiePrefs">Save Preferences</button>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="list-group-item list-group-item-action text-warning">
-                                    <a href="#" id="deleteCookieData">Delete Cookie Data</a>
-                                    <small class="text-muted ms-2">Clears cookies & location data</small>
-                                </li>
-                                <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                                    <a href="#" id="dataSharing">Data Sharing</a>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="dataSharingSwitch" checked>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    
-                        <div class="settings-section">
-                            <h6 class="text-muted mb-3">About</h6>
-                            <ul class="list-group">
-                                <li class="list-group-item list-group-item-action">
-                                    <a href="#" id="versionInfo">App Version</a>
-                                    <small class="text-muted ms-2">v2.3.1</small>
-                                </li>
-                                <li class="list-group-item list-group-item-action">
-                                    <a href="#" id="terms">Terms of Service</a>
-                                </li>
-                                <li class="list-group-item list-group-item-action">
-                                    <a href="#" id="privacy">Privacy Policy</a>
-                                </li>
-                            </ul>
-                        </div>
+                    <div class="settings-section">
+                        <h6 class="text-muted mb-3">Privacy</h6>
+                        <ul class="list-group mb-4">
+                            <li class="list-group-item list-group-item-action">
+                                <a href="#" id="cookieSettings">Cookie Preferences</a>
+                            </li>
+                            <li class="list-group-item list-group-item-action text-warning">
+                                <a href="#" id="deleteCookieData">Delete Cookie Data</a>
+                                <small class="text-muted ms-2">Clears cookies & location data</small>
+                            </li>
+                            <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                <a href="#" id="dataSharing">Data Sharing</a>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="dataSharingSwitch" checked>
+                                </div>
+                            </li>
+                        </ul>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" id="saveSettings">Save Changes</button>
+    
+                    <div class="settings-section">
+                        <h6 class="text-muted mb-3">About</h6>
+                        <ul class="list-group">
+                            <li class="list-group-item list-group-item-action">
+                                <a href="#" id="versionInfo">App Version</a>
+                                <small class="text-muted ms-2">v2.3.1</small>
+                            </li>
+                            <li class="list-group-item list-group-item-action">
+                                <a href="#" id="terms">Terms of Service</a>
+                            </li>
+                            <li class="list-group-item list-group-item-action">
+                                <a href="#" id="privacy">Privacy Policy</a>
+                            </li>
+                        </ul>
                     </div>
+                </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveSettings">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
     
     <!-- New MFA Confirmation Modal -->
     <div class="modal fade" id="deleteCookieConfirmModal" tabindex="-1" aria-labelledby="deleteCookieConfirmLabel" aria-hidden="true">
