@@ -131,6 +131,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Load General News on Page Load
     fetchNews();
+    
 
     // Delete Cookie Data Functionality
     document.getElementById("deleteCookieData").addEventListener("click", async function(e) {
@@ -141,6 +142,7 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("Please log in first to delete your data.");
             return;
         }
+
 
         // Reset modal state
         document.getElementById("emailInputSection").classList.remove("d-none");
@@ -168,7 +170,7 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
     
-        const consentId = localStorage.getItem("consentId"); // Assuming stored here
+        const consentId = getCookie("consentId"); // Fetch from cookies instead of localStorage
         if (!consentId) {
             alert("Consent ID not found. Please set preferences first.");
             return;
@@ -199,6 +201,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(";").shift();
+        return null;
+    }
     // Resend Code
     document.getElementById("resendCode").addEventListener("click", async function(e) {
         e.preventDefault();
