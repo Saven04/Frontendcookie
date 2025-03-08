@@ -472,7 +472,6 @@ h2 {
     </div>
 </div>
 
-<!-- Cookie Preferences Modal (Moved outside settingsModal) -->
 <!-- Cookie Preferences Modal -->
 <div class="modal fade" id="cookieModal" tabindex="-1" role="dialog" aria-labelledby="cookieModalLabel">
     <div class="modal-dialog">
@@ -484,8 +483,8 @@ h2 {
             <div class="modal-body">
                 <div class="mb-3">
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="essentialCookies" checked disabled>
-                        <label class="form-check-label" for="essentialCookies">Essential Cookies (Required)</label>
+                        <input class="form-check-input" type="checkbox" id="strictlyNecessaryCookies" checked disabled>
+                        <label class="form-check-label" for="strictlyNecessaryCookies">Strictly Necessary Cookies (Required)</label>
                     </div>
                     <small class="form-text text-muted">These cookies are necessary for the website to function and cannot be disabled.</small>
                 </div>
@@ -518,13 +517,14 @@ h2 {
                     <small class="form-text text-muted">These cookies allow integration with social media platforms for sharing content.</small>
                 </div>
             </div>
+            
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-primary" id="saveCookiePrefs">Save Preferences</button>
             </div>
         </div>
     </div>
-</div>
+</div>>
 
 <!-- MFA Confirmation Modal -->
 <div class="modal fade" id="deleteCookieConfirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteCookieConfirmLabel">

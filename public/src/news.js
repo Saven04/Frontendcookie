@@ -173,111 +173,128 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Cookie Preferences Functionality
     const cookieSettingsBtn = document.getElementById('cookieSettings');
-    if (cookieSettingsBtn) {
-        cookieSettingsBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            loadCookiePreferences();
-            const cookieModal = document.getElementById('cookieModal');
-            if (cookieModal && typeof bootstrap !== 'undefined') {
-                const modal = new bootstrap.Modal(cookieModal);
-                modal.show();
-                setTimeout(() => {
-                    const firstFocusable = cookieModal.querySelector('input:not([disabled]), button:not([data-bs-dismiss])');
-                    if (firstFocusable) firstFocusable.focus();
-                }, 100);
-            }
-        });
-    }
-    
-    const saveCookiePrefsBtn = document.getElementById('saveCookiePrefs');
-    if (saveCookiePrefsBtn) {
-        saveCookiePrefsBtn.addEventListener('click', function() {
-            saveCookiePreferences();
-        });
-    }
-    
-    function loadCookiePreferences() {
-        const cookiePrefs = getCookie('cookiePreferences');
-        if (!cookiePrefs) return;
-        try {
-            const preferences = JSON.parse(cookiePrefs);
-            const performanceCheckbox = document.getElementById('performanceCookies');
-            const functionalCheckbox = document.getElementById('functionalCookies');
-            const advertisingCheckbox = document.getElementById('advertisingCookies');
-            const socialMediaCheckbox = document.getElementById('socialMediaCookies');
-            if (performanceCheckbox) performanceCheckbox.checked = preferences.performance || false;
-            if (functionalCheckbox) functionalCheckbox.checked = preferences.functional || false;
-            if (advertisingCheckbox) advertisingCheckbox.checked = preferences.advertising || false;
-            if (socialMediaCheckbox) socialMediaCheckbox.checked = preferences.socialMedia || false;
-        } catch (error) {
-            console.error('Error parsing cookie preferences:', error);
+if (cookieSettingsBtn) {
+    cookieSettingsBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        loadCookiePreferences();
+        const cookieModal = document.getElementById('cookieModal');
+        if (cookieModal && typeof bootstrap !== 'undefined') {
+            const modal = new bootstrap.Modal(cookieModal);
+            modal.show();
+            setTimeout(() => {
+                const firstFocusable = cookieModal.querySelector('input:not([disabled]), button:not([data-bs-dismiss])');
+                if (firstFocusable) firstFocusable.focus();
+            }, 100);
         }
-    }
-    
-    function saveCookiePreferences() {
+    });
+}
+
+const saveCookiePrefsBtn = document.getElementById('saveCookiePrefs');
+if (saveCookiePrefsBtn) {
+    saveCookiePrefsBtn.addEventListener('click', function() {
+        saveCookiePreferences();
+    });
+}
+
+function loadCookiePreferences() {
+    const cookiePrefs = getCookie('cookiePreferences');
+    if (!cookiePrefs) return;
+    try {
+        const preferencesData = JSON.parse(cookiePrefs);
+        const preferences = preferencesData.preferences; // Access nested "preferences" object
         const performanceCheckbox = document.getElementById('performanceCookies');
         const functionalCheckbox = document.getElementById('functionalCookies');
         const advertisingCheckbox = document.getElementById('advertisingCookies');
         const socialMediaCheckbox = document.getElementById('socialMediaCookies');
-        if (!performanceCheckbox || !functionalCheckbox || !advertisingCheckbox || !socialMediaCheckbox) {
-            console.error('Cookie preference checkboxes not found');
-            alert('Error: Unable to save preferences');
-            return;
-        }
-    
-        const preferences = {
-            essential: true,
-            performance: performanceCheckbox.checked,
-            functional: functionalCheckbox.checked,
-            advertising: advertisingCheckbox.checked,
-            socialMedia: socialMediaCheckbox.checked,
-            timestamp: new Date().toISOString()
-        };
-    
-        setCookie('cookiePreferences', JSON.stringify(preferences), 365);
-        updateDatabasePreferences(preferences);
-    
-        const cookieModal = document.getElementById('cookieModal');
-        if (cookieModal && typeof bootstrap !== 'undefined') {
-            const modalInstance = bootstrap.Modal.getInstance(cookieModal);
-            if (modalInstance) {
-                modalInstance.hide();
-                // Ensure backdrop is removed
-                document.body.classList.remove('modal-open');
-                const backdrop = document.querySelector('.modal-backdrop');
-                if (backdrop) backdrop.remove();
-            }
+        if (performanceCheckbox) performanceCheckbox.checked = preferences.performance || false;
+        if (functionalCheckbox) functionalCheckbox.checked = preferences.functional || false;
+        if (advertisingCheckbox) advertisingCheckbox.checked = preferences.advertising || false;
+        if (socialMediaCheckbox) socialMediaCheckbox.checked = preferences.socialMedia || false;
+        // strictlyNecessary is always true and disabled, so no need to load it
+    } catch (error) {
+        console.error('Error parsing cookie preferences:', error);
+    }
+}
+
+function saveCookiePreferences() {
+    const performanceCheckbox = document.getElementById('performanceCookies');
+    const functionalCheckbox = document.getElementById('functionalCookies');
+    const advertisingCheckbox = document.getElementById('advertisingCookies');
+    const socialMediaCheckbox = document.getElementById('socialMediaCookies');
+    if (!performanceCheckbox || !functionalCheckbox || !advertisingCheckbox || !socialMediaCheckbox) {
+        console.error('Cookie preference checkboxes not found');
+        alert('Error: Unable to save preferences');
+        return;
+    }
+
+    const preferences = {
+        strictlyNecessary: true, // Matches the cookie key
+        performance: performanceCheckbox.checked,
+        functional: functionalCheckbox.checked,
+        advertising: advertisingCheckbox.checked,
+        socialMedia: socialMediaCheckbox.checked
+    };
+
+    // Wrap preferences in an object to match the cookie structure
+    const preferencesData = { preferences };
+
+    setCookie('cookiePreferences', JSON.stringify(preferencesData), 365);
+    updateDatabasePreferences(preferences);
+
+    const cookieModal = document.getElementById('cookieModal');
+    if (cookieModal && typeof bootstrap !== 'undefined') {
+        const modalInstance = bootstrap.Modal.getInstance(cookieModal);
+        if (modalInstance) {
+            modalInstance.hide();
+            document.body.classList.remove('modal-open');
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) backdrop.remove();
         }
     }
-    
-    // Existing updateDatabasePreferences function (unchanged)
-    function updateDatabasePreferences(preferences) {
-        const token = localStorage.getItem('token');
-        const consentId = getCookie('consentId');
-        if (!consentId) {
-            console.warn('Consent ID not found');
-            alert('Error: Consent ID not found. Please set preferences first.');
-            return;
-        }
-    
-        fetch('https://backendcookie-8qc1.onrender.com/api/update-cookie-prefs', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                ...(token && { 'Authorization': `Bearer ${token}` })
-            },
-            body: JSON.stringify({ consentId, preferences, deletedAt: null })
-        })
-        .then(response => {
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            return response.json();
-        })
-        .then(data => console.log('Preferences updated in DB:', data))
-        .catch(error => {
-            console.error('Error updating preferences:', error);
-            alert('Failed to save preferences to the server. Please try again.');
-        });
+}
+
+function updateDatabasePreferences(preferences) {
+    const token = localStorage.getItem('token');
+    const consentId = getCookie('consentId');
+    if (!consentId) {
+        console.warn('Consent ID not found');
+        alert('Error: Consent ID not found. Please set preferences first.');
+        return;
     }
+
+    fetch('https://backendcookie-8qc1.onrender.com/api/update-cookie-prefs', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            ...(token && { 'Authorization': `Bearer ${token}` })
+        },
+        body: JSON.stringify({ consentId, preferences, deletedAt: null })
+    })
+    .then(response => {
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        return response.json();
+    })
+    .then(data => console.log('Preferences updated in DB:', data))
+    .catch(error => {
+        console.error('Error updating preferences:', error);
+        alert('Failed to save preferences to the server. Please try again.');
+    });
+}
+
+function setCookie(name, value, days) {
+    const expires = new Date();
+    expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+    document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+}
+
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    return parts.length === 2 ? parts.pop().split(';').shift() : null;
+}
+
+
+
     // Delete Cookie Data Functionality
     const deleteCookieDataBtn = document.getElementById("deleteCookieData");
     if (deleteCookieDataBtn) {
