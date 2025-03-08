@@ -5,159 +5,145 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Privacy Policy</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Google Fonts: Roboto -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        /* Improved Styling for Privacy Policy Page */
         body {
             font-family: 'Roboto', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #000000; /* Dark background */
-            color: #f7f7f7; /* Light text for contrast */
+            background-color: #000000;
+            color: #f7f7f7;
             line-height: 1.6;
         }
-
         .container {
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 30px;
-            background-color: #1a1a1a; /* Dark container background */
+            background-color: #1a1a1a;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
-
+        h1, h2 {
+            color: #f44336;
+        }
         h1 {
-            font-size: 2.5rem;
-            color: #f44336; /* Accent color */
-            text-align: center;
-            margin-bottom: 20px;
             border-bottom: 2px solid #f44336;
-            padding-bottom: 10px;
         }
-
-        h2 {
-            font-size: 1.8rem;
-            color: #f44336; /* Accent color */
-            margin-top: 30px;
-            margin-bottom: 15px;
-        }
-
         h3 {
-            font-size: 1.4rem;
-            color: #f7f7f7; /* Light text */
-            margin-top: 20px;
-            margin-bottom: 10px;
+            color: #f7f7f7;
         }
-
-        p {
-            font-size: 1rem;
-            color: #f7f7f7; /* Light text */
-            margin-bottom: 15px;
-        }
-
-        ul {
-            padding-left: 20px;
-            margin-bottom: 15px;
-        }
-
-        ul li {
-            margin-bottom: 10px;
-        }
-
         a {
-            color: #f44336; /* Accent color */
-            text-decoration: none;
+            color: #f44336;
             font-weight: bold;
         }
-
         a:hover {
+            color: #ff6659;
             text-decoration: underline;
         }
-
         .footer {
-            text-align: center;
-            margin-top: 40px;
-            font-size: 0.9rem;
             color: #777;
         }
-
         .footer a {
-            color: #f44336; /* Accent color */
-            text-decoration: none;
-            font-weight: bold;
+            color: #f44336;
         }
-
         .footer a:hover {
-            text-decoration: underline;
+            color: #ff6659;
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <h1>Privacy Policy</h1>
-        <p><em>Last Updated: [Insert Date]</em></p>
+    <div class="container my-5 p-4">
+        <h1 class="text-center mb-4 pb-2">Privacy Policy</h1>
+        <p class="text-center"><em>Last Updated: March 08, 2025</em></p>
 
-        <h2>1. Introduction</h2>
-        <p>Welcome to [Your Company Name] ("we", "us", "our"). This Privacy Policy outlines how we collect, use, disclose, and protect your personal information when you visit our website, [yourwebsite.com], and use our services. By using our website, you agree to the terms of this Privacy Policy.</p>
+        <h2 class="mt-5">1. Introduction</h2>
+        <p>Welcome to NewsHub ("we", "us", "our"). This Privacy Policy explains how we collect, use, disclose, and protect your personal information when you visit our website, [yourwebsite.com], and use our services, including cookie management and location data features. By using our website, you agree to this Privacy Policy.</p>
 
-        <h2>2. Information We Collect</h2>
+        <h2 class="mt-5">2. Information We Collect</h2>
         <p>We collect the following types of information:</p>
-        <ul>
-            <li><strong>Personal Information:</strong> Name, email address, phone number, and other details you provide when registering, subscribing, or contacting us.</li>
-            <li><strong>Usage Data:</strong> Information about how you interact with our website, such as IP address, browser type, pages visited, and time spent on the site.</li>
-            <li><strong>Cookies and Tracking Technologies:</strong> We use cookies to enhance your experience. For more details, please refer to our <a href="cookie-policy.html">Cookie Policy</a>.</li>
+        <ul class="list-unstyled ps-4">
+            <li><strong>Personal Information:</strong> Email address provided during multi-factor authentication (MFA) or account actions.</li>
+            <li><strong>Cookie Preferences:</strong> Your consent ID and preferences (e.g., strictly necessary, performance, functional, advertising, social media).</li>
+            <li><strong>Location Data:</strong> IP address, ISP, city, country, latitude, and longitude, linked to your consent ID.</li>
+            <li><strong>Usage Data:</strong> Interactions with our site (e.g., pages visited), collected via cookies if consented.</li>
+            <li><strong>Cookies:</strong> See our <a href="cookie-policy.html">Cookie Policy</a> for details.</li>
         </ul>
 
-        <h2>3. How We Use Your Information</h2>
-        <p>We use your information for the following purposes:</p>
-        <ul>
-            <li>To provide, maintain, and improve our services.</li>
-            <li>To communicate with you, including responding to inquiries and sending updates.</li>
-            <li>To personalize your experience and show relevant content.</li>
-            <li>To analyze website usage and improve performance.</li>
-            <li>To send promotional emails (you can opt-out at any time).</li>
+        <h2 class="mt-5">3. How We Use Your Information</h2>
+        <p>We use your information to:</p>
+        <ul class="list-unstyled ps-4">
+            <li>Provide and improve our news delivery and user settings.</li>
+            <li>Authenticate deletion requests via MFA.</li>
+            <li>Manage cookie preferences.</li>
+            <li>Analyze usage (if performance cookies are enabled).</li>
+            <li>Ensure security and legal compliance.</li>
         </ul>
 
-        <h2>4. Sharing Your Information</h2>
-        <p>We do not sell or rent your personal information. However, we may share it with:</p>
-        <ul>
-            <li><strong>Service Providers:</strong> Trusted third parties who assist us in operating our website and providing services (e.g., hosting, analytics).</li>
-            <li><strong>Legal Obligations:</strong> When required by law or to protect our rights and safety.</li>
-            <li><strong>Business Transfers:</strong> In the event of a merger, acquisition, or sale of assets, your information may be transferred to the new owner.</li>
+        <h2 class="mt-5">4. Cookie Management</h2>
+        <h3>4.1 Types of Cookies</h3>
+        <p>We use these cookie categories, manageable in our settings:</p>
+        <ul class="list-unstyled ps-4">
+            <li><strong>Strictly Necessary:</strong> Essential for functionality (e.g., authentication). Always enabled.</li>
+            <li><strong>Performance:</strong> Tracks analytics (optional).</li>
+            <li><strong>Functional:</strong> Enhances features (optional).</li>
+            <li><strong>Advertising:</strong> Targets ads (optional).</li>
+            <li><strong>Social Media:</strong> Integrates social platforms (optional).</li>
         </ul>
 
-        <h2>5. Your Data Protection Rights</h2>
-        <p>Under the GDPR, you have the following rights:</p>
-        <ul>
-            <li><strong>Access:</strong> Request a copy of the personal data we hold about you.</li>
-            <li><strong>Rectification:</strong> Request corrections to inaccurate or incomplete data.</li>
-            <li><strong>Erasure:</strong> Request deletion of your personal data under certain conditions.</li>
-            <li><strong>Restrict Processing:</strong> Request restriction of processing your data.</li>
-            <li><strong>Object:</strong> Object to the processing of your data for specific purposes.</li>
-            <li><strong>Data Portability:</strong> Request a copy of your data in a structured, machine-readable format.</li>
+        <h3>4.2 Managing Preferences</h3>
+        <p>You can update preferences in the "Settings" section. Non-essential cookies are off by default unless opted-in. Deleting cookie data resets non-essential preferences to "off," preserving your consent ID and strictly necessary settings.</p>
+
+        <h3>4.3 Retention</h3>
+        <p>Cookie preferences are kept for 2 years unless deleted. Upon deletion request, non-essential preferences are disabled immediately, with records removed after 2 years.</p>
+
+        <h2 class="mt-5">5. Location Data Management</h2>
+        <h3>5.1 Collection and Use</h3>
+        <p>Location data (IP address, ISP, city, country, latitude, longitude) is collected for service enhancement and security, tied to your consent ID.</p>
+
+        <h3>5.2 Deletion</h3>
+        <p>Upon a "Delete Cookie Data" request, location data is marked as deleted with a timestamp. It is retained for 90 days for security purposes, during which it is not processed, and is permanently deleted thereafter.</p>
+
+        <h2 class="mt-5">6. Sharing Your Information</h2>
+        <p>We do not sell or rent your data. It may be shared with:</p>
+        <ul class="list-unstyled ps-4">
+            <li><strong>Service Providers:</strong> For hosting, email (MFA), and analytics (if consented).</li>
+            <li><strong>Legal Obligations:</strong> As required by law or for safety.</li>
+            <li><strong>Business Transfers:</strong> In mergers or acquisitions.</li>
         </ul>
-        <p>To exercise these rights, please contact us at [Your Contact Email].</p>
 
-        <h2>6. Data Security</h2>
-        <p>We implement robust security measures to protect your personal information from unauthorized access, alteration, disclosure, or destruction. However, no method of transmission over the internet is 100% secure, and we cannot guarantee absolute security.</p>
+        <h2 class="mt-5">7. Your Data Protection Rights</h2>
+        <p>Under GDPR, you have these rights:</p>
+        <ul class="list-unstyled ps-4">
+            <li><strong>Access:</strong> Request your data (e.g., cookie preferences, location).</li>
+            <li><strong>Rectification:</strong> Correct inaccuracies.</li>
+            <li><strong>Erasure:</strong> Request deletion—non-essential cookies reset immediately, location data retained 90 days.</li>
+            <li><strong>Restrict Processing:</strong> Limit data use.</li>
+            <li><strong>Object:</strong> Oppose processing (e.g., analytics).</li>
+            <li><strong>Data Portability:</strong> Get your data in a readable format.</li>
+        </ul>
+        <p>Contact us at <a href="mailto:privacy@newshub.com">privacy@newshub.com</a> to exercise these rights.</p>
 
-        <h2>7. Third-Party Links</h2>
-        <p>Our website may contain links to third-party websites. We are not responsible for the privacy practices or content of these sites. We encourage you to review their privacy policies before providing any personal information.</p>
+        <h2 class="mt-5">8. Data Security</h2>
+        <p>We use encryption and access controls to protect your data, though no online system is fully secure.</p>
 
-        <h2>8. Changes to This Privacy Policy</h2>
-        <p>We may update this Privacy Policy from time to time. Any changes will be posted on this page, and we will notify you of significant updates. Please review this policy periodically to stay informed.</p>
+        <h2 class="mt-5">9. Third-Party Links</h2>
+        <p>Links to third-party sites (e.g., news sources) are not covered by this policy.</p>
 
-        <h2>9. Contact Us</h2>
-        <p>If you have any questions or concerns about this Privacy Policy or our data practices, please contact us:</p>
-        <p><strong>Email:</strong> <a href="mailto:privacy@yourcompany.com">privacy@yourcompany.com</a></p>
-        <p><strong>Address:</strong> [Your Company Address]</p>
+        <h2 class="mt-5">10. Changes to This Privacy Policy</h2>
+        <p>Updates will be posted here, with significant changes notified via email or site notice.</p>
+
+        <h2 class="mt-5">11. Contact Us</h2>
+        <p>For inquiries:</p>
+        <p><strong>Email:</strong> <a href="mailto:privacy@newshub.com">privacy@newshub.com</a></p>
+        <p><strong>Address:</strong> 123 News Lane, Info City, ST 45678</p>
     </div>
 
-    <div class="footer">
-        <p>© [Year] [Your Company Name]. All rights reserved.</p>
+    <footer class="footer text-center py-4">
+        <p>© 2025 NewsHub. All rights reserved.</p>
         <p><a href="cookie-policy.html">Cookie Policy</a> | <a href="terms-of-service.html">Terms of Service</a></p>
-    </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS (for responsiveness) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 
 </html>
