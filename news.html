@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Latest News</title>
-   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 </head>
 <body>
@@ -58,7 +58,6 @@
                             <label class="form-label">Username</label>
                             <input type="text" class="form-control" id="username">
                         </div>
-    
                         <!-- Email Field -->
                         <div class="mb-3">
                             <label class="form-label">Email</label>
@@ -72,7 +71,6 @@
                                 <input type="text" class="form-control" id="emailOtp" placeholder="Enter OTP">
                             </div>
                         </div>
-    
                         <!-- New Password Field -->
                         <div class="mb-3">
                             <label class="form-label">New Password</label>
@@ -86,13 +84,11 @@
                                 <input type="text" class="form-control" id="passwordOtp" placeholder="Enter OTP">
                             </div>
                         </div>
-    
                         <!-- Profile Picture Field -->
                         <div class="mb-3">
                             <label class="form-label">Profile Picture</label>
                             <input type="file" class="form-control" id="profilePicUpload">
                         </div>
-    
                         <!-- Delete Account Section -->
                         <div class="mb-3">
                             <button type="button" class="btn btn-danger w-100" id="deleteAccountBtn">
@@ -105,7 +101,6 @@
                                 <button class="btn btn-danger mt-2 w-100" id="confirmDeleteAccountBtn">Confirm Deletion</button>
                             </div>
                         </div>
-    
                         <!-- Save Changes Button -->
                         <div class="d-flex justify-content-end">
                             <button type="submit" class="btn btn-primary">Save Changes</button>
@@ -205,79 +200,70 @@
         </div>
     </div>
 
-
- <!-- Delete Data Modal -->
- <div class="modal fade" id="deleteDataModal" tabindex="-1" aria-labelledby="deleteDataModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <!-- Modal Header -->
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title" id="deleteDataModalLabel">Delete My Data</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-
-            <!-- Modal Body -->
-            <div class="modal-body">
-                <p class="text-danger fw-bold mb-3">
-                    <i class="bi bi-exclamation-triangle-fill me-2"></i> 
-                    Warning: This action is irreversible and will permanently delete all your data.
-                </p>
-
-                <!-- Email Input -->
-                <div class="mb-3">
-                    <label for="deleteCookieEmail" class="form-label">Email Address</label>
-                    <div class="input-group">
-                        <input type="email" class="form-control" id="deleteCookieEmail" placeholder="Enter your email" required>
-                        <button class="btn btn-outline-secondary" type="button" id="sendDeleteDataOtpBtn">
-                            Send OTP
-                        </button>
+    <!-- Delete Data Modal -->
+    <div class="modal fade" id="deleteDataModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Delete My Data</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-danger fw-bold mb-3">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i> 
+                        Warning: This action is irreversible and will permanently delete all your data.
+                    </p>
+                    <!-- Email Input -->
+                    <div class="mb-3">
+                        <label class="form-label">Email Address</label>
+                        <div class="input-group">
+                            <input type="email" class="form-control" id="deleteCookieEmail" placeholder="Enter your email" required>
+                            <button class="btn btn-outline-secondary" type="button" id="sendDeleteDataOtpBtn">
+                                Send OTP
+                            </button>
+                        </div>
+                        <small class="text-muted d-block mt-2">
+                            An OTP will be sent to your email for verification.
+                        </small>
+                        <div id="emailError" class="invalid-feedback">Please enter a valid email address.</div>
                     </div>
-                    <small class="text-muted d-block mt-2">
-                        An OTP will be sent to your email for verification.
-                    </small>
-                    <div id="emailError" class="invalid-feedback">Please enter a valid email address.</div>
-                </div>
-
-                <!-- OTP Input -->
-                <div class="mb-3 d-none" id="otpSection">
-                    <label for="deleteCookieOTP" class="form-label">One-Time Password (OTP)</label>
-                    <div class="input-group">
-                        <input type="text" class="form-control" id="deleteCookieOTP" placeholder="Enter OTP" required>
-                        <button class="btn btn-outline-secondary" type="button" id="resendOtpBtn">
-                            Resend OTP
-                        </button>
+                    <!-- OTP Input -->
+                    <div class="mb-3 d-none" id="otpSection">
+                        <label class="form-label">One-Time Password (OTP)</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="deleteCookieOTP" placeholder="Enter OTP" required>
+                            <button class="btn btn-outline-secondary" type="button" id="resendOtpBtn">
+                                Resend OTP
+                            </button>
+                        </div>
+                        <small class="text-muted d-block mt-2">
+                            Didn't receive the OTP? Click "Resend OTP".
+                        </small>
+                        <div id="otpError" class="invalid-feedback">Please enter a valid OTP.</div>
                     </div>
-                    <small class="text-muted d-block mt-2">
-                        Didn't receive the OTP? Click "Resend OTP".
-                    </small>
-                    <div id="otpError" class="invalid-feedback">Please enter a valid OTP.</div>
-                </div>
-
-                <!-- Loading Indicator -->
-                <div id="loadingIndicator" class="d-none text-center">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
+                    <!-- Loading Indicator -->
+                    <div id="loadingIndicator" class="d-none text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Processing your request...</p>
                     </div>
-                    <p class="mt-2">Processing your request...</p>
+                    <!-- Error Message -->
+                    <div id="errorMessage" class="alert alert-danger d-none mt-3" role="alert">
+                        <i class="bi bi-x-circle me-2"></i> 
+                        <span id="errorMessageText">An error occurred. Please try again.</span>
+                    </div>
                 </div>
-
-                <!-- Error Message -->
-                <div id="errorMessage" class="alert alert-danger d-none mt-3" role="alert">
-                    <i class="bi bi-x-circle me-2"></i> 
-                    <span id="errorMessageText">An error occurred. Please try again.</span>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger d-none" id="confirmDeleteCookieDataBtn">
+                        Confirm Deletion
+                    </button>
                 </div>
-            </div>
-
-            <!-- Modal Footer -->
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger d-none" id="confirmDeleteCookieDataBtn">
-                    Confirm Deletion
-                </button>
             </div>
         </div>
     </div>
-</div>
+
     <!-- Delete Account Modal -->
     <div class="modal fade" id="deleteAccountModal" tabindex="-1">
         <div class="modal-dialog">
@@ -288,27 +274,23 @@
                 </div>
                 <div class="modal-body">
                     <p>Are you sure you want to delete your account? All data will be permanently removed.</p>
-    
                     <!-- Email Input -->
                     <div class="mb-3">
                         <label class="form-label">Email</label>
                         <div class="input-group">
                             <input type="email" class="form-control" id="deleteAccountEmail" placeholder="Enter your email">
-
                             <button class="btn btn-outline-secondary" type="button" id="sendOtpBtn">
                                 Send OTP
                             </button>
                         </div>
                         <small class="text-muted d-block mt-2">An OTP will be sent to your email for verification.</small>
                     </div>
-    
                     <!-- OTP Input -->
                     <div class="mb-3 d-none" id="otpSection">
                         <label class="form-label">OTP</label>
                         <input type="text" class="form-control" id="deleteAccountOTP" placeholder="Enter OTP">
                         <small class="text-muted d-block mt-2">Check your email for the OTP.</small>
                     </div>
-    
                     <!-- Confirm Deletion Button -->
                     <button type="button" class="btn btn-danger w-100 d-none" id="confirmDeleteAccountBtn">
                         Confirm Account Deletion
@@ -317,6 +299,7 @@
             </div>
         </div>
     </div>
+
     <!-- News Categories -->
     <div class="container mt-3">
         <h2>Latest News</h2>
@@ -338,14 +321,63 @@
         <div id="newsContainer" class="row"></div>
     </div>
 
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-
-
-
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     'use strict';
+
+    // General Modal Handling
+    const modalTriggers = document.querySelectorAll('[data-bs-toggle="modal"]');
+    modalTriggers.forEach(trigger => {
+        trigger.addEventListener('click', function () {
+            const targetId = this.getAttribute('data-bs-target');
+            const modalElement = document.querySelector(targetId);
+
+            if (modalElement) {
+                const modalInstance = new bootstrap.Modal(modalElement);
+                modalInstance.show();
+            }
+        });
+    });
+
+    // Close Modals Programmatically
+    const closeButtons = document.querySelectorAll('[data-bs-dismiss="modal"]');
+    closeButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const modalElement = this.closest('.modal');
+            if (modalElement) {
+                const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                modalInstance.hide();
+
+                // Remove leftover backdrop
+                const backdrop = document.querySelector('.modal-backdrop');
+                if (backdrop) {
+                    backdrop.remove();
+                }
+
+                // Reset body styles
+                document.body.classList.remove('modal-open');
+                document.body.style.paddingRight = '';
+            }
+        });
+    });
+
+    // Nested Modal Handling
+    document.querySelectorAll('[data-bs-target^="#"]').forEach(trigger => {
+        trigger.addEventListener('click', function () {
+            const currentModal = document.querySelector('.modal.show');
+            if (currentModal) {
+                const modalInstance = bootstrap.Modal.getInstance(currentModal);
+                modalInstance.hide();
+            }
+
+            const target = document.querySelector(this.getAttribute('data-bs-target'));
+            if (target) {
+                const modal = new bootstrap.Modal(target);
+                modal.show();
+            }
+        });
+    });
 
     // Profile Modal: Handle Profile Form Submission
     const profileForm = document.getElementById('profileForm');
@@ -370,8 +402,9 @@ document.addEventListener("DOMContentLoaded", function () {
             reader.readAsDataURL(profilePicUpload.files[0]);
         }
 
-        // Close modal
-        bootstrap.Modal.getInstance(document.getElementById('profileModal')).hide();
+        // Close modal using Bootstrap's modal instance
+        const modalInstance = bootstrap.Modal.getInstance(document.getElementById('profileModal'));
+        modalInstance.hide();
     });
 
     // Delete Data Modal: Send OTP Handling
@@ -444,35 +477,15 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // General Modal Handling
-    const modalTriggers = document.querySelectorAll('[data-bs-toggle="modal"]');
-    modalTriggers.forEach(trigger => {
-        trigger.addEventListener('click', function () {
-            const targetId = this.getAttribute('data-bs-target');
-            const modalElement = document.querySelector(targetId);
-
-            if (modalElement) {
-                const modalInstance = new bootstrap.Modal(modalElement);
-                modalInstance.show();
-            }
-        });
-    });
-
-    // Close Modals Programmatically
-    const closeButtons = document.querySelectorAll('[data-bs-dismiss="modal"]');
-    closeButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            const modalElement = this.closest('.modal');
-            if (modalElement) {
-                const modalInstance = bootstrap.Modal.getInstance(modalElement);
-                modalInstance.hide();
-            }
-        });
-    });
-
-    // Nested Modal Handling
+    // Handle Nested Modals Properly
     document.querySelectorAll('[data-bs-target^="#"]').forEach(trigger => {
         trigger.addEventListener('click', function () {
+            const currentModal = document.querySelector('.modal.show');
+            if (currentModal) {
+                const modalInstance = bootstrap.Modal.getInstance(currentModal);
+                modalInstance.hide();
+            }
+
             const target = document.querySelector(this.getAttribute('data-bs-target'));
             if (target) {
                 const modal = new bootstrap.Modal(target);
@@ -480,9 +493,13 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     });
+
+    // Ensure Backdrop is Removed on Page Load
+    document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+    document.body.classList.remove('modal-open');
+    document.body.style.paddingRight = '';
 });
 </script>
-
 <script src="./public/src/news.js"></script>
 <script type="module" src="./public/src/otp.js"></script>
 <script type="module" src="./public/src/delete.js"></script>
