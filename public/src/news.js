@@ -82,17 +82,17 @@ function debounce(func, wait) {
     };
 }
 
+// Helper to get cookie by name
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+    return null;
+}
+
 // Single DOMContentLoaded listener
 document.addEventListener("DOMContentLoaded", function () {
     const token = localStorage.getItem("token");
-
-    // Helper to get cookie by name
-    function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(";").shift();
-        return null;
-    }
 
     // Category Buttons Event Listeners
     document.querySelectorAll(".category-btn").forEach(button => {
@@ -122,7 +122,6 @@ document.addEventListener("DOMContentLoaded", function () {
     // Settings Modal Functionality
     const settingsModal = document.getElementById("settingsModal");
     if (settingsModal) {
-        // Theme Selection
         const themeSelect = document.getElementById("themeSelect");
         const savedTheme = localStorage.getItem("theme") || "system";
         themeSelect.value = savedTheme;
@@ -134,7 +133,6 @@ document.addEventListener("DOMContentLoaded", function () {
             localStorage.setItem("theme", theme);
         });
 
-        // Font Size Selection
         const fontSizeSelect = document.getElementById("fontSizeSelect");
         const savedFontSize = localStorage.getItem("fontSize") || "medium";
         fontSizeSelect.value = savedFontSize;
@@ -146,21 +144,18 @@ document.addEventListener("DOMContentLoaded", function () {
             localStorage.setItem("fontSize", size);
         });
 
-        // Notification Switch
         const notificationSwitch = document.getElementById("notificationSwitch");
         notificationSwitch.checked = localStorage.getItem("notifications") !== "false";
         notificationSwitch.addEventListener("change", function () {
             localStorage.setItem("notifications", this.checked);
         });
 
-        // Data Sharing Switch
         const dataSharingSwitch = document.getElementById("dataSharingSwitch");
         dataSharingSwitch.checked = localStorage.getItem("dataSharing") !== "false";
         dataSharingSwitch.addEventListener("change", function () {
             localStorage.setItem("dataSharing", this.checked);
         });
 
-        // Save Settings Button
         document.getElementById("saveSettings").addEventListener("click", () => {
             bootstrap.Modal.getInstance(settingsModal).hide();
         });
@@ -169,12 +164,10 @@ document.addEventListener("DOMContentLoaded", function () {
     // Load General News on Page Load
     fetchNews();
 
-    // Cookie Preferences Logic
+    // Cookie Preferences Logic (Load on page load)
     const consentId = getCookie("consentId");
     let preferences = {};
 
-    // Load preferences from cookies
-    const cookiePrefs = getCookie("cookiePrefs");
     if (cookiePrefs) {
         try {
             preferences = JSON.parse(cookiePrefs);
@@ -185,19 +178,16 @@ document.addEventListener("DOMContentLoaded", function () {
         } catch (error) {
             console.error("Error parsing cookiePrefs:", error);
         }
-    } else if (consentId && token) { // Only fetch if both consentId and token are present
+    } else if (consentId && token) {
         fetch("https://backendcookie-8qc1.onrender.com/api/cookie-prefs", {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json",
-                "Consent-Id": consentId // Explicitly send consentId in header
+                "Content-Type": "application/json"
             }
         })
         .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
             return response.json();
         })
         .then(data => {
@@ -216,9 +206,28 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Save Cookie Preferences
     document.getElementById("saveCookiePrefs").addEventListener("click", async function() {
+        const token = localStorage.getItem("token");
         if (!token) {
             alert("Please log in to save cookie preferences.");
             return;
+        }
+
+        const consentId = getCookie("consentId");
+        if (!consentId) {
+            alert("No consent ID found in cookies. Please log in or set initial preferences.");
+            return;
+        }
+
+        const cookiePrefs = getCookie("cookiePrefs");
+        let existingPrefs = {};
+        if (cookiePrefs) {
+            try {
+                existingPrefs = JSON.parse(cookiePrefs);
+                console.log("Existing preferences from cookies:", existingPrefs);
+            } catch (error) {
+                console.error("Error parsing existing cookiePrefs:", error);
+                existingPrefs = { strictlyNecessary: true, performance: false, functional: false, advertising: false, socialMedia: false };
+            }
         }
 
         const preferences = {
@@ -236,33 +245,22 @@ document.addEventListener("DOMContentLoaded", function () {
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                    "Consent-Id": consentId || generateConsentId() // Send existing or new consentId
+                    "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ consentId: consentId || generateConsentId(), preferences })
+                body: JSON.stringify({ consentId, preferences })
             });
 
             if (!response.ok) {
-                throw new Error("Failed to save cookie preferences to database");
+                const errorData = await response.json();
+                throw new Error(`Failed to update cookie preferences: ${response.status} - ${errorData.message || "Unknown error"}`);
             }
 
-            const data = await response.json();
-            if (!consentId) {
-                document.cookie = `consentId=${data.consentId}; path=/; max-age=${60 * 60 * 24 * 730}`;
-            }
-            alert("Cookie preferences saved successfully!");
+            alert("Cookie preferences updated successfully!");
         } catch (error) {
-            console.error("Error saving cookie preferences:", error);
-            alert("Failed to save preferences. Please try again.");
+            console.error("Error updating cookie preferences:", error);
+            alert(`Failed to update preferences: ${error.message}. Please try again.`);
         }
     });
-
-    function generateConsentId() {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        });
-    }
 
     // Delete Cookie Data Functionality
     document.getElementById("deleteCookieData").addEventListener("click", async function(e) {
@@ -273,7 +271,6 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        // Reset modal state
         document.getElementById("emailInputSection").classList.remove("d-none");
         document.getElementById("codeInputSection").classList.add("d-none");
         document.getElementById("confirmDeleteCookie").classList.add("d-none");
@@ -291,19 +288,19 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("Please log in first.");
             return;
         }
-    
+
         mfaEmail = document.getElementById("mfaEmail").value.trim();
         if (!mfaEmail || !mfaEmail.includes("@")) {
             alert("Please enter a valid email address.");
             return;
         }
-    
+
         const consentId = getCookie("consentId");
         if (!consentId) {
             alert("Consent ID not found. Please set preferences first.");
             return;
         }
-    
+
         try {
             const response = await fetch("https://backendcookie-8qc1.onrender.com/api/send-mfa", {
                 method: "POST",
@@ -311,14 +308,14 @@ document.addEventListener("DOMContentLoaded", function () {
                     "Authorization": `Bearer ${token}`,
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ email: mfaEmail, consentId: consentId })
+                body: JSON.stringify({ email: mfaEmail, consentId })
             });
-    
+
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(`Failed to send MFA code: ${response.status} - ${errorData.message}`);
             }
-    
+
             console.log("MFA code sent to user's email");
             document.getElementById("emailInputSection").classList.add("d-none");
             document.getElementById("codeInputSection").classList.remove("d-none");
@@ -395,7 +392,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 throw new Error(errorData.message || "Invalid code");
             }
 
-            const consentId = getCookie("consentId"); // Preserve consentId
+            // Preserve consentId in cookies, not localStorage
+            const consentId = getCookie("consentId");
             document.cookie.split(";").forEach(cookie => {
                 const [name] = cookie.trim().split("=");
                 if (name !== "consentId") {
@@ -404,10 +402,6 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
             localStorage.clear();
-            if (consentId) {
-                localStorage.setItem("consentId", consentId); // This line was incorrectly preserving from localStorage
-            }
-
             document.getElementById("themeSelect").value = "system";
             document.getElementById("fontSizeSelect").value = "medium";
             document.getElementById("notificationSwitch").checked = true;
