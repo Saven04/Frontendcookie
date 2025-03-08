@@ -1,12 +1,8 @@
 // Send OTP Button Click Handler
-document.getElementById('sendDeleteDataOtpBtn')?.addEventListener('click', async () => {
-    const email = document.getElementById('deleteCookieEmail').value.trim();
+// otp.js
 
-    if (!email) {
-        alert('Please enter a valid email address.');
-        return;
-    }
-
+// Define the sendOtp function
+export async function sendOtp(email) {
     try {
         const response = await fetch('https://backendcookie-8qc1.onrender.com/send-otp', {
             method: 'POST',
@@ -20,16 +16,17 @@ document.getElementById('sendDeleteDataOtpBtn')?.addEventListener('click', async
         }
 
         const result = await response.json();
-        if (result.success) {
-            alert(`An OTP has been sent to ${email}. Please check your inbox.`);
-            document.getElementById('otpSection').classList.remove('d-none'); // Show OTP input section
-        } else {
-            alert('Failed to send OTP: ' + result.message);
-        }
+        return result;
     } catch (error) {
-        alert('Error sending OTP: ' + error.message);
+        console.error('Error sending OTP:', error.message);
+        throw error;
     }
-});
+}
+
+// Define other functions (e.g., verifyOtp) if needed
+export async function verifyOtp(email, otp) {
+    // Similar implementation for verifying OTP
+}
 
 // Confirm Deletion Button Click Handler
 document.getElementById('confirmDeleteCookieDataBtn')?.addEventListener('click', async () => {
