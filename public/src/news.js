@@ -1,106 +1,5 @@
-const newsContainer = document.getElementById("newsContainer");
-const searchInput = document.getElementById("searchInput");
+// ... (all previous code remains the same until DOMContentLoaded)
 
-// Variable to store email during MFA flow
-let mfaEmail = null;
-
-// Function to fetch news from the backend
-async function fetchNews(category = "general") {
-    try {
-        const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/news?category=${category}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
-        if (!response.ok) {
-            const errorData = await response.text(); // Raw text for debugging
-            throw new Error(`HTTP error! Status: ${response.status}, Response: ${errorData}`);
-        }
-        const articles = await response.json();
-        console.log("Fetched news articles:", articles); // Debug log
-        displayNews(articles);
-    } catch (error) {
-        console.error("Error fetching news:", error);
-        newsContainer.innerHTML = `
-            <div class="col-12 text-center py-4">
-                <p class="text-danger">Failed to load news: ${error.message}. Please try again later.</p>
-            </div>
-        `;
-    }
-}
-
-// Function to display news
-function displayNews(articles) {
-    newsContainer.innerHTML = "";
-    if (!articles || !Array.isArray(articles) || articles.length === 0) {
-        newsContainer.innerHTML = `
-            <div class="col-12 text-center py-4">
-                <p>No news articles available.</p>
-            </div>
-        `;
-        return;
-    }
-
-    articles.forEach(article => {
-        const newsItem = `
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm">
-                    <img src="${article.urlToImage || 'default.jpg'}" class="card-img-top" alt="${article.title || 'News Image'}">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">${article.title || 'Untitled'}</h5>
-                        <p class="card-text flex-grow-1">${article.description || 'No description available.'}</p>
-                        <a href="${article.url}" target="_blank" class="btn btn-primary mt-auto">Read More</a>
-                    </div>
-                </div>
-            </div>
-        `;
-        newsContainer.innerHTML += newsItem;
-    });
-}
-
-
-
-
-// Apply font size settings
-function applyFontSize(size) {
-    document.body.style.fontSize = size === 'small' ? '14px' : size === 'large' ? '18px' : '16px';
-}
-
-// Theme Application Function
-function applyTheme(theme) {
-    const body = document.body;
-    body.classList.remove("dark-mode");
-    if (theme === "dark") {
-        body.classList.add("dark-mode");
-    } else if (theme === "system") {
-        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-            body.classList.add("dark-mode");
-        }
-    }
-}
-
-// Debounce Function to limit search frequency
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => {
-            clearTimeout(timeout);
-            func(...args);
-        }, wait);
-    };
-}
-
-// Helper to get cookie by name
-function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(";").shift();
-    return null;
-}
-
-// Single DOMContentLoaded listener
 document.addEventListener("DOMContentLoaded", () => {
     const token = localStorage.getItem("token");
 
@@ -168,6 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // Cookie Preferences Logic
     const consentId = getCookie("consentId");
     let preferences = {};
     const cookiePrefs = getCookie("cookiePrefs");
@@ -209,6 +109,8 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("No consentId or token found, skipping API fetch for cookie preferences");
     }
 
+    // Load General News on Page Load
+    fetchNews();
 
     // Save Cookie Preferences
     document.getElementById("saveCookiePrefs").addEventListener("click", async () => {
@@ -411,6 +313,3 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
-
-// Load General News on Page Load
-    fetchNews();
