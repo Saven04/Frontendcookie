@@ -50,5 +50,38 @@ searchInput.addEventListener("input", () => {
     });
 });
 
+
+document.addEventListener("DOMContentLoaded", function () {
+    const themeToggleBtn = document.getElementById("themeToggle");
+    const body = document.body;
+
+    // Load saved theme preference
+    if (localStorage.getItem("theme") === "dark") {
+        body.classList.add("dark-mode");
+    }
+
+    // Toggle theme mode
+    themeToggleBtn.addEventListener("click", function () {
+        body.classList.toggle("dark-mode");
+
+        if (body.classList.contains("dark-mode")) {
+            localStorage.setItem("theme", "dark");
+        } else {
+            localStorage.setItem("theme", "light");
+        }
+    });
+
+    // Open Profile Modal
+    document.getElementById("profileLink").addEventListener("click", function () {
+        new bootstrap.Modal(document.getElementById("profileModal")).show();
+    });
+
+    // Open Settings Modal
+    document.getElementById("settingsDropdown").addEventListener("click", function () {
+        new bootstrap.Modal(document.getElementById("settingsModal")).show();
+    });
+});
+
+
 // Load General News on Page Load
 fetchNews();
