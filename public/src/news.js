@@ -59,6 +59,9 @@ function displayNews(articles) {
     });
 }
 
+
+
+
 // Apply font size settings
 function applyFontSize(size) {
     document.body.style.fontSize = size === 'small' ? '14px' : size === 'large' ? '18px' : '16px';
@@ -207,8 +210,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("No consentId or token found, skipping API fetch for cookie preferences");
     }
 
-    // Load General News on Page Load
-    fetchNews();
+
 
     // Save Cookie Preferences
     document.getElementById("saveCookiePrefs").addEventListener("click", async () => {
@@ -411,3 +413,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+
+// Load General News on Page Load
+    fetchNews();
