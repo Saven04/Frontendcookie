@@ -1,5 +1,3 @@
-// otp.js
-
 /**
  * Sends an OTP to the user's email address.
  * @param {string} email - The user's email address.
@@ -11,6 +9,17 @@ export async function sendOtp(email) {
         if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
             throw new Error('Please provide a valid email address.');
         }
+
+        // Debounce logic: Prevent multiple rapid requests
+        const cooldownMessage = document.getElementById('cooldownMessage');
+        const sendOtpBtn = document.querySelector('#sendDeleteDataOtpBtn');
+        if (sendOtpBtn.disabled) {
+            throw new Error('Please wait before sending another OTP.');
+        }
+
+        // Disable the button to prevent spamming
+        sendOtpBtn.disabled = true;
+        sendOtpBtn.textContent = 'Sending...';
 
         // Call the backend API to send OTP
         const response = await fetch('https://backendcookie-8qc1.onrender.com/api/send-otp', {
@@ -28,10 +37,24 @@ export async function sendOtp(email) {
         // Parse successful response
         const result = await response.json();
         console.log(`OTP sent successfully to ${email}`);
+
+        // Provide user feedback
+        alert(`An OTP has been sent to ${email}. Please check your inbox.`);
+
         return result;
     } catch (error) {
         console.error('Error sending OTP:', error.message);
+        alert(error.message); // Show error message to the user
         throw error; // Re-throw the error for the caller to handle
+    } finally {
+        // Re-enable the button after a cooldown period (e.g., 60 seconds)
+        setTimeout(() => {
+            const sendOtpBtn = document.querySelector('#sendDeleteDataOtpBtn');
+            if (sendOtpBtn) {
+                sendOtpBtn.disabled = false;
+                sendOtpBtn.textContent = 'Send OTP';
+            }
+        }, 60000); // 60 seconds cooldown
     }
 }
 
@@ -61,15 +84,18 @@ export async function verifyOtp(email, otp) {
         // Handle non-2xx responses
         if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.message || 'Failed to verify OTP');
+            throw new Error(errorData.message || 'Invalid OTP.');
         }
 
         // Parse successful response
         const result = await response.json();
         console.log(`OTP verified successfully for ${email}`);
+        alert('OTP verified successfully.');
+
         return result;
     } catch (error) {
         console.error('Error verifying OTP:', error.message);
+        alert(error.message); // Show error message to the user
         throw error; // Re-throw the error for the caller to handle
     }
 }
