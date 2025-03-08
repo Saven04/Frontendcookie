@@ -55,8 +55,45 @@ function applyFontSize(size) {
     document.body.style.fontSize = size === 'small' ? '14px' : size === 'large' ? '18px' : '16px';
 }
 
-// DOM Content Loaded Event
+// Theme Application Function
+function applyTheme(theme) {
+    const body = document.body;
+    body.classList.remove("dark-mode");
+
+    if (theme === "dark") {
+        body.classList.add("dark-mode");
+    } else if (theme === "system") {
+        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            body.classList.add("dark-mode");
+        }
+    }
+}
+
+// Debounce Function to limit search frequency
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Single DOMContentLoaded listener
 document.addEventListener("DOMContentLoaded", function () {
+    const token = localStorage.getItem("token");
+
+    // Helper to get cookie by name
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(";").shift();
+        return null;
+    }
+
     // Category Buttons Event Listeners
     document.querySelectorAll(".category-btn").forEach(button => {
         button.addEventListener("click", () => {
@@ -132,25 +169,109 @@ document.addEventListener("DOMContentLoaded", function () {
     // Load General News on Page Load
     fetchNews();
 
-    
-    function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(";").shift();
-        return null;
+    // Cookie Preferences Logic
+    const consentId = getCookie("consentId");
+    let preferences = {};
+
+    // Load preferences from cookies
+    const cookiePrefs = getCookie("cookiePrefs");
+    if (cookiePrefs) {
+        try {
+            preferences = JSON.parse(cookiePrefs);
+            document.getElementById("performance").checked = preferences.performance || false;
+            document.getElementById("functional").checked = preferences.functional || false;
+            document.getElementById("advertising").checked = preferences.advertising || false;
+            document.getElementById("socialMedia").checked = preferences.socialMedia || false;
+        } catch (error) {
+            console.error("Error parsing cookiePrefs:", error);
+        }
+    } else if (consentId && token) { // Only fetch if both consentId and token are present
+        fetch("https://backendcookie-8qc1.onrender.com/api/cookie-prefs", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+                "Consent-Id": consentId // Explicitly send consentId in header
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.preferences) {
+                document.getElementById("performance").checked = data.preferences.performance;
+                document.getElementById("functional").checked = data.preferences.functional;
+                document.getElementById("advertising").checked = data.preferences.advertising;
+                document.getElementById("socialMedia").checked = data.preferences.socialMedia;
+                document.cookie = `cookiePrefs=${JSON.stringify(data.preferences)}; path=/; max-age=${60 * 60 * 24 * 730}`;
+            }
+        })
+        .catch(error => console.error("Error loading cookie preferences from DB:", error));
+    } else {
+        console.log("No consentId or token found, skipping API fetch for cookie preferences");
     }
-    
+
+    // Save Cookie Preferences
+    document.getElementById("saveCookiePrefs").addEventListener("click", async function() {
+        if (!token) {
+            alert("Please log in to save cookie preferences.");
+            return;
+        }
+
+        const preferences = {
+            strictlyNecessary: true,
+            performance: document.getElementById("performance").checked,
+            functional: document.getElementById("functional").checked,
+            advertising: document.getElementById("advertising").checked,
+            socialMedia: document.getElementById("socialMedia").checked
+        };
+
+        try {
+            document.cookie = `cookiePrefs=${JSON.stringify(preferences)}; path=/; max-age=${60 * 60 * 24 * 730}`;
+
+            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/cookie-prefs", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                    "Consent-Id": consentId || generateConsentId() // Send existing or new consentId
+                },
+                body: JSON.stringify({ consentId: consentId || generateConsentId(), preferences })
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to save cookie preferences to database");
+            }
+
+            const data = await response.json();
+            if (!consentId) {
+                document.cookie = `consentId=${data.consentId}; path=/; max-age=${60 * 60 * 24 * 730}`;
+            }
+            alert("Cookie preferences saved successfully!");
+        } catch (error) {
+            console.error("Error saving cookie preferences:", error);
+            alert("Failed to save preferences. Please try again.");
+        }
+    });
+
+    function generateConsentId() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
 
     // Delete Cookie Data Functionality
     document.getElementById("deleteCookieData").addEventListener("click", async function(e) {
         e.preventDefault();
 
-        const token = localStorage.getItem("token");
         if (!token) {
             alert("Please log in first to delete your data.");
             return;
         }
-
 
         // Reset modal state
         document.getElementById("emailInputSection").classList.remove("d-none");
@@ -166,7 +287,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Send MFA Code
     document.getElementById("sendMfaCode").addEventListener("click", async function() {
-        const token = localStorage.getItem("token");
         if (!token) {
             alert("Please log in first.");
             return;
@@ -178,7 +298,7 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
     
-        const consentId = getCookie("consentId"); // Fetch from cookies instead of localStorage
+        const consentId = getCookie("consentId");
         if (!consentId) {
             alert("Consent ID not found. Please set preferences first.");
             return;
@@ -212,7 +332,6 @@ document.addEventListener("DOMContentLoaded", function () {
     // Resend Code
     document.getElementById("resendCode").addEventListener("click", async function(e) {
         e.preventDefault();
-        const token = localStorage.getItem("token");
         if (!token) {
             alert("Please log in first.");
             return;
@@ -248,7 +367,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Confirm Deletion
     document.getElementById("confirmDeleteCookie").addEventListener("click", async function() {
-        const token = localStorage.getItem("token");
         if (!token) {
             alert("Please log in first.");
             return;
@@ -277,24 +395,19 @@ document.addEventListener("DOMContentLoaded", function () {
                 throw new Error(errorData.message || "Invalid code");
             }
 
-            // Preserve consentId from localStorage and cookies
-            const consentId = localStorage.getItem("consentId"); // Assuming consentId is stored here
-
-            // Clear client-side cookies, preserving consentId
+            const consentId = getCookie("consentId"); // Preserve consentId
             document.cookie.split(";").forEach(cookie => {
                 const [name] = cookie.trim().split("=");
-                if (name !== "consentId") { // Skip consentId cookie
+                if (name !== "consentId") {
                     document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
                 }
             });
 
-            // Clear localStorage except for consentId
             localStorage.clear();
             if (consentId) {
-                localStorage.setItem("consentId", consentId); // Restore consentId
+                localStorage.setItem("consentId", consentId); // This line was incorrectly preserving from localStorage
             }
 
-            // Reset UI settings
             document.getElementById("themeSelect").value = "system";
             document.getElementById("fontSizeSelect").value = "medium";
             document.getElementById("notificationSwitch").checked = true;
@@ -305,140 +418,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
             confirmModal.hide();
             alert("Cookie preferences and location data have been deleted successfully.");
-            mfaEmail = null; // Reset after success
+            mfaEmail = null;
         } catch (error) {
             console.error("MFA verification error:", error);
             alert(error.message || "Invalid verification code. Please try again.");
             document.getElementById("mfaCode").value = "";
         }
     });
-});
-
-// Theme Application Function
-function applyTheme(theme) {
-    const body = document.body;
-    body.classList.remove("dark-mode");
-
-    if (theme === "dark") {
-        body.classList.add("dark-mode");
-    } else if (theme === "system") {
-        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-            body.classList.add("dark-mode");
-        }
-    }
-}
-
-// Debounce Function to limit search frequency
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
-
-document.addEventListener("DOMContentLoaded", function() {
-    // Existing variables and functions (e.g., login, MFA)
-    const token = localStorage.getItem("token");
-
-    // Your existing code here (e.g., login handlers, sendMfaCode, etc.)
-
-    // Cookie Preferences Logic
-    function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(";").shift();
-        return null;
-    }
-
-    const consentId = getCookie("consentId");
-    let preferences = {};
-
-    // Load preferences from cookies
-    const cookiePrefs = getCookie("cookiePrefs");
-    if (cookiePrefs) {
-        try {
-            preferences = JSON.parse(cookiePrefs);
-            document.getElementById("performance").checked = preferences.performance || false;
-            document.getElementById("functional").checked = preferences.functional || false;
-            document.getElementById("advertising").checked = preferences.advertising || false;
-            document.getElementById("socialMedia").checked = preferences.socialMedia || false;
-        } catch (error) {
-            console.error("Error parsing cookiePrefs:", error);
-        }
-    } else if (consentId) {
-        fetch("https://backendcookie-8qc1.onrender.com/api/cookie-prefs", {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json"
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.preferences) {
-                document.getElementById("performance").checked = data.preferences.performance;
-                document.getElementById("functional").checked = data.preferences.functional;
-                document.getElementById("advertising").checked = data.preferences.advertising;
-                document.getElementById("socialMedia").checked = data.preferences.socialMedia;
-                document.cookie = `cookiePrefs=${JSON.stringify(data.preferences)}; path=/; max-age=${60 * 60 * 24 * 730}`;
-            }
-        })
-        .catch(error => console.error("Error loading cookie preferences from DB:", error));
-    }
-
-    document.getElementById("saveCookiePrefs").addEventListener("click", async function() {
-        if (!token) {
-            alert("Please log in to save cookie preferences.");
-            return;
-        }
-
-        const preferences = {
-            strictlyNecessary: true,
-            performance: document.getElementById("performance").checked,
-            functional: document.getElementById("functional").checked,
-            advertising: document.getElementById("advertising").checked,
-            socialMedia: document.getElementById("socialMedia").checked
-        };
-
-        try {
-            document.cookie = `cookiePrefs=${JSON.stringify(preferences)}; path=/; max-age=${60 * 60 * 24 * 730}`;
-
-            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/cookie-prefs", {
-                method: "POST",
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ consentId: consentId || generateConsentId(), preferences })
-            });
-
-            if (!response.ok) {
-                throw new Error("Failed to save cookie preferences to database");
-            }
-
-            const data = await response.json();
-            if (!consentId) {
-                document.cookie = `consentId=${data.consentId}; path=/; max-age=${60 * 60 * 24 * 730}`;
-            }
-            alert("Cookie preferences saved successfully!");
-        } catch (error) {
-            console.error("Error saving cookie preferences:", error);
-            alert("Failed to save preferences. Please try again.");
-        }
-    });
-
-    function generateConsentId() {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        });
-    }
-
-    // Rest of your existing news.js code (e.g., sendMfaCode, confirmDeleteCookie, etc.)
 });
