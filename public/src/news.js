@@ -262,8 +262,18 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
     
-        const payload = { consentId, preferences, deletedAt: null };
-        console.log('Sending to backend:', payload); // Log payload for debugging
+        const payload = {
+            consentId,
+            preferences: {
+                strictlyNecessary: preferences.strictlyNecessary,
+                performance: preferences.performance,
+                functional: preferences.functional,
+                advertising: preferences.advertising,
+                socialMedia: preferences.socialMedia
+            },
+            deletedAt: null
+        };
+        console.log('Sending to backend:', JSON.stringify(payload));
     
         fetch('https://backendcookie-8qc1.onrender.com/api/update-cookie-prefs', {
             method: 'POST',
@@ -274,8 +284,10 @@ document.addEventListener("DOMContentLoaded", function () {
             body: JSON.stringify(payload)
         })
         .then(response => {
+            console.log('Response status:', response.status);
             if (!response.ok) {
                 return response.json().then(errorData => {
+                    console.error('Backend error response:', errorData);
                     throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
                 });
             }
@@ -283,11 +295,12 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .then(data => console.log('Preferences updated in DB:', data))
         .catch(error => {
-            console.error('Error updating cookie preferences:', error);
-            alert(`Failed to save preferences to the server: ${error.message}. Please try again.`);
+            console.error('Error updating preferences:', error);
+            alert(`Failed to save preferences: ${error.message}. Check console for details.`);
         });
     }
 
+    
 function setCookie(name, value, days) {
     const expires = new Date();
     expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
