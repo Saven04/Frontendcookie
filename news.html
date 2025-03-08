@@ -191,31 +191,135 @@
 
     <!-- Settings Modal -->
     <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="settingsModalLabel">Settings</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <ul class="list-group">
-                        <li class="list-group-item list-group-item-action">
-                            <a href="#" id="profileSettings">Profile Settings</a>
-                        </li>
-                        <li class="list-group-item list-group-item-action">
-                            <a href="#" id="themeToggle">Toggle Theme</a>
-                        </li>
-                        <li class="list-group-item list-group-item-action">
-                            <a href="#" id="cookieSettings">Cookie Settings</a>
-                        </li>
-                        <li class="list-group-item text-danger list-group-item-action">
-                            <a href="#" id="logout">Logout</a>
-                        </li>
-                    </ul>
+                    <!-- Settings Sections -->
+                    <div class="settings-section">
+                        <h6 class="text-muted mb-3">Account</h6>
+                        <ul class="list-group mb-4">
+                            <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                <a href="#" id="profileSettings">Profile Settings</a>
+                                <span class="badge bg-primary rounded-pill">Edit</span>
+                            </li>
+                            <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                <a href="#" id="notifications">Notifications</a>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="notificationSwitch">
+                                </div>
+                            </li>
+                            <li class="list-group-item list-group-item-action text-danger">
+                                <a href="#" id="logout">Logout</a>
+                            </li>
+                        </ul>
+                    </div>
+    
+                    <div class="settings-section">
+                        <h6 class="text-muted mb-3">Appearance</h6>
+                        <ul class="list-group mb-4">
+                            <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                <a href="#" id="themeToggle">Theme</a>
+                                <select class="form-select w-50" id="themeSelect">
+                                    <option value="light">Light</option>
+                                    <option value="dark">Dark</option>
+                                    <option value="system">System Default</option>
+                                </select>
+                            </li>
+                            <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                <a href="#" id="fontSize">Font Size</a>
+                                <select class="form-select w-50" id="fontSizeSelect">
+                                    <option value="small">Small</option>
+                                    <option value="medium" selected>Medium</option>
+                                    <option value="large">Large</option>
+                                </select>
+                            </li>
+                        </ul>
+                    </div>
+    
+                    <div class="settings-section">
+                        <h6 class="text-muted mb-3">Privacy</h6>
+                        <ul class="list-group mb-4">
+                            <li class="list-group-item list-group-item-action">
+                                <a href="#" id="cookieSettings">Cookie Preferences</a>
+                            </li>
+                            <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                <a href="#" id="dataSharing">Data Sharing</a>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="dataSharingSwitch" checked>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+    
+                    <div class="settings-section">
+                        <h6 class="text-muted mb-3">About</h6>
+                        <ul class="list-group">
+                            <li class="list-group-item list-group-item-action">
+                                <a href="#" id="versionInfo">App Version</a>
+                                <small class="text-muted ms-2">v2.3.1</small>
+                            </li>
+                            <li class="list-group-item list-group-item-action">
+                                <a href="#" id="terms">Terms of Service</a>
+                            </li>
+                            <li class="list-group-item list-group-item-action">
+                                <a href="#" id="privacy">Privacy Policy</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveSettings">Save Changes</button>
                 </div>
             </div>
         </div>
     </div>
+    
+    <!-- Additional CSS for the improved settings -->
+    <style>
+        .settings-section {
+            margin-bottom: 1.5rem;
+        }
+    
+        .settings-section h6 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            padding-bottom: 0.5rem;
+        }
+    
+        .dark-mode .settings-section h6 {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    
+        .list-group-item {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 2px;
+        }
+    
+        .form-select, .form-check-input {
+            cursor: pointer;
+        }
+    
+        .form-select {
+            border-radius: 20px;
+            padding: 4px 10px;
+        }
+    
+        .badge {
+            padding: 4px 8px;
+        }
+    
+        .modal-footer {
+            justify-content: space-between;
+        }
+    </style>
 
     <div class="container mt-3">
         <h2>Latest News</h2>
@@ -237,5 +341,21 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="./public/src/news.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeSelect = document.getElementById('themeSelect');
+            themeSelect.addEventListener('change', function() {
+                const theme = this.value;
+                document.body.classList.remove('dark-mode');
+                if (theme === 'dark') {
+                    document.body.classList.add('dark-mode');
+                } else if (theme === 'system') {
+                    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                        document.body.classList.add('dark-mode');
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 </html>
