@@ -27,10 +27,7 @@ async function fetchNews(category = "general") {
 
 // Function to display news
 function displayNews(articles) {
-    if (!newsContainer) {
-        console.error("newsContainer not found in the DOM");
-        return;
-    }
+    if (!newsContainer) return;
     newsContainer.innerHTML = "";
     if (!articles || articles.length === 0) {
         newsContainer.innerHTML = `
@@ -70,13 +67,10 @@ function applyFontSize(size) {
 function applyTheme(theme) {
     const body = document.body;
     body.classList.remove("dark-mode");
-
     if (theme === "dark") {
         body.classList.add("dark-mode");
-    } else if (theme === "system") {
-        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-            body.classList.add("dark-mode");
-        }
+    } else if (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        body.classList.add("dark-mode");
     }
 }
 
@@ -84,12 +78,8 @@ function applyTheme(theme) {
 function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
         clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
+        timeout = setTimeout(() => func(...args), wait);
     };
 }
 
@@ -103,8 +93,7 @@ function setCookie(name, value, days) {
 function getCookie(name) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-    return null;
+    return parts.length === 2 ? parts.pop().split(';').shift() : null;
 }
 
 // DOM Content Loaded Event
@@ -123,13 +112,10 @@ document.addEventListener("DOMContentLoaded", function () {
     if (searchInput) {
         searchInput.addEventListener("input", debounce(() => {
             const query = searchInput.value.trim().toLowerCase();
-            const cards = document.querySelectorAll(".card");
-
-            cards.forEach(card => {
+            document.querySelectorAll(".card").forEach(card => {
                 const title = card.querySelector(".card-title").textContent.toLowerCase();
                 const description = card.querySelector(".card-text").textContent.toLowerCase();
-                card.parentElement.style.display = 
-                    title.includes(query) || description.includes(query) ? "block" : "none";
+                card.parentElement.style.display = title.includes(query) || description.includes(query) ? "block" : "none";
             });
         }, 300));
     }
@@ -137,13 +123,11 @@ document.addEventListener("DOMContentLoaded", function () {
     // Settings Modal Functionality
     const settingsModal = document.getElementById("settingsModal");
     if (settingsModal) {
-        // Theme Selection
         const themeSelect = document.getElementById("themeSelect");
         if (themeSelect) {
             const savedTheme = localStorage.getItem("theme") || "system";
             themeSelect.value = savedTheme;
             applyTheme(savedTheme);
-
             themeSelect.addEventListener("change", function () {
                 const theme = this.value;
                 applyTheme(theme);
@@ -151,13 +135,11 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
 
-        // Font Size Selection
         const fontSizeSelect = document.getElementById("fontSizeSelect");
         if (fontSizeSelect) {
             const savedFontSize = localStorage.getItem("fontSize") || "medium";
             fontSizeSelect.value = savedFontSize;
             applyFontSize(savedFontSize);
-
             fontSizeSelect.addEventListener("change", function () {
                 const size = this.value;
                 applyFontSize(size);
@@ -165,7 +147,6 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
 
-        // Notification Switch
         const notificationSwitch = document.getElementById("notificationSwitch");
         if (notificationSwitch) {
             notificationSwitch.checked = localStorage.getItem("notifications") !== "false";
@@ -174,7 +155,6 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
 
-        // Data Sharing Switch
         const dataSharingSwitch = document.getElementById("dataSharingSwitch");
         if (dataSharingSwitch) {
             dataSharingSwitch.checked = localStorage.getItem("dataSharing") !== "false";
@@ -183,7 +163,6 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
 
-        // Save Settings Button
         const saveSettingsBtn = document.getElementById("saveSettings");
         if (saveSettingsBtn) {
             saveSettingsBtn.addEventListener("click", () => {
@@ -196,22 +175,18 @@ document.addEventListener("DOMContentLoaded", function () {
     const cookieSettingsBtn = document.getElementById('cookieSettings');
     if (cookieSettingsBtn) {
         cookieSettingsBtn.addEventListener('click', function(e) {
-            e.preventDefault(); // Optional with data-bs-toggle
+            e.preventDefault();
             loadCookiePreferences();
-            // Ensure focus moves to the modal when it opens
             const cookieModal = document.getElementById('cookieModal');
             if (cookieModal && typeof bootstrap !== 'undefined') {
                 const modal = new bootstrap.Modal(cookieModal);
                 modal.show();
-                // Move focus to the first focusable element in the modal
                 setTimeout(() => {
                     const firstFocusable = cookieModal.querySelector('input:not([disabled]), button:not([data-bs-dismiss])');
                     if (firstFocusable) firstFocusable.focus();
-                }, 100); // Small delay to ensure modal is fully rendered
+                }, 100);
             }
         });
-    } else {
-        console.warn('Element with ID "cookieSettings" not found');
     }
 
     const saveCookiePrefsBtn = document.getElementById('saveCookiePrefs');
@@ -219,41 +194,28 @@ document.addEventListener("DOMContentLoaded", function () {
         saveCookiePrefsBtn.addEventListener('click', function() {
             saveCookiePreferences();
         });
-    } else {
-        console.warn('Element with ID "saveCookiePrefs" not found');
     }
 
     function loadCookiePreferences() {
         const cookiePrefs = getCookie('cookiePreferences');
-        if (cookiePrefs) {
-            try {
-                const preferences = JSON.parse(cookiePrefs);
-                const analyticsCheckbox = document.getElementById('analyticsCookies');
-                const marketingCheckbox = document.getElementById('marketingCookies');
-
-                if (analyticsCheckbox) {
-                    analyticsCheckbox.checked = preferences.analytics || false;
-                } else {
-                    console.warn('Element with ID "analyticsCookies" not found');
-                }
-                if (marketingCheckbox) {
-                    marketingCheckbox.checked = preferences.marketing || false;
-                } else {
-                    console.warn('Element with ID "marketingCookies" not found');
-                }
-            } catch (error) {
-                console.error('Error parsing cookie preferences:', error);
-            }
+        if (!cookiePrefs) return;
+        try {
+            const preferences = JSON.parse(cookiePrefs);
+            const analyticsCheckbox = document.getElementById('analyticsCookies');
+            const marketingCheckbox = document.getElementById('marketingCookies');
+            if (analyticsCheckbox) analyticsCheckbox.checked = preferences.analytics || false;
+            if (marketingCheckbox) marketingCheckbox.checked = preferences.marketing || false;
+        } catch (error) {
+            console.error('Error parsing cookie preferences:', error);
         }
     }
 
     function saveCookiePreferences() {
         const analyticsCheckbox = document.getElementById('analyticsCookies');
         const marketingCheckbox = document.getElementById('marketingCookies');
-
         if (!analyticsCheckbox || !marketingCheckbox) {
-            console.error('One or more cookie preference checkboxes not found');
-            alert('Error: Unable to save preferences due to missing elements');
+            console.error('Cookie preference checkboxes not found');
+            alert('Error: Unable to save preferences');
             return;
         }
 
@@ -269,19 +231,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const cookieModal = document.getElementById('cookieModal');
         if (cookieModal && typeof bootstrap !== 'undefined') {
-            const modal = bootstrap.Modal.getInstance(cookieModal);
-            if (modal) modal.hide();
-        } else {
-            console.warn('Bootstrap not loaded or cookieModal element not found');
+            bootstrap.Modal.getInstance(cookieModal)?.hide();
         }
     }
 
     function updateDatabasePreferences(preferences) {
         const token = localStorage.getItem('token');
         const consentId = getCookie('consentId');
-
         if (!consentId) {
-            console.warn('Consent ID not found in cookies');
+            console.warn('Consent ID not found');
             alert('Error: Consent ID not found. Please set preferences first.');
             return;
         }
@@ -292,19 +250,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 'Content-Type': 'application/json',
                 ...(token && { 'Authorization': `Bearer ${token}` })
             },
-            body: JSON.stringify({
-                consentId: consentId,
-                preferences: preferences,
-                deletedAt: null
-            })
+            body: JSON.stringify({ consentId, preferences, deletedAt: null })
         })
         .then(response => {
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             return response.json();
         })
-        .then(data => {
-            console.log('Preferences updated in DB:', data);
-        })
+        .then(data => console.log('Preferences updated in DB:', data))
         .catch(error => {
             console.error('Error updating preferences:', error);
             alert('Failed to save preferences to the server. Please try again.');
@@ -314,9 +266,8 @@ document.addEventListener("DOMContentLoaded", function () {
     // Delete Cookie Data Functionality
     const deleteCookieDataBtn = document.getElementById("deleteCookieData");
     if (deleteCookieDataBtn) {
-        deleteCookieDataBtn.addEventListener("click", async function(e) {
+        deleteCookieDataBtn.addEventListener("click", function(e) {
             e.preventDefault();
-
             const token = localStorage.getItem("token");
             if (!token) {
                 alert("Please log in first to delete your data.");
@@ -328,6 +279,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const confirmDeleteCookie = document.getElementById("confirmDeleteCookie");
             const mfaEmailInput = document.getElementById("mfaEmail");
             const mfaCodeInput = document.getElementById("mfaCode");
+            const mfaStatus = document.getElementById("mfaStatus");
 
             if (emailInputSection && codeInputSection && confirmDeleteCookie && mfaEmailInput && mfaCodeInput) {
                 emailInputSection.classList.remove("d-none");
@@ -335,6 +287,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 confirmDeleteCookie.classList.add("d-none");
                 mfaEmailInput.value = "";
                 mfaCodeInput.value = "";
+                if (mfaStatus) {
+                    mfaStatus.classList.add("d-none");
+                    mfaStatus.textContent = "";
+                }
             }
             mfaEmail = null;
 
@@ -342,6 +298,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (deleteModal && typeof bootstrap !== 'undefined') {
                 const confirmModal = new bootstrap.Modal(deleteModal);
                 confirmModal.show();
+                setTimeout(() => mfaEmailInput.focus(), 100);
             }
         });
     }
@@ -355,19 +312,29 @@ document.addEventListener("DOMContentLoaded", function () {
                 alert("Please log in first.");
                 return;
             }
-        
-            mfaEmail = document.getElementById("mfaEmail").value.trim();
+
+            const mfaEmailInput = document.getElementById("mfaEmail");
+            mfaEmail = mfaEmailInput.value.trim();
             if (!mfaEmail || !mfaEmail.includes("@")) {
                 alert("Please enter a valid email address.");
                 return;
             }
-        
+
             const consentId = getCookie("consentId");
             if (!consentId) {
                 alert("Consent ID not found. Please set preferences first.");
                 return;
             }
-        
+
+            const spinner = sendMfaCodeBtn.querySelector(".spinner-border");
+            const mfaStatus = document.getElementById("mfaStatus");
+            sendMfaCodeBtn.disabled = true;
+            if (spinner) spinner.classList.remove("d-none");
+            if (mfaStatus) {
+                mfaStatus.classList.add("d-none");
+                mfaStatus.textContent = "";
+            }
+
             try {
                 const response = await fetch("https://backendcookie-8qc1.onrender.com/api/send-mfa", {
                     method: "POST",
@@ -375,21 +342,37 @@ document.addEventListener("DOMContentLoaded", function () {
                         "Authorization": `Bearer ${token}`,
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({ email: mfaEmail, consentId: consentId })
+                    body: JSON.stringify({ email: mfaEmail, consentId })
                 });
-        
+
                 if (!response.ok) {
                     const errorData = await response.json();
                     throw new Error(`Failed to send MFA code: ${response.status} - ${errorData.message}`);
                 }
-        
-                console.log("MFA code sent to user's email");
+
                 document.getElementById("emailInputSection").classList.add("d-none");
                 document.getElementById("codeInputSection").classList.remove("d-none");
                 document.getElementById("confirmDeleteCookie").classList.remove("d-none");
+                if (mfaStatus) {
+                    mfaStatus.classList.remove("d-none");
+                    mfaStatus.classList.remove("alert-danger");
+                    mfaStatus.classList.add("alert-info");
+                    mfaStatus.textContent = `Code sent to ${mfaEmail}`;
+                }
+                document.getElementById("mfaCode").focus();
             } catch (error) {
                 console.error("Error sending MFA code:", error);
-                alert(`Failed to send verification code: ${error.message}. Please try again later or check server logs.`);
+                if (mfaStatus) {
+                    mfaStatus.classList.remove("d-none");
+                    mfaStatus.classList.remove("alert-info");
+                    mfaStatus.classList.add("alert-danger");
+                    mfaStatus.textContent = `Failed to send code: ${error.message}`;
+                } else {
+                    alert(`Failed to send verification code: ${error.message}`);
+                }
+            } finally {
+                sendMfaCodeBtn.disabled = false;
+                if (spinner) spinner.classList.add("d-none");
             }
         });
     }
@@ -409,9 +392,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 alert("No email provided. Please start over.");
                 const deleteModal = document.getElementById("deleteCookieConfirmModal");
                 if (deleteModal && typeof bootstrap !== 'undefined') {
-                    bootstrap.Modal.getInstance(deleteModal).hide();
+                    bootstrap.Modal.getInstance(deleteModal)?.hide();
                 }
                 return;
+            }
+
+            const mfaStatus = document.getElementById("mfaStatus");
+            resendCodeBtn.disabled = true;
+            if (mfaStatus) {
+                mfaStatus.classList.add("d-none");
+                mfaStatus.textContent = "";
             }
 
             try {
@@ -429,10 +419,26 @@ document.addEventListener("DOMContentLoaded", function () {
                     throw new Error(`Failed to resend MFA code: ${response.status} - ${errorData.message}`);
                 }
 
-                alert("A new code has been sent to your email.");
+                if (mfaStatus) {
+                    mfaStatus.classList.remove("d-none");
+                    mfaStatus.classList.remove("alert-danger");
+                    mfaStatus.classList.add("alert-info");
+                    mfaStatus.textContent = `New code sent to ${mfaEmail}`;
+                } else {
+                    alert("A new code has been sent to your email.");
+                }
             } catch (error) {
                 console.error("Error resending MFA code:", error);
-                alert(`Failed to resend code: ${error.message}. Please try again.`);
+                if (mfaStatus) {
+                    mfaStatus.classList.remove("d-none");
+                    mfaStatus.classList.remove("alert-info");
+                    mfaStatus.classList.add("alert-danger");
+                    mfaStatus.textContent = `Failed to resend code: ${error.message}`;
+                } else {
+                    alert(`Failed to resend code: ${error.message}`);
+                }
+            } finally {
+                resendCodeBtn.disabled = false;
             }
         });
     }
@@ -450,10 +456,24 @@ document.addEventListener("DOMContentLoaded", function () {
             const mfaCode = document.getElementById("mfaCode").value.trim();
             const deleteModal = document.getElementById("deleteCookieConfirmModal");
             const confirmModal = deleteModal && typeof bootstrap !== 'undefined' ? bootstrap.Modal.getInstance(deleteModal) : null;
+            const mfaStatus = document.getElementById("mfaStatus");
 
             if (!mfaCode || mfaCode.length !== 6 || !/^\d+$/.test(mfaCode)) {
-                alert("Please enter a valid 6-digit code.");
+                if (mfaStatus) {
+                    mfaStatus.classList.remove("d-none");
+                    mfaStatus.classList.remove("alert-info");
+                    mfaStatus.classList.add("alert-warning");
+                    mfaStatus.textContent = "Please enter a valid 6-digit code.";
+                } else {
+                    alert("Please enter a valid 6-digit code.");
+                }
                 return;
+            }
+
+            confirmDeleteCookieBtn.disabled = true;
+            if (mfaStatus) {
+                mfaStatus.classList.add("d-none");
+                mfaStatus.textContent = "";
             }
 
             try {
@@ -502,8 +522,17 @@ document.addEventListener("DOMContentLoaded", function () {
                 mfaEmail = null;
             } catch (error) {
                 console.error("MFA verification error:", error);
-                alert(error.message || "Invalid verification code. Please try again.");
+                if (mfaStatus) {
+                    mfaStatus.classList.remove("d-none");
+                    mfaStatus.classList.remove("alert-info");
+                    mfaStatus.classList.add("alert-danger");
+                    mfaStatus.textContent = error.message || "Invalid verification code.";
+                } else {
+                    alert(error.message || "Invalid verification code. Please try again.");
+                }
                 document.getElementById("mfaCode").value = "";
+            } finally {
+                confirmDeleteCookieBtn.disabled = false;
             }
         });
     }

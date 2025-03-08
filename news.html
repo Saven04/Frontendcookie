@@ -375,139 +375,142 @@
     </div>
 
     <!-- Settings Modal -->
-    <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="settingsModalLabel">Settings</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- Settings Sections -->
-                    <div class="settings-section">
-                        <h6 class="text-muted mb-3">Account</h6>
-                        <ul class="list-group mb-4">
-                            <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                                <a href="#" id="profileSettings">Profile Settings</a>
-                                <span class="badge bg-primary rounded-pill">Edit</span>
-                            </li>
-                            <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                                <a href="#" id="notifications">Notifications</a>
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="notificationSwitch">
-                                </div>
-                            </li>
-                            <li class="list-group-item list-group-item-action text-danger">
-                                <a href="#" id="logout">Logout</a>
-                            </li>
-                        </ul>
-                    </div>
-    
-                    <div class="settings-section">
-                        <h6 class="text-muted mb-3">Appearance</h6>
-                        <ul class="list-group mb-4">
-                            <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                                <a href="#" id="themeToggle">Theme</a>
-                                <select class="form-select w-50" id="themeSelect">
-                                    <option value="light">Light</option>
-                                    <option value="dark">Dark</option>
-                                    <option value="system">System Default</option>
-                                </select>
-                            </li>
-                            <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                                <a href="#" id="fontSize">Font Size</a>
-                                <select class="form-select w-50" id="fontSizeSelect">
-                                    <option value="small">Small</option>
-                                    <option value="medium" selected>Medium</option>
-                                    <option value="large">Large</option>
-                                </select>
-                            </li>
-                        </ul>
-                    </div>
-    
-                    <div class="settings-section">
-                        <h6 class="text-muted mb-3">Privacy</h6>
-                        <ul class="list-group mb-4">
-                            <li class="list-group-item list-group-item-action">
-                                <a href="#" id="cookieSettings" data-bs-toggle="modal" data-bs-target="#cookieModal">Cookie Preferences</a>
-                            </li>
-                            <li class="list-group-item list-group-item-action text-warning">
-                                <a href="#" id="deleteCookieData">Delete Cookie Data</a>
-                                <small class="text-muted ms-2">Clears cookies & location data</small>
-                            </li>
-                            <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                                <a href="#" id="dataSharing">Data Sharing</a>
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="dataSharingSwitch" checked>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                    
-                    <!-- Cookie Preferences Modal -->
-                    <div class="modal fade" id="cookieModal" tabindex="-1" role="dialog" aria-labelledby="cookieModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="cookieModalLabel">Cookie Preferences</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="mb-3">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="essentialCookies" checked disabled>
-                                            <label class="form-check-label" for="essentialCookies">
-                                                Essential Cookies (Required)
-                                            </label>
-                                        </div>
-                                        <small class="form-text text-muted">These cookies are necessary for the website to function</small>
-                                    </div>
-                                    <div class="mb-3">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="analyticsCookies">
-                                            <label class="form-check-label" for="analyticsCookies">
-                                                Analytics Cookies
-                                            </label>
-                                        </div>
-                                        <small class="form-text text-muted">Help us understand how visitors interact with our site</small>
-                                    </div>
-                                    <div class="mb-3">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="marketingCookies">
-                                            <label class="form-check-label" for="marketingCookies">
-                                                Marketing Cookies
-                                            </label>
-                                        </div>
-                                        <small class="form-text text-muted">Used to deliver personalized advertisements</small>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                                    <button type="button" class="btn btn-primary" id="saveCookiePrefs">Save Preferences</button>
-                                </div>
+ <!-- Settings Modal -->
+<div class="modal fade" id="settingsModal" tabindex="-1" role="dialog" aria-labelledby="settingsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="settingsModalLabel">Settings</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Account Section -->
+                <div class="settings-section">
+                    <h6 class="text-muted mb-3">Account</h6>
+                    <ul class="list-group mb-4">
+                        <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <span id="profileSettings">Profile Settings</span>
+                            <span class="badge bg-primary rounded-pill">Edit</span>
+                        </li>
+                        <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <span id="notifications">Notifications</span>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="notificationSwitch">
                             </div>
-                        </div>
+                        </li>
+                        <li class="list-group-item list-group-item-action text-danger">
+                            <a href="#" id="logout">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Appearance Section -->
+                <div class="settings-section">
+                    <h6 class="text-muted mb-3">Appearance</h6>
+                    <ul class="list-group mb-4">
+                        <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <label for="themeSelect" id="themeToggle">Theme</label>
+                            <select class="form-select w-50" id="themeSelect">
+                                <option value="light">Light</option>
+                                <option value="dark">Dark</option>
+                                <option value="system" selected>System Default</option>
+                            </select>
+                        </li>
+                        <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <label for="fontSizeSelect" id="fontSize">Font Size</label>
+                            <select class="form-select w-50" id="fontSizeSelect">
+                                <option value="small">Small</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="large">Large</option>
+                            </select>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Privacy Section -->
+                <div class="settings-section">
+                    <h6 class="text-muted mb-3">Privacy</h6>
+                    <ul class="list-group mb-4">
+                        <li class="list-group-item list-group-item-action">
+                            <a href="#" id="cookieSettings" data-bs-toggle="modal" data-bs-target="#cookieModal">Cookie Preferences</a>
+                        </li>
+                        <li class="list-group-item list-group-item-action text-warning">
+                            <a href="#" id="deleteCookieData">Delete Cookie Data</a>
+                            <small class="text-muted ms-2">Clears cookies & location data</small>
+                        </li>
+                        <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <span id="dataSharing">Data Sharing</span>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="dataSharingSwitch" checked>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- About Section -->
+                <div class="settings-section">
+                    <h6 class="text-muted mb-3">About</h6>
+                    <ul class="list-group">
+                        <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <span id="versionInfo">App Version</span>
+                            <small class="text-muted">v2.3.1</small>
+                        </li>
+                        <li class="list-group-item list-group-item-action">
+                            <a href="terms-of-service.html" id="terms">Terms of Service</a>
+                        </li>
+                        <li class="list-group-item list-group-item-action">
+                            <a href="privacy-policy.html" id="privacy">Privacy Policy</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="saveSettings">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cookie Preferences Modal (Moved outside settingsModal) -->
+<div class="modal fade" id="cookieModal" tabindex="-1" role="dialog" aria-labelledby="cookieModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cookieModalLabel">Cookie Preferences</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="essentialCookies" checked disabled>
+                        <label class="form-check-label" for="essentialCookies">Essential Cookies (Required)</label>
                     </div>
-                    
-                    <!-- Existing About Section -->
-                    <div class="settings-section">
-                        <h6 class="text-muted mb-3">About</h6>
-                        <ul class="list-group">
-                            <li class="list-group-item list-group-item-action">
-                                <a href="#" id="versionInfo">App Version</a>
-                                <small class="text-muted ms-2">v2.3.1</small>
-                            </li>
-                            <li class="list-group-item list-group-item-action">
-                                <a href="terms-of-service.html" id="terms">Terms of Service</a>
-                            </li>
-                            <li class="list-group-item list-group-item-action">
-                                <a href="privacy-policy.html" id="privacy">Privacy Policy</a>
-                            </li>
-                        </ul>
+                    <small class="form-text text-muted">These cookies are necessary for the website to function</small>
+                </div>
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="analyticsCookies">
+                        <label class="form-check-label" for="analyticsCookies">Analytics Cookies</label>
                     </div>
-    
+                    <small class="form-text text-muted">Help us understand how visitors interact with our site</small>
+                </div>
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="marketingCookies">
+                        <label class="form-check-label" for="marketingCookies">Marketing Cookies</label>
+                    </div>
+                    <small class="form-text text-muted">Used to deliver personalized advertisements</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveCookiePrefs">Save Preferences</button>
+            </div>
+        </div>
+    </div>
+</div>
     <!-- New MFA Confirmation Modal -->
-    <div class="modal fade" id="deleteCookieConfirmModal" tabindex="-1" aria-labelledby="deleteCookieConfirmLabel" aria-hidden="true">
+    <div class="modal fade" id="deleteCookieConfirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteCookieConfirmLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -516,26 +519,35 @@
                 </div>
                 <div class="modal-body">
                     <p><strong>Warning:</strong> Deleting your cookie data will:</p>
-                    <ul>
-                        <li>Remove all stored preferences (theme, font size, etc.)</li>
-                        <li>Clear location data used for personalized news</li>
-                        <li>Reset your session, requiring you to log in again</li>
+                    <ul class="list-unstyled ms-4">
+                        <li><i class="bi bi-dash"></i> Remove all stored preferences (theme, font size, etc.)</li>
+                        <li><i class="bi bi-dash"></i> Clear location data used for personalized news</li>
+                        <li><i class="bi bi-dash"></i> Reset your session, requiring you to log in again</li>
                     </ul>
-                    <p>This action cannot be undone. Please enter your email to receive a verification code, then enter the code sent to proceed.</p>
+                    <p class="mt-3">This action cannot be undone. Please enter your email to receive a verification code, then enter the code to proceed.</p>
     
                     <!-- Email Input Section -->
                     <div class="mb-3" id="emailInputSection">
                         <label for="mfaEmail" class="form-label">Email Address</label>
-                        <input type="email" class="form-control" id="mfaEmail" placeholder="Enter your email">
-                        <button type="button" class="btn btn-primary mt-2" id="sendMfaCode">Send Code</button>
+                        <input type="email" class="form-control" id="mfaEmail" placeholder="Enter your email" required>
+                        <button type="button" class="btn btn-primary mt-2" id="sendMfaCode">
+                            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                            Send Code
+                        </button>
                     </div>
     
                     <!-- Verification Code Section (hidden initially) -->
                     <div class="mb-3 d-none" id="codeInputSection">
                         <label for="mfaCode" class="form-label">Verification Code</label>
-                        <input type="text" class="form-control" id="mfaCode" placeholder="Enter 6-digit code" maxlength="6">
-                        <small class="text-muted">Code expires in 5 minutes. <a href="#" id="resendCode">Resend Code</a></small>
+                        <input type="text" class="form-control" id="mfaCode" placeholder="Enter 6-digit code" maxlength="6" pattern="[0-9]{6}" required>
+                        <small class="form-text text-muted">
+                            Code expires in 5 minutes. 
+                            <a href="#" id="resendCode" class="text-decoration-underline">Resend Code</a>
+                        </small>
                     </div>
+    
+                    <!-- Status Message (hidden initially) -->
+                    <div class="alert alert-info d-none" id="mfaStatus" role="alert"></div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
