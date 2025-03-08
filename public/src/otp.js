@@ -13,7 +13,7 @@ export async function sendOtp(email) {
         }
 
         // Call the backend API to send OTP
-        const response = await fetch('https://backendcookie-8qc1.onrender.com/send-otp', {
+        const response = await fetch('https://backendcookie-8qc1.onrender.com/api/send-otp', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email }),
@@ -52,7 +52,7 @@ export async function verifyOtp(email, otp) {
         }
 
         // Call the backend API to verify OTP
-        const response = await fetch('https://backendcookie-8qc1.onrender.com/verify-otp', {
+        const response = await fetch('https://backendcookie-8qc1.onrender.com/api/verify-otp', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, otp }),
