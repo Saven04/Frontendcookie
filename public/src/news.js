@@ -340,3 +340,105 @@ function debounce(func, wait) {
         timeout = setTimeout(later, wait);
     };
 }
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Existing variables and functions (e.g., login, MFA)
+    const token = localStorage.getItem("token");
+
+    // Your existing code here (e.g., login handlers, sendMfaCode, etc.)
+
+    // Cookie Preferences Logic
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(";").shift();
+        return null;
+    }
+
+    const consentId = getCookie("consentId");
+    let preferences = {};
+
+    // Load preferences from cookies
+    const cookiePrefs = getCookie("cookiePrefs");
+    if (cookiePrefs) {
+        try {
+            preferences = JSON.parse(cookiePrefs);
+            document.getElementById("performance").checked = preferences.performance || false;
+            document.getElementById("functional").checked = preferences.functional || false;
+            document.getElementById("advertising").checked = preferences.advertising || false;
+            document.getElementById("socialMedia").checked = preferences.socialMedia || false;
+        } catch (error) {
+            console.error("Error parsing cookiePrefs:", error);
+        }
+    } else if (consentId) {
+        fetch("https://backendcookie-8qc1.onrender.com/api/cookie-prefs", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.preferences) {
+                document.getElementById("performance").checked = data.preferences.performance;
+                document.getElementById("functional").checked = data.preferences.functional;
+                document.getElementById("advertising").checked = data.preferences.advertising;
+                document.getElementById("socialMedia").checked = data.preferences.socialMedia;
+                document.cookie = `cookiePrefs=${JSON.stringify(data.preferences)}; path=/; max-age=${60 * 60 * 24 * 730}`;
+            }
+        })
+        .catch(error => console.error("Error loading cookie preferences from DB:", error));
+    }
+
+    document.getElementById("saveCookiePrefs").addEventListener("click", async function() {
+        if (!token) {
+            alert("Please log in to save cookie preferences.");
+            return;
+        }
+
+        const preferences = {
+            strictlyNecessary: true,
+            performance: document.getElementById("performance").checked,
+            functional: document.getElementById("functional").checked,
+            advertising: document.getElementById("advertising").checked,
+            socialMedia: document.getElementById("socialMedia").checked
+        };
+
+        try {
+            document.cookie = `cookiePrefs=${JSON.stringify(preferences)}; path=/; max-age=${60 * 60 * 24 * 730}`;
+
+            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/cookie-prefs", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ consentId: consentId || generateConsentId(), preferences })
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to save cookie preferences to database");
+            }
+
+            const data = await response.json();
+            if (!consentId) {
+                document.cookie = `consentId=${data.consentId}; path=/; max-age=${60 * 60 * 24 * 730}`;
+            }
+            alert("Cookie preferences saved successfully!");
+        } catch (error) {
+            console.error("Error saving cookie preferences:", error);
+            alert("Failed to save preferences. Please try again.");
+        }
+    });
+
+    function generateConsentId() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
+
+    // Rest of your existing news.js code (e.g., sendMfaCode, confirmDeleteCookie, etc.)
+});
