@@ -188,53 +188,69 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
-
+    
     const saveCookiePrefsBtn = document.getElementById('saveCookiePrefs');
     if (saveCookiePrefsBtn) {
         saveCookiePrefsBtn.addEventListener('click', function() {
             saveCookiePreferences();
         });
     }
-
+    
     function loadCookiePreferences() {
         const cookiePrefs = getCookie('cookiePreferences');
         if (!cookiePrefs) return;
         try {
             const preferences = JSON.parse(cookiePrefs);
-            const analyticsCheckbox = document.getElementById('analyticsCookies');
-            const marketingCheckbox = document.getElementById('marketingCookies');
-            if (analyticsCheckbox) analyticsCheckbox.checked = preferences.analytics || false;
-            if (marketingCheckbox) marketingCheckbox.checked = preferences.marketing || false;
+            const performanceCheckbox = document.getElementById('performanceCookies');
+            const functionalCheckbox = document.getElementById('functionalCookies');
+            const advertisingCheckbox = document.getElementById('advertisingCookies');
+            const socialMediaCheckbox = document.getElementById('socialMediaCookies');
+            if (performanceCheckbox) performanceCheckbox.checked = preferences.performance || false;
+            if (functionalCheckbox) functionalCheckbox.checked = preferences.functional || false;
+            if (advertisingCheckbox) advertisingCheckbox.checked = preferences.advertising || false;
+            if (socialMediaCheckbox) socialMediaCheckbox.checked = preferences.socialMedia || false;
         } catch (error) {
             console.error('Error parsing cookie preferences:', error);
         }
     }
-
+    
     function saveCookiePreferences() {
-        const analyticsCheckbox = document.getElementById('analyticsCookies');
-        const marketingCheckbox = document.getElementById('marketingCookies');
-        if (!analyticsCheckbox || !marketingCheckbox) {
+        const performanceCheckbox = document.getElementById('performanceCookies');
+        const functionalCheckbox = document.getElementById('functionalCookies');
+        const advertisingCheckbox = document.getElementById('advertisingCookies');
+        const socialMediaCheckbox = document.getElementById('socialMediaCookies');
+        if (!performanceCheckbox || !functionalCheckbox || !advertisingCheckbox || !socialMediaCheckbox) {
             console.error('Cookie preference checkboxes not found');
             alert('Error: Unable to save preferences');
             return;
         }
-
+    
         const preferences = {
             essential: true,
-            analytics: analyticsCheckbox.checked,
-            marketing: marketingCheckbox.checked,
+            performance: performanceCheckbox.checked,
+            functional: functionalCheckbox.checked,
+            advertising: advertisingCheckbox.checked,
+            socialMedia: socialMediaCheckbox.checked,
             timestamp: new Date().toISOString()
         };
-
+    
         setCookie('cookiePreferences', JSON.stringify(preferences), 365);
         updateDatabasePreferences(preferences);
-
+    
         const cookieModal = document.getElementById('cookieModal');
         if (cookieModal && typeof bootstrap !== 'undefined') {
-            bootstrap.Modal.getInstance(cookieModal)?.hide();
+            const modalInstance = bootstrap.Modal.getInstance(cookieModal);
+            if (modalInstance) {
+                modalInstance.hide();
+                // Ensure backdrop is removed
+                document.body.classList.remove('modal-open');
+                const backdrop = document.querySelector('.modal-backdrop');
+                if (backdrop) backdrop.remove();
+            }
         }
     }
-
+    
+    // Existing updateDatabasePreferences function (unchanged)
     function updateDatabasePreferences(preferences) {
         const token = localStorage.getItem('token');
         const consentId = getCookie('consentId');
@@ -243,7 +259,7 @@ document.addEventListener("DOMContentLoaded", function () {
             alert('Error: Consent ID not found. Please set preferences first.');
             return;
         }
-
+    
         fetch('https://backendcookie-8qc1.onrender.com/api/update-cookie-prefs', {
             method: 'POST',
             headers: {
@@ -262,7 +278,6 @@ document.addEventListener("DOMContentLoaded", function () {
             alert('Failed to save preferences to the server. Please try again.');
         });
     }
-
     // Delete Cookie Data Functionality
     const deleteCookieDataBtn = document.getElementById("deleteCookieData");
     if (deleteCookieDataBtn) {
