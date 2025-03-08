@@ -146,99 +146,114 @@ document.addEventListener("DOMContentLoaded", function () {
             const response = await fetch("https://backendcookie-8qc1.onrender.com/api/send-mfa", {
                 method: "POST",
                 headers: {
-                    "Authorization": `Bearer ${token}`, // Add JWT
+                    "Authorization": `Bearer ${token}`,
                     "Content-Type": "application/json"
-                }
+                },
+                // Add body if required by your backend (e.g., email or user ID)
+                // Replace with actual data expected by your API
+                body: JSON.stringify({}) // Example: { email: "user@example.com" }
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || `Failed to send MFA code: ${response.status}`);
+                const errorData = await response.text(); // Get raw response for more detail
+                throw new Error(`Failed to send MFA code: ${response.status} - ${errorData}`);
             }
 
             console.log("MFA code sent to user's email");
         } catch (error) {
             console.error("Error sending MFA code:", error);
-            alert(`Failed to send verification code: ${error.message}. Please try again later.`);
+            alert(`Failed to send verification code: ${error.message}. Please try again later or check server logs.`);
             confirmModal.hide();
+        }
+    });
+
+    // Resend Code (moved outside)
+    document.getElementById("resendCode").addEventListener("click", async function(e) {
+        e.preventDefault();
+        const token = localStorage.getItem("token");
+        if (!token) {
+            alert("Please log in first.");
             return;
         }
 
-        // Resend Code
-        document.getElementById("resendCode").addEventListener("click", async function(e) {
-            e.preventDefault();
-            try {
-                const response = await fetch("https://backendcookie-8qc1.onrender.com/api/send-mfa", {
-                    method: "POST",
-                    headers: {
-                        "Authorization": `Bearer ${token}`, // Add JWT
-                        "Content-Type": "application/json"
-                    }
-                });
+        try {
+            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/send-mfa", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({}) // Add required data if needed
+            });
 
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || "Failed to resend MFA code");
-                }
-
-                alert("A new code has been sent to your email.");
-            } catch (error) {
-                console.error("Error resending MFA code:", error);
-                alert(`Failed to resend code: ${error.message}. Please try again.`);
-            }
-        });
-
-        // Confirm Deletion
-        document.getElementById("confirmDeleteCookie").addEventListener("click", async function() {
-            const mfaCode = document.getElementById("mfaCode").value.trim();
-
-            if (!mfaCode || mfaCode.length !== 6 || !/^\d+$/.test(mfaCode)) {
-                alert("Please enter a valid 6-digit code.");
-                return;
+            if (!response.ok) {
+                const errorData = await response.text();
+                throw new Error(`Failed to resend MFA code: ${response.status} - ${errorData}`);
             }
 
-            try {
-                const response = await fetch("https://backendcookie-8qc1.onrender.com/api/verify-mfa", {
-                    method: "POST",
-                    headers: {
-                        "Authorization": `Bearer ${token}`, // Add JWT
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ code: mfaCode })
-                });
+            alert("A new code has been sent to your email.");
+        } catch (error) {
+            console.error("Error resending MFA code:", error);
+            alert(`Failed to resend code: ${error.message}. Please try again.`);
+        }
+    });
 
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || "Invalid code");
-                }
+    // Confirm Deletion (moved outside)
+    document.getElementById("confirmDeleteCookie").addEventListener("click", async function() {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            alert("Please log in first.");
+            return;
+        }
 
-                // Clear client-side data
-                document.cookie.split(";").forEach(cookie => {
-                    const [name] = cookie.split("=");
-                    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
-                });
-                localStorage.clear();
+        const mfaCode = document.getElementById("mfaCode").value.trim();
+        const confirmModal = bootstrap.Modal.getInstance(document.getElementById("deleteCookieConfirmModal"));
 
-                // Reset UI settings
-                document.getElementById("themeSelect").value = "system";
-                document.getElementById("fontSizeSelect").value = "medium";
-                document.getElementById("notificationSwitch").checked = true;
-                document.getElementById("dataSharingSwitch").checked = true;
+        if (!mfaCode || mfaCode.length !== 6 || !/^\d+$/.test(mfaCode)) {
+            alert("Please enter a valid 6-digit code.");
+            return;
+        }
 
-                applyTheme("system");
-                applyFontSize("medium");
+        try {
+            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/verify-mfa", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ code: mfaCode })
+            });
 
-                confirmModal.hide();
-                alert("Cookie preferences and location data have been deleted successfully.");
-            } catch (error) {
-                console.error("MFA verification error:", error);
-                alert(error.message || "Invalid verification code. Please try again.");
-                document.getElementById("mfaCode").value = "";
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Invalid code");
             }
-        }, { once: true });
+
+            // Clear client-side data
+            document.cookie.split(";").forEach(cookie => {
+                const [name] = cookie.split("=");
+                document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+            });
+            localStorage.clear();
+
+            // Reset UI settings
+            document.getElementById("themeSelect").value = "system";
+            document.getElementById("fontSizeSelect").value = "medium";
+            document.getElementById("notificationSwitch").checked = true;
+            document.getElementById("dataSharingSwitch").checked = true;
+
+            applyTheme("system");
+            applyFontSize("medium");
+
+            confirmModal.hide();
+            alert("Cookie preferences and location data have been deleted successfully.");
+        } catch (error) {
+            console.error("MFA verification error:", error);
+            alert(error.message || "Invalid verification code. Please try again.");
+            document.getElementById("mfaCode").value = "";
+        }
     });
 });
-
 // Theme Application Function
 function applyTheme(theme) {
     const body = document.body;
