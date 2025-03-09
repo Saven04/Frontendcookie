@@ -158,19 +158,16 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Profile modal
     const profileModal = document.getElementById("profileModal");
     if (profileModal) {
-        const profileImage = document.getElementById("profileImage");
-        const profilePicInput = document.getElementById("profilePicInput");
-        const changeProfilePicBtn = document.getElementById("changeProfilePic");
         const profileName = document.getElementById("profileName");
         const profileEmail = document.getElementById("profileEmail");
         const profileLocation = document.getElementById("profileLocation");
         const editProfileBtn = document.getElementById("editProfileBtn");
         const saveProfileBtn = document.getElementById("saveProfileBtn");
         const logoutBtn = document.getElementById("logoutBtn");
-
+    
+        // Load profile data when modal opens
         profileModal.addEventListener('show.bs.modal', async () => {
             const token = localStorage.getItem('token');
             if (!token) {
@@ -178,37 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 bootstrap.Modal.getInstance(profileModal).hide();
                 return;
             }
-        
-            try {
-                const response = await fetch('https://backendcookie-8qc1.onrender.com/api/user-profile', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const data = await response.json();
-                if (response.ok) {
-                    profileName.value = data.username || 'Anonymous'; // Line ~192
-                    profileEmail.value = data.email === '**********' ? 'Email Hidden' : data.email;
-                    profileLocation.value = data.location ? `${data.location.city}, ${data.location.country}` : 'Not set';
-                    profileImage.src = data.profilePic || 'profile.jpg';
-                } else {
-                    throw new Error(data.message || 'Failed to load profile'); // Line 195
-                }
-            } catch (error) {
-                console.error('Error loading profile:', error); // Logs "User not found or deleted"
-                alert('Failed to load profile data.');
-            }
-        });
-
-        
-        changeProfilePicBtn?.addEventListener('click', () => profilePicInput.click());
-        
-        profileModal.addEventListener('show.bs.modal', async () => {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                alert('Please log in to view your profile.');
-                bootstrap.Modal.getInstance(profileModal).hide();
-                return;
-            }
-        
+    
             try {
                 const response = await fetch('https://backendcookie-8qc1.onrender.com/api/user-profile', {
                     headers: { 'Authorization': `Bearer ${token}` }
@@ -216,9 +183,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 const data = await response.json();
                 if (response.ok) {
                     profileName.value = data.username || 'Anonymous';
-                    profileEmail.value = data.email === '**********' ? 'Email Hidden' : data.email;
+                    profileEmail.value = data.email || 'Email Hidden'; // Matches backend mask '****@*****.***'
                     profileLocation.value = data.location ? `${data.location.city}, ${data.location.country}` : 'Not set';
-                    profileImage.src = data.profilePic || 'profile.jpg';
                 } else {
                     throw new Error(data.message || 'Failed to load profile');
                 }
@@ -227,18 +193,25 @@ document.addEventListener("DOMContentLoaded", () => {
                 alert('Failed to load profile data.');
             }
         });
-
+    
+        // Enable editing username
         editProfileBtn?.addEventListener('click', () => {
             profileName.readOnly = false;
             profileName.focus();
             editProfileBtn.classList.add('d-none');
             saveProfileBtn.classList.remove('d-none');
         });
-
+    
+        // Save updated username
         saveProfileBtn?.addEventListener('click', async () => {
             const token = localStorage.getItem('token');
-            const updatedProfile = { username: profileName.value };
-            
+            const updatedProfile = { username: profileName.value.trim() };
+    
+            if (!updatedProfile.username || updatedProfile.username.length < 2) {
+                alert('Username must be at least 2 characters long.');
+                return;
+            }
+    
             try {
                 const response = await fetch('https://backendcookie-8qc1.onrender.com/api/update-profile', {
                     method: 'POST',
@@ -248,25 +221,26 @@ document.addEventListener("DOMContentLoaded", () => {
                     },
                     body: JSON.stringify(updatedProfile)
                 });
+                const data = await response.json();
                 if (response.ok) {
                     profileName.readOnly = true;
                     editProfileBtn.classList.remove('d-none');
                     saveProfileBtn.classList.add('d-none');
                     alert('Profile updated successfully!');
                 } else {
-                    throw new Error('Failed to update profile');
+                    throw new Error(data.message || 'Failed to update profile');
                 }
             } catch (error) {
                 console.error('Error saving profile:', error);
                 alert('Failed to save profile.');
             }
         });
-
+    
+        // Logout
         logoutBtn?.addEventListener('click', () => {
             localStorage.removeItem('token');
             bootstrap.Modal.getInstance(profileModal).hide();
-            alert('Logged out successfully!');
-            // Optionally redirect to login page
+            window.location.href = 'index.html'; // Adjust redirect as needed
         });
     }
 
