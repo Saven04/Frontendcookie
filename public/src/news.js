@@ -225,10 +225,11 @@ document.addEventListener("DOMContentLoaded", () => {
             editProfileBtn.classList.add('d-none');
             saveProfileBtn.classList.remove('d-none');
         });
-        
+
         saveProfileBtn?.addEventListener('click', async () => {
             const token = localStorage.getItem('token');
             const updatedProfile = { username: profileName.value };
+            
             try {
                 const response = await fetch('https://backendcookie-8qc1.onrender.com/api/update-profile', {
                     method: 'POST',
@@ -322,9 +323,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const requiresLocation = preferences.performance || preferences.functional;
 
         if (requiresLocation) {
-            const userConsent = confirm(
-                "Enabling Performance or Functional cookies allows us to update your IP address and approximate location (e.g., city, country) for analytics and personalization. Do you consent to this data being updated? See our Privacy Policy for details."
-            );
 
             if (userConsent) {
                 try {
