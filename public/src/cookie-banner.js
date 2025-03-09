@@ -73,7 +73,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         setCookie("cookiePreferences", JSON.stringify(preferences), 365);
 
         sendPreferencesToDB(consentId, preferences);
-        saveLocationData(consentId);
+
+        // Only collect location data if performance or functional cookies are accepted
+        if (preferences.performance || preferences.functional) {
+            saveLocationData(consentId);
+        } else {
+            console.log("🚫 Location data collection skipped: User did not consent to performance or functional cookies.");
+        }
+
         hideBanner();
         cookiePreferencesModal.classList.remove("show");
     });
@@ -127,7 +134,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                         locationData.longitude = position.coords.longitude;
                         sendLocationDataToDB(locationData);
                     },
-                    () => sendLocationDataToDB(locationData)
+                    () => sendLocationDataToDB(locationData) // Fallback to IP-based data if geolocation is rejected
                 );
             } else {
                 sendLocationDataToDB(locationData);
@@ -171,8 +178,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         setCookie("cookiePreferences", JSON.stringify(preferences), 365);
 
         sendPreferencesToDB(consentId, preferences);
-        saveLocationData(consentId);
+
+        // Only collect location data if accepted (implies consent to performance/functional)
+        if (accepted) {
+            saveLocationData(consentId);
+        } else {
+            console.log("🚫 Location data collection skipped: User rejected cookies.");
+        }
+
         hideBanner();
     }
-
 });
