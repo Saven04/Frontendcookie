@@ -442,44 +442,44 @@ h2 {
     </div>
 
 
-
-    <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="profileModalLabel">Your Profile</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="profileForm">
-                        <div class="mb-3">
-                            <label for="profileName" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="profileName" readonly>
-                            <small class="form-text text-muted">Click Edit to change.</small>
-                        </div>
-                        <div class="mb-3">
-                            <label for="profileEmail" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="profileEmail" readonly>
-                            <small class="form-text text-muted">Email is linked to your account.</small>
-                        </div>
-                        <div class="mb-3">
-                            <label for="profileLocation" class="form-label">Location</label>
-                            <input type="text" class="form-control" id="profileLocation" readonly>
-                            <small class="form-text text-muted">Based on your latest consent.</small>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-danger" id="logoutBtn">Logout</button>
-                    <button type="button" class="btn btn-outline-secondary" id="editProfileBtn">Edit</button>
-                    <button type="button" class="btn btn-primary d-none" id="saveProfileBtn">Save</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
+<!-- Profile Modal -->
+<div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="profileModalLabel">Your Profile</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="profileForm">
+                    <div class="mb-3">
+                        <label for="profileName" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="profileName" readonly>
+                        <small class="form-text text-muted">Click Edit to change.</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="profileEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="profileEmail" readonly>
+                        <small class="form-text text-muted">Email is linked to your account.</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="profileLocation" class="form-label">Location</label>
+                        <input type="text" class="form-control" id="profileLocation" readonly>
+                        <small class="form-text text-muted">Based on your latest consent.</small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger" id="logoutBtn">Logout</button>
+                <button type="button" class="btn btn-outline-secondary" id="editProfileBtn">Edit</button>
+                <button type="button" class="btn btn-primary d-none" id="saveProfileBtn">Save</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
+</div>
 
- <!-- Settings Modal -->
+<!-- Settings Modal -->
 <div class="modal fade" id="settingsModal" tabindex="-1" role="dialog" aria-labelledby="settingsModalLabel">
     <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content">
@@ -515,9 +515,9 @@ h2 {
                                         <input type="password" class="form-control" id="settingsPassword" placeholder="Enter new password" readonly>
                                         <small class="form-text text-muted">Requires MFA to update.</small>
                                     </div>
-                                    <div class="mb-3 d-none" id="mfaCodeSection">
-                                        <label for="mfaCode" class="form-label">MFA Code</label>
-                                        <input type="text" class="form-control" id="mfaCode" placeholder="Enter code sent to your email">
+                                    <div class="mb-3 d-none" id="settingsMfaCodeSection">
+                                        <label for="settingsMfaCode" class="form-label">MFA Code</label>
+                                        <input type="text" class="form-control" id="settingsMfaCode" placeholder="Enter code sent to your email">
                                         <small class="form-text text-muted">Check your email for the code.</small>
                                     </div>
                                     <button type="button" class="btn btn-outline-secondary" id="editProfileBtn">Edit</button>
@@ -720,9 +720,9 @@ h2 {
                 </div>
 
                 <!-- Verification Code Section (hidden initially) -->
-                <div class="mb-3 d-none" id="codeInputSection">
-                    <label for="mfaCode" class="form-label">Verification Code</label>
-                    <input type="text" class="form-control" id="mfaCode" placeholder="Enter 6-digit code" maxlength="6" pattern="[0-9]{6}" required>
+                <div class="mb-3 d-none" id="deleteCookieMfaCodeSection">
+                    <label for="deleteCookieMfaCode" class="form-label">Verification Code</label>
+                    <input type="text" class="form-control" id="deleteCookieMfaCode" placeholder="Enter 6-digit code" maxlength="6" pattern="[0-9]{6}" required>
                     <small class="form-text text-muted">
                         Code expires in 5 minutes. 
                         <a href="#" id="resendCode" class="text-decoration-underline">Resend Code</a>
@@ -739,7 +739,6 @@ h2 {
         </div>
     </div>
 </div>
-
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="./public/src/news.js"></script>

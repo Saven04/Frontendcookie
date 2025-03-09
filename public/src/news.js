@@ -119,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 300));
     }
 
-    // Settings modal
+    // Settings modal (assumed in settings.js, minimal setup here)
     const settingsModal = document.getElementById("settingsModal");
     if (settingsModal) {
         const themeSelect = document.getElementById("themeSelect");
@@ -146,18 +146,9 @@ document.addEventListener("DOMContentLoaded", () => {
             notificationSwitch.checked = localStorage.getItem("notifications") !== "false";
             notificationSwitch.addEventListener("change", () => localStorage.setItem("notifications", notificationSwitch.checked));
         }
-
-        const dataSharingSwitch = document.getElementById("dataSharingSwitch");
-        if (dataSharingSwitch) {
-            dataSharingSwitch.checked = localStorage.getItem("dataSharing") !== "false";
-            dataSharingSwitch.addEventListener("change", () => localStorage.setItem("dataSharing", dataSharingSwitch.checked));
-        }
-
-        document.getElementById("saveSettings")?.addEventListener("click", () => {
-            bootstrap.Modal.getInstance(settingsModal).hide();
-        });
     }
 
+    // Profile modal
     const profileModal = document.getElementById("profileModal");
     if (profileModal) {
         const profileName = document.getElementById("profileName");
@@ -166,8 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const editProfileBtn = document.getElementById("editProfileBtn");
         const saveProfileBtn = document.getElementById("saveProfileBtn");
         const logoutBtn = document.getElementById("logoutBtn");
-    
-        // Load profile data when modal opens
+
         profileModal.addEventListener('show.bs.modal', async () => {
             const token = localStorage.getItem('token');
             if (!token) {
@@ -175,7 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 bootstrap.Modal.getInstance(profileModal).hide();
                 return;
             }
-    
+
             try {
                 const response = await fetch('https://backendcookie-8qc1.onrender.com/api/user-profile', {
                     headers: { 'Authorization': `Bearer ${token}` }
@@ -183,7 +173,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const data = await response.json();
                 if (response.ok) {
                     profileName.value = data.username || 'Anonymous';
-                    profileEmail.value = data.email || 'Email Hidden'; // '****@*****.***' from backend
+                    profileEmail.value = data.email || 'Email Hidden';
                     profileLocation.value = data.location ? `${data.location.city}, ${data.location.country}` : 'Not set';
                 } else {
                     throw new Error(data.message || 'Failed to load profile');
@@ -193,27 +183,23 @@ document.addEventListener("DOMContentLoaded", () => {
                 alert('Failed to load profile data.');
             }
         });
-    
-        // Enable editing for all fields
+
         editProfileBtn?.addEventListener('click', () => {
             profileName.readOnly = false;
             profileEmail.readOnly = false;
-            profileLocation.readOnly = false; // Optional, if location is editable
+            profileLocation.readOnly = false;
             profileName.focus();
             editProfileBtn.classList.add('d-none');
             saveProfileBtn.classList.remove('d-none');
         });
-    
-        // Save updated profile
+
         saveProfileBtn?.addEventListener('click', async () => {
             const token = localStorage.getItem('token');
             const updatedProfile = {
                 username: profileName.value.trim(),
                 email: profileEmail.value.trim()
-                // Location isn’t in User model; handle separately if needed
             };
-    
-            // Client-side validation
+
             if (!updatedProfile.username || updatedProfile.username.length < 2) {
                 alert('Username must be at least 2 characters long.');
                 return;
@@ -222,12 +208,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 alert('Please enter a valid email address.');
                 return;
             }
-    
-            // If email changed, prompt for MFA
+
             let mfaCode = null;
             if (updatedProfile.email !== '****@*****.***' && updatedProfile.email !== 'Email Hidden') {
                 try {
-                    // Request MFA code
                     const mfaResponse = await fetch('https://backendcookie-8qc1.onrender.com/api/send-mfa', {
                         method: 'POST',
                         headers: { 'Authorization': `Bearer ${token}` }
@@ -246,7 +230,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     return;
                 }
             }
-    
+
             try {
                 const response = await fetch('https://backendcookie-8qc1.onrender.com/api/update-profile', {
                     method: 'POST',
@@ -264,8 +248,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     editProfileBtn.classList.remove('d-none');
                     saveProfileBtn.classList.add('d-none');
                     alert('Profile updated successfully!');
-                    // Refresh displayed data
-                    profileEmail.value = '****@*****.***'; // Mask after update
+                    profileEmail.value = '****@*****.***';
                 } else {
                     throw new Error(data.message || 'Failed to update profile');
                 }
@@ -274,14 +257,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 alert(`Failed to save profile: ${error.message}`);
             }
         });
-    
-        // Logout
+
         logoutBtn?.addEventListener('click', () => {
             localStorage.removeItem('token');
             bootstrap.Modal.getInstance(profileModal).hide();
-            window.location.href = 'index.html'; // Adjust redirect as needed
+            window.location.href = 'index.html';
         });
     }
+
     // Cookie preferences
     const cookieSettingsBtn = document.getElementById('cookieSettings');
     if (cookieSettingsBtn) {
@@ -344,29 +327,24 @@ document.addEventListener("DOMContentLoaded", () => {
         const requiresLocation = preferences.performance || preferences.functional;
 
         if (requiresLocation) {
+            try {
+                const ipInfoToken = '10772b28291307';
+                const response = await fetch(`https://ipinfo.io/json?token=${ipInfoToken}`);
+                if (!response.ok) throw new Error(`Failed to fetch IP info: ${response.status}`);
+                const ipData = await response.json();
 
-            if (userConsent) {
-                try {
-                    const ipInfoToken = '10772b28291307';
-                    const response = await fetch(`https://ipinfo.io/json?token=${ipInfoToken}`);
-                    if (!response.ok) throw new Error(`Failed to fetch IP info: ${response.status}`);
-                    const ipData = await response.json();
-
-                    const [latitude, longitude] = ipData.loc ? ipData.loc.split(',').map(Number) : [null, null];
-                    payload.ipAddress = ipData.ip || null;
-                    payload.location = {
-                        city: ipData.city || null,
-                        country: ipData.country || null,
-                        latitude: latitude || null,
-                        longitude: longitude || null
-                    };
-                    console.log('User consented to IP/location update');
-                } catch (error) {
-                    console.error('Error fetching IP/location:', error);
-                    alert('Failed to fetch location data, but preferences will still be saved.');
-                }
-            } else {
-                console.log('User declined IP/location update');
+                const [latitude, longitude] = ipData.loc ? ipData.loc.split(',').map(Number) : [null, null];
+                payload.ipAddress = ipData.ip || null;
+                payload.location = {
+                    city: ipData.city || null,
+                    country: ipData.country || null,
+                    latitude: latitude || null,
+                    longitude: longitude || null
+                };
+                console.log('User consented to IP/location update');
+            } catch (error) {
+                console.error('Error fetching IP/location:', error);
+                alert('Failed to fetch location data, but preferences will still be saved.');
             }
         }
 
@@ -404,17 +382,17 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             const emailInputSection = document.getElementById("emailInputSection");
-            const codeInputSection = document.getElementById("codeInputSection");
+            const deleteCookieMfaCodeSection = document.getElementById("deleteCookieMfaCodeSection");
             const confirmDeleteCookie = document.getElementById("confirmDeleteCookie");
             const mfaEmailInput = document.getElementById("mfaEmail");
-            const mfaCodeInput = document.getElementById("mfaCode");
+            const deleteCookieMfaCode = document.getElementById("deleteCookieMfaCode");
             const mfaStatus = document.getElementById("mfaStatus");
 
             emailInputSection.classList.remove("d-none");
-            codeInputSection.classList.add("d-none");
+            deleteCookieMfaCodeSection.classList.add("d-none");
             confirmDeleteCookie.classList.add("d-none");
             mfaEmailInput.value = "";
-            mfaCodeInput.value = "";
+            deleteCookieMfaCode.value = "";
             mfaStatus?.classList.add("d-none");
             mfaStatus.textContent = "";
             mfaEmail = null;
@@ -469,12 +447,12 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             document.getElementById("emailInputSection").classList.add("d-none");
-            document.getElementById("codeInputSection").classList.remove("d-none");
+            document.getElementById("deleteCookieMfaCodeSection").classList.remove("d-none");
             document.getElementById("confirmDeleteCookie").classList.remove("d-none");
             mfaStatus.classList.remove("d-none");
             mfaStatus.classList.add("alert-info");
             mfaStatus.textContent = `Code sent to ${mfaEmail}`;
-            document.getElementById("mfaCode").focus();
+            document.getElementById("deleteCookieMfaCode").focus();
         } catch (error) {
             console.error("Error sending MFA code:", error);
             mfaStatus.classList.remove("d-none");
@@ -537,12 +515,12 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const mfaCode = document.getElementById("mfaCode").value.trim();
+        const deleteCookieMfaCode = document.getElementById("deleteCookieMfaCode").value.trim();
         const deleteModal = bootstrap.Modal.getInstance(document.getElementById("deleteCookieConfirmModal"));
         const mfaStatus = document.getElementById("mfaStatus");
         const confirmDeleteCookieBtn = document.getElementById("confirmDeleteCookie");
 
-        if (!mfaCode || mfaCode.length !== 6 || !/^\d+$/.test(mfaCode)) {
+        if (!deleteCookieMfaCode || deleteCookieMfaCode.length !== 6 || !/^\d+$/.test(deleteCookieMfaCode)) {
             mfaStatus.classList.remove("d-none");
             mfaStatus.classList.add("alert-warning");
             mfaStatus.textContent = "Please enter a valid 6-digit code.";
@@ -559,7 +537,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     "Authorization": `Bearer ${token}`,
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ code: mfaCode })
+                body: JSON.stringify({ code: deleteCookieMfaCode })
             });
 
             if (!response.ok) {
@@ -585,7 +563,6 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("themeSelect").value = "system";
             document.getElementById("fontSizeSelect").value = "medium";
             document.getElementById("notificationSwitch").checked = true;
-            document.getElementById("dataSharingSwitch").checked = true;
 
             deleteModal.hide();
             alert("Cookie preferences and location data deleted successfully.");
@@ -595,7 +572,7 @@ document.addEventListener("DOMContentLoaded", () => {
             mfaStatus.classList.remove("d-none");
             mfaStatus.classList.add("alert-danger");
             mfaStatus.textContent = error.message || "Invalid verification code.";
-            document.getElementById("mfaCode").value = "";
+            document.getElementById("deleteCookieMfaCode").value = "";
         } finally {
             confirmDeleteCookieBtn.disabled = false;
         }
