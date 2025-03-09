@@ -183,7 +183,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const data = await response.json();
                 if (response.ok) {
                     profileName.value = data.username || 'Anonymous';
-                    profileEmail.value = data.email || 'Email Hidden'; // Matches backend mask '****@*****.***'
+                    profileEmail.value = data.email || 'Email Hidden'; // '****@*****.***' from backend
                     profileLocation.value = data.location ? `${data.location.city}, ${data.location.country}` : 'Not set';
                 } else {
                     throw new Error(data.message || 'Failed to load profile');
@@ -194,22 +194,57 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     
-        // Enable editing username
+        // Enable editing for all fields
         editProfileBtn?.addEventListener('click', () => {
             profileName.readOnly = false;
+            profileEmail.readOnly = false;
+            profileLocation.readOnly = false; // Optional, if location is editable
             profileName.focus();
             editProfileBtn.classList.add('d-none');
             saveProfileBtn.classList.remove('d-none');
         });
     
-        // Save updated username
+        // Save updated profile
         saveProfileBtn?.addEventListener('click', async () => {
             const token = localStorage.getItem('token');
-            const updatedProfile = { username: profileName.value.trim() };
+            const updatedProfile = {
+                username: profileName.value.trim(),
+                email: profileEmail.value.trim()
+                // Location isn’t in User model; handle separately if needed
+            };
     
+            // Client-side validation
             if (!updatedProfile.username || updatedProfile.username.length < 2) {
                 alert('Username must be at least 2 characters long.');
                 return;
+            }
+            if (updatedProfile.email && !/\S+@\S+\.\S+/.test(updatedProfile.email)) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+    
+            // If email changed, prompt for MFA
+            let mfaCode = null;
+            if (updatedProfile.email !== '****@*****.***' && updatedProfile.email !== 'Email Hidden') {
+                try {
+                    // Request MFA code
+                    const mfaResponse = await fetch('https://backendcookie-8qc1.onrender.com/api/send-mfa', {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const mfaData = await mfaResponse.json();
+                    if (!mfaResponse.ok) throw new Error(mfaData.message || 'Failed to send MFA code');
+                    
+                    mfaCode = prompt('Enter the MFA code sent to your email:');
+                    if (!mfaCode) {
+                        alert('MFA code is required to update email.');
+                        return;
+                    }
+                } catch (error) {
+                    console.error('Error sending MFA code:', error);
+                    alert('Failed to send MFA code.');
+                    return;
+                }
             }
     
             try {
@@ -219,20 +254,24 @@ document.addEventListener("DOMContentLoaded", () => {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify(updatedProfile)
+                    body: JSON.stringify({ ...updatedProfile, mfaCode })
                 });
                 const data = await response.json();
                 if (response.ok) {
                     profileName.readOnly = true;
+                    profileEmail.readOnly = true;
+                    profileLocation.readOnly = true;
                     editProfileBtn.classList.remove('d-none');
                     saveProfileBtn.classList.add('d-none');
                     alert('Profile updated successfully!');
+                    // Refresh displayed data
+                    profileEmail.value = '****@*****.***'; // Mask after update
                 } else {
                     throw new Error(data.message || 'Failed to update profile');
                 }
             } catch (error) {
                 console.error('Error saving profile:', error);
-                alert('Failed to save profile.');
+                alert(`Failed to save profile: ${error.message}`);
             }
         });
     
@@ -243,7 +282,6 @@ document.addEventListener("DOMContentLoaded", () => {
             window.location.href = 'index.html'; // Adjust redirect as needed
         });
     }
-
     // Cookie preferences
     const cookieSettingsBtn = document.getElementById('cookieSettings');
     if (cookieSettingsBtn) {
