@@ -207,11 +207,13 @@ body {
 }
 
 /* Dark Mode */
+/* Dark Mode Base */
 .dark-mode {
     background-color: var(--dark-bg);
-    color: var(--light-text);
+    color: var(--light-text); /* Default text color */
 }
 
+/* Navbar */
 .dark-mode .navbar {
     background-color: var(--dark-surface);
     box-shadow: 0 2px 10px var(--shadow-dark);
@@ -225,29 +227,67 @@ body {
     color: var(--light-text) !important;
 }
 
+/* Modal */
 .dark-mode .modal-content {
     background-color: var(--dark-surface);
+    color: var(--light-text); /* Ensure all text in modal is white */
 }
 
 .dark-mode .modal-header {
     background-color: #2a2a2a;
     border-bottom: 1px solid var(--shadow-dark);
+    color: var(--light-text); /* Modal header text */
 }
 
+.dark-mode .modal-title {
+    color: var(--light-text); /* Modal title specifically */
+}
+
+/* Settings Section */
 .dark-mode .settings-section h6 {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* Slightly more visible border */
-    color: #e0e0e0; /* Brighter for better contrast */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--light-text); /* Was #e0e0e0, now consistent with --light-text */
 }
 
+/* Accordion */
+.dark-mode .accordion-button {
+    background-color: var(--dark-surface);
+    color: var(--light-text);
+}
+
+.dark-mode .accordion-button:not(.collapsed) {
+    background-color: #2a2a2a;
+    color: var(--light-text);
+}
+
+.dark-mode .accordion-button:focus {
+    box-shadow: none;
+    border-color: var(--shadow-dark);
+}
+
+/* List Group */
 .dark-mode .list-group-item {
     background-color: #2a2a2a;
-    color: var(--light-text); /* Ensure text is visible */
+    color: var(--light-text);
 }
 
 .dark-mode .list-group-item:hover {
     background-color: #333;
 }
 
+.dark-mode .list-group-item a {
+    color: var(--light-text); /* Links in list items */
+}
+
+.dark-mode .list-group-item a:hover {
+    color: #ddd; /* Slightly dimmer on hover */
+}
+
+.dark-mode .list-group-item.text-warning a {
+    color: #ffca2c !important; /* Warning color for Delete Cookie Data */
+}
+
+/* Inputs */
 .dark-mode #searchInput {
     background-color: #2a2a2a;
     border-color: var(--shadow-dark);
@@ -256,8 +296,8 @@ body {
 }
 
 .dark-mode #searchInput::placeholder {
-    color: #aaa; /* Visible placeholder color */
-    opacity: 1; /* Ensure full opacity (some browsers reduce it) */
+    color: #aaa;
+    opacity: 1;
 }
 
 .dark-mode .form-control {
@@ -267,10 +307,11 @@ body {
 }
 
 .dark-mode .form-control::placeholder {
-    color: #aaa; /* Visible placeholder color for all inputs */
+    color: #aaa;
     opacity: 1;
 }
 
+/* Cards */
 .dark-mode .card {
     background-color: #1e1e1e;
 }
@@ -283,7 +324,21 @@ body {
     color: #bbb;
 }
 
-/* Responsive Adjustments */
+/* Headings */
+.dark-mode h2,
+.dark-mode h3,
+.dark-mode h4,
+.dark-mode h5,
+.dark-mode h6 {
+    color: var(--light-text); /* All headings in dark mode */
+}
+
+/* Override Bootstrap muted text */
+.dark-mode .text-muted {
+    color: #bbb !important; /* Lighter gray for muted text */
+}
+
+/* Responsive Adjustments (unchanged, no dark mode issue here) */
 @media (max-width: 768px) {
     .navbar-brand {
         font-size: 1.3rem;
@@ -307,6 +362,23 @@ body {
     .card-title {
         font-size: 1.1rem;
     }
+}
+
+/* Container Styling */
+.container {
+    max-width: 1200px;
+    padding: 0 15px;
+}
+
+/* Base heading style (light mode) */
+h2 {
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 1.5rem;
+}
+
+.dark-mode h2 {
+    color: var(--light-text);
 }
 
 /* Container Styling */

@@ -270,7 +270,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Only fetch and include IP/location if performance or functional is enabled
         if (preferences.performance || preferences.functional) {
             try {
-                const ipInfoToken = '10772b28291307'; // Replace with your token
+                const ipInfoToken = '10772b28291307'; 
                 const response = await fetch(`https://ipinfo.io/json?token=${ipInfoToken}`);
                 if (!response.ok) {
                     throw new Error(`Failed to fetch IP info: ${response.status}`);
