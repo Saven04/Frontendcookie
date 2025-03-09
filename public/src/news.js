@@ -198,24 +198,29 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         changeProfilePicBtn?.addEventListener('click', () => profilePicInput.click());
+        
         profilePicInput?.addEventListener('change', async (e) => {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = (e) => profileImage.src = e.target.result;
                 reader.readAsDataURL(file);
-
+        
                 const formData = new FormData();
                 formData.append('profilePic', file);
                 const token = localStorage.getItem('token');
-                fetch('https://backendcookie-8qc1.onrender.com/api/upload-profile-pic', {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${token}` },
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => console.log('Profile pic updated:', data))
-                .catch(error => console.error('Error uploading pic:', error));
+                try {
+                    const response = await fetch('https://backendcookie-8qc1.onrender.com/api/upload-profile-pic', {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` },
+                        body: formData
+                    });
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.message || 'Upload failed');
+                    console.log('Profile pic updated:', data);
+                } catch (error) {
+                    console.error('Error uploading pic:', error);
+                }
             }
         });
 
