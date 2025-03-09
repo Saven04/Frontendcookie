@@ -149,114 +149,169 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Profile modal
-    const profileModal = document.getElementById("profileModal");
-    if (profileModal) {
-        const profileName = document.getElementById("profileName");
-        const profileEmail = document.getElementById("profileEmail");
-        const profileLocation = document.getElementById("profileLocation");
+    const settingsModal = document.getElementById("settingsModal");
+    if (settingsModal) {
+        const profileSettingsForm = document.getElementById("profileSettingsForm");
+        const settingsUsername = document.getElementById("settingsUsername");
+        const settingsEmail = document.getElementById("settingsEmail");
+        const settingsPassword = document.getElementById("settingsPassword");
+        const settingsMfaCodeSection = document.getElementById("settingsMfaCodeSection");
+        const settingsMfaCode = document.getElementById("settingsMfaCode");
         const editProfileBtn = document.getElementById("editProfileBtn");
         const saveProfileBtn = document.getElementById("saveProfileBtn");
-        const logoutBtn = document.getElementById("logoutBtn");
-
-        profileModal.addEventListener('show.bs.modal', async () => {
-            const token = localStorage.getItem('token');
+        const sendMfaCodeBtn = document.getElementById("sendMfaCodeBtn");
+    
+        let originalEmail = "****@*****.***"; // Store initial email value
+    
+        // Load initial profile data when collapse opens
+        document.getElementById("profileSettingsCollapse").addEventListener("show.bs.collapse", async () => {
+            const token = localStorage.getItem("token");
             if (!token) {
-                alert('Please log in to view your profile.');
-                bootstrap.Modal.getInstance(profileModal).hide();
+                alert("Please log in to view your settings.");
+                bootstrap.Collapse.getInstance(document.getElementById("profileSettingsCollapse")).hide();
                 return;
             }
-
+    
             try {
-                const response = await fetch('https://backendcookie-8qc1.onrender.com/api/user-profile', {
-                    headers: { 'Authorization': `Bearer ${token}` }
+                const response = await fetch("https://backendcookie-8qc1.onrender.com/api/user-profile", {
+                    headers: { "Authorization": `Bearer ${token}` }
                 });
                 const data = await response.json();
                 if (response.ok) {
-                    profileName.value = data.username || 'Anonymous';
-                    profileEmail.value = data.email || 'Email Hidden';
-                    profileLocation.value = data.location ? `${data.location.city}, ${data.location.country}` : 'Not set';
+                    settingsUsername.value = data.username || "Anonymous";
+                    settingsEmail.value = data.email || "****@*****.***";
+                    originalEmail = data.email || "****@*****.***"; // Store for comparison
+                    settingsPassword.value = ""; // Password isn’t returned, keep blank
                 } else {
-                    throw new Error(data.message || 'Failed to load profile');
+                    throw new Error(data.message || "Failed to load profile");
                 }
             } catch (error) {
-                console.error('Error loading profile:', error);
-                alert('Failed to load profile data.');
+                console.error("Error loading profile:", error);
+                alert("Failed to load profile data.");
             }
         });
-
-        editProfileBtn?.addEventListener('click', () => {
-            profileName.readOnly = false;
-            profileEmail.readOnly = false;
-            profileLocation.readOnly = false;
-            profileName.focus();
-            editProfileBtn.classList.add('d-none');
-            saveProfileBtn.classList.remove('d-none');
+    
+        // Enable editing
+        editProfileBtn?.addEventListener("click", () => {
+            settingsUsername.readOnly = false;
+            settingsEmail.readOnly = false;
+            settingsPassword.readOnly = false;
+            settingsUsername.focus();
+            editProfileBtn.classList.add("d-none");
+            saveProfileBtn.classList.remove("d-none");
+            sendMfaCodeBtn.classList.add("d-none"); // Hide MFA button until needed
+            settingsMfaCodeSection.classList.add("d-none"); // Ensure MFA section is hidden
         });
-
-        saveProfileBtn?.addEventListener('click', async () => {
-            const token = localStorage.getItem('token');
+    
+        // Send MFA code when email or password changes
+        sendMfaCodeBtn?.addEventListener("click", async () => {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                alert("Please log in first.");
+                return;
+            }
+    
+            try {
+                const response = await fetch("https://backendcookie-8qc1.onrender.com/api/send-mfa", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                });
+                const mfaData = await response.json();
+                if (!response.ok) throw new Error(mfaData.message || "Failed to send MFA code");
+    
+                settingsMfaCodeSection.classList.remove("d-none");
+                sendMfaCodeBtn.classList.add("d-none");
+                settingsMfaCode.focus();
+                alert("MFA code sent to your email.");
+            } catch (error) {
+                console.error("Error sending MFA code:", error);
+                alert("Failed to send MFA code: " + error.message);
+            }
+        });
+    
+        // Handle form submission
+        profileSettingsForm?.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const token = localStorage.getItem("token");
+            if (!token) {
+                alert("Please log in first.");
+                return;
+            }
+    
             const updatedProfile = {
-                username: profileName.value.trim(),
-                email: profileEmail.value.trim()
+                username: settingsUsername.value.trim(),
+                email: settingsEmail.value.trim(),
+                password: settingsPassword.value.trim()
             };
-
+    
+            // Validation
             if (!updatedProfile.username || updatedProfile.username.length < 2) {
-                alert('Username must be at least 2 characters long.');
+                alert("Username must be at least 2 characters long.");
                 return;
             }
             if (updatedProfile.email && !/\S+@\S+\.\S+/.test(updatedProfile.email)) {
-                alert('Please enter a valid email address.');
+                alert("Please enter a valid email address.");
                 return;
             }
-
-            let mfaCode = null;
-            if (updatedProfile.email !== '****@*****.***' && updatedProfile.email !== 'Email Hidden') {
-                try {
-                    const mfaResponse = await fetch('https://backendcookie-8qc1.onrender.com/api/send-mfa', {
-                        method: 'POST',
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-                    const mfaData = await mfaResponse.json();
-                    if (!mfaResponse.ok) throw new Error(mfaData.message || 'Failed to send MFA code');
-                    
-                    mfaCode = prompt('Enter the MFA code sent to your email:');
-                    if (!mfaCode) {
-                        alert('MFA code is required to update email.');
-                        return;
-                    }
-                } catch (error) {
-                    console.error('Error sending MFA code:', error);
-                    alert('Failed to send MFA code.');
+            if (updatedProfile.password && updatedProfile.password.length < 6) {
+                alert("Password must be at least 6 characters long.");
+                return;
+            }
+    
+            // Check if email or password changed
+            const emailChanged = updatedProfile.email !== originalEmail;
+            const passwordChanged = updatedProfile.password !== "";
+            const requiresMfa = emailChanged || passwordChanged;
+    
+            if (requiresMfa && !settingsMfaCodeSection.classList.contains("d-none")) {
+                const mfaCode = settingsMfaCode.value.trim();
+                if (!mfaCode) {
+                    alert("Please enter the MFA code.");
                     return;
                 }
+                updatedProfile.mfaCode = mfaCode;
+            } else if (requiresMfa) {
+                saveProfileBtn.classList.add("d-none");
+                sendMfaCodeBtn.classList.remove("d-none");
+                alert("Please request an MFA code to update email or password.");
+                return;
             }
-
+    
             try {
-                const response = await fetch('https://backendcookie-8qc1.onrender.com/api/update-profile', {
-                    method: 'POST',
+                const response = await fetch("https://backendcookie-8qc1.onrender.com/api/update-profile", {
+                    method: "POST",
                     headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
                     },
-                    body: JSON.stringify({ ...updatedProfile, mfaCode })
+                    body: JSON.stringify(updatedProfile)
                 });
                 const data = await response.json();
                 if (response.ok) {
-                    profileName.readOnly = true;
-                    profileEmail.readOnly = true;
-                    profileLocation.readOnly = true;
-                    editProfileBtn.classList.remove('d-none');
-                    saveProfileBtn.classList.add('d-none');
-                    alert('Profile updated successfully!');
-                    profileEmail.value = '****@*****.***';
+                    settingsUsername.readOnly = true;
+                    settingsEmail.readOnly = true;
+                    settingsPassword.readOnly = true;
+                    settingsMfaCodeSection.classList.add("d-none");
+                    settingsMfaCode.value = "";
+                    editProfileBtn.classList.remove("d-none");
+                    saveProfileBtn.classList.add("d-none");
+                    sendMfaCodeBtn.classList.add("d-none");
+                    originalEmail = updatedProfile.email; // Update original email
+                    settingsEmail.value = "****@*****.***"; // Mask after update
+                    settingsPassword.value = ""; // Clear password field
+                    alert("Profile updated successfully!");
                 } else {
-                    throw new Error(data.message || 'Failed to update profile');
+                    throw new Error(data.message || "Failed to update profile");
                 }
             } catch (error) {
-                console.error('Error saving profile:', error);
+                console.error("Error saving profile:", error);
                 alert(`Failed to save profile: ${error.message}`);
             }
         });
+    
 
         logoutBtn?.addEventListener('click', () => {
             localStorage.removeItem('token');
