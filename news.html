@@ -443,7 +443,6 @@ h2 {
 
 
 
-    <!-- Profile Modal -->
     <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -452,27 +451,20 @@ h2 {
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="text-center mb-4">
-                        <img src="profile.jpg" alt="Profile Picture" class="rounded-circle mb-3" width="100" height="100" id="profileImage">
-                        <div>
-                            <button type="button" class="btn btn-outline-primary btn-sm" id="changeProfilePic">Change Picture</button>
-                            <input type="file" id="profilePicInput" accept="image/*" class="d-none">
-                        </div>
-                    </div>
                     <form id="profileForm">
                         <div class="mb-3">
                             <label for="profileName" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="profileName" placeholder="Your Name" readonly>
+                            <input type="text" class="form-control" id="profileName" readonly>
                             <small class="form-text text-muted">Click Edit to change.</small>
                         </div>
                         <div class="mb-3">
                             <label for="profileEmail" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="profileEmail" placeholder="your@email.com" readonly>
+                            <input type="email" class="form-control" id="profileEmail" readonly>
                             <small class="form-text text-muted">Email is linked to your account.</small>
                         </div>
                         <div class="mb-3">
                             <label for="profileLocation" class="form-label">Location</label>
-                            <input type="text" class="form-control" id="profileLocation" placeholder="City, Country" readonly>
+                            <input type="text" class="form-control" id="profileLocation" readonly>
                             <small class="form-text text-muted">Based on your latest consent.</small>
                         </div>
                     </form>
