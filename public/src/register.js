@@ -41,15 +41,18 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         const response = await fetch("https://backendcookie-8qc1.onrender.com/api/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, email, password, consentId }), // Include consentId in the request body
+            body: JSON.stringify({ username, email, password, consentId }) // Include consentId
         });
 
         const data = await response.json();
         if (response.ok) {
-            showModal("✅ Registration successful! Redirecting to login...", "success");
+            // Store the token for immediate login
+            localStorage.setItem('token', data.token);
+            showModal("✅ Registration successful! You are now logged in.", "success");
             setTimeout(() => {
                 document.getElementById("registerForm").reset();
-                window.location.href = "index.html";
+                // Optionally redirect or update UI to reflect logged-in state
+                // window.location.href = "profile.html"; // Uncomment if you have a profile page
             }, 1500);
         } else {
             showModal(`❌ ${data.message || "Registration failed."}`, "error");
@@ -62,6 +65,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     }
 });
 
+// Function to get cookie value
 function getCookie(name) {
     const cookies = document.cookie.split("; ");
     for (let cookie of cookies) {
@@ -73,7 +77,7 @@ function getCookie(name) {
     return null;
 }
 
-// Function to reset the register button after an action
+// Function to reset the register button
 function resetButton() {
     const registerButton = document.querySelector(".login-button");
     if (registerButton) {
@@ -81,7 +85,6 @@ function resetButton() {
         registerButton.textContent = "Register";
     }
 }
-
 
 // Function to show a custom modal
 function showModal(message, type) {
