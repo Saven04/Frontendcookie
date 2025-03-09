@@ -263,8 +263,8 @@ document.addEventListener("DOMContentLoaded", function () {
     
         try {
             // Fetch IP and location data from ipinfo.io
-            const ipInfoToken = 'YOUR_IPINFO_TOKEN_HERE'; // Replace with your ipinfo.io token
-            const response = await fetch(`https://ipinfo.io/json?token=10772b28291307`);
+            const ipInfoToken = '10772b28291307'; // Replace with your ipinfo.io token
+            const response = await fetch(`https://ipinfo.io/json?token=${ipInfoToken}`);
             if (!response.ok) {
                 throw new Error(`Failed to fetch IP info: ${response.status}`);
             }
