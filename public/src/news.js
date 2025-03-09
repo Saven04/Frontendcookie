@@ -178,25 +178,27 @@ document.addEventListener("DOMContentLoaded", () => {
                 bootstrap.Modal.getInstance(profileModal).hide();
                 return;
             }
+        
             try {
                 const response = await fetch('https://backendcookie-8qc1.onrender.com/api/user-profile', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 const data = await response.json();
                 if (response.ok) {
-                    profileName.value = data.username || 'Anonymous'; // Changed from name
-                    profileEmail.value = data.email === '**********' ? 'Email Hidden' : data.email; // Handle masked email
+                    profileName.value = data.username || 'Anonymous'; // Line ~192
+                    profileEmail.value = data.email === '**********' ? 'Email Hidden' : data.email;
                     profileLocation.value = data.location ? `${data.location.city}, ${data.location.country}` : 'Not set';
                     profileImage.src = data.profilePic || 'profile.jpg';
                 } else {
-                    throw new Error(data.message || 'Failed to load profile');
+                    throw new Error(data.message || 'Failed to load profile'); // Line 195
                 }
             } catch (error) {
-                console.error('Error loading profile:', error);
+                console.error('Error loading profile:', error); // Logs "User not found or deleted"
                 alert('Failed to load profile data.');
             }
         });
 
+        
         changeProfilePicBtn?.addEventListener('click', () => profilePicInput.click());
         
         profilePicInput?.addEventListener('change', async (e) => {
