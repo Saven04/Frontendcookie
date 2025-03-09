@@ -201,28 +201,30 @@ document.addEventListener("DOMContentLoaded", () => {
         
         changeProfilePicBtn?.addEventListener('click', () => profilePicInput.click());
         
-        profilePicInput?.addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => profileImage.src = e.target.result;
-                reader.readAsDataURL(file);
+        profileModal.addEventListener('show.bs.modal', async () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('Please log in to view your profile.');
+                bootstrap.Modal.getInstance(profileModal).hide();
+                return;
+            }
         
-                const formData = new FormData();
-                formData.append('profilePic', file);
-                const token = localStorage.getItem('token');
-                try {
-                    const response = await fetch('https://backendcookie-8qc1.onrender.com/api/upload-profile-pic', {
-                        method: 'POST',
-                        headers: { 'Authorization': `Bearer ${token}` },
-                        body: formData
-                    });
-                    const data = await response.json();
-                    if (!response.ok) throw new Error(data.message || 'Upload failed');
-                    console.log('Profile pic updated:', data);
-                } catch (error) {
-                    console.error('Error uploading pic:', error);
+            try {
+                const response = await fetch('https://backendcookie-8qc1.onrender.com/api/user-profile', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    profileName.value = data.username || 'Anonymous';
+                    profileEmail.value = data.email === '**********' ? 'Email Hidden' : data.email;
+                    profileLocation.value = data.location ? `${data.location.city}, ${data.location.country}` : 'Not set';
+                    profileImage.src = data.profilePic || 'profile.jpg';
+                } else {
+                    throw new Error(data.message || 'Failed to load profile');
                 }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                alert('Failed to load profile data.');
             }
         });
 
