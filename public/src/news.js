@@ -261,34 +261,51 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
     
-        try {
-            // Fetch IP and location data from ipinfo.io
-            const ipInfoToken = '10772b28291307'; // Replace with your ipinfo.io token
-            const response = await fetch(`https://ipinfo.io/json?token=${ipInfoToken}`);
-            if (!response.ok) {
-                throw new Error(`Failed to fetch IP info: ${response.status}`);
+        const payload = {
+            consentId,
+            preferences,
+            deletedAt: null
+        };
+    
+        // Check if performance or functional cookies are enabled
+        const requiresLocation = preferences.performance || preferences.functional;
+    
+        if (requiresLocation) {
+            // Explicitly ask for consent to update IP/location
+            const userConsent = confirm(
+                "Enabling Performance or Functional cookies allows us to update your IP address and approximate location (e.g., city, country) for analytics and personalization. Do you consent to this data being updated? See our Privacy Policy for details."
+            );
+    
+            if (userConsent) {
+                try {
+                    const ipInfoToken = '10772b28291307'; // Replace with your ipinfo.io token
+                    const response = await fetch(`https://ipinfo.io/json?token=${ipInfoToken}`);
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch IP info: ${response.status}`);
+                    }
+                    const ipData = await response.json();
+    
+                    const [latitude, longitude] = ipData.loc ? ipData.loc.split(',').map(Number) : [null, null];
+                    payload.ipAddress = ipData.ip || null;
+                    payload.location = {
+                        city: ipData.city || null,
+                        country: ipData.country || null,
+                        latitude: latitude || null,
+                        longitude: longitude || null
+                    };
+                    console.log('User consented to IP/location update');
+                } catch (error) {
+                    console.error('Error fetching IP/location:', error);
+                    alert('Failed to fetch location data, but preferences will still be saved.');
+                }
+            } else {
+                console.log('User declined IP/location update');
             }
-            const ipData = await response.json();
+        }
     
-            // Map ipinfo.io response to your Location model
-            const [latitude, longitude] = ipData.loc ? ipData.loc.split(',').map(Number) : [null, null];
-            const ipAddress = ipData.ip || null;
-            const location = {
-                city: ipData.city || null,
-                country: ipData.country || null,
-                latitude: latitude || null,
-                longitude: longitude || null
-            };
+        console.log('Sending to backend:', JSON.stringify(payload));
     
-            const payload = {
-                consentId,
-                preferences,
-                deletedAt: null,
-                ipAddress,
-                location
-            };
-            console.log('Sending to backend:', JSON.stringify(payload));
-    
+        try {
             const fetchResponse = await fetch('https://backendcookie-8qc1.onrender.com/api/update-cookie-prefs', {
                 method: 'POST',
                 headers: {
@@ -306,7 +323,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const data = await fetchResponse.json();
             console.log('Preferences and location updated:', data);
         } catch (error) {
-            console.error('Error updating preferences and location:', error);
+            console.error('Error updating preferences:', error);
             alert(`Failed to save preferences: ${error.message}. Check console for details.`);
         }
     }
