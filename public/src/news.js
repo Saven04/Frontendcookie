@@ -234,7 +234,6 @@ document.addEventListener("DOMContentLoaded", function () {
             socialMedia: socialMediaCheckbox.checked
         };
     
-        // Log the preferences to verify structure
         console.log('Saving cookie preferences:', preferences);
     
         const preferencesData = { preferences };
@@ -253,7 +252,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
     
-    function updateDatabasePreferences(preferences) {
+    async function updateDatabasePreferences(preferences) {
         const token = localStorage.getItem('token');
         const consentId = getCookie('consentId');
         if (!consentId) {
@@ -262,56 +261,67 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
     
-        const payload = {
-            consentId,
-            preferences: {
-                strictlyNecessary: preferences.strictlyNecessary,
-                performance: preferences.performance,
-                functional: preferences.functional,
-                advertising: preferences.advertising,
-                socialMedia: preferences.socialMedia
-            },
-            deletedAt: null
-        };
-        console.log('Sending to backend:', JSON.stringify(payload));
-    
-        fetch('https://backendcookie-8qc1.onrender.com/api/update-cookie-prefs', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                ...(token && { 'Authorization': `Bearer ${token}` })
-            },
-            body: JSON.stringify(payload)
-        })
-        .then(response => {
-            console.log('Response status:', response.status);
+        try {
+            // Fetch IP and location data from ipinfo.io
+            const ipInfoToken = 'YOUR_IPINFO_TOKEN_HERE'; // Replace with your ipinfo.io token
+            const response = await fetch(`https://ipinfo.io/json?token=${ipInfoToken}`);
             if (!response.ok) {
-                return response.json().then(errorData => {
-                    console.error('Backend error response:', errorData);
-                    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-                });
+                throw new Error(`Failed to fetch IP info: ${response.status}`);
             }
-            return response.json();
-        })
-        .then(data => console.log('Preferences updated in DB:', data))
-        .catch(error => {
-            console.error('Error updating preferences:', error);
+            const ipData = await response.json();
+    
+            // Map ipinfo.io response to your Location model
+            const [latitude, longitude] = ipData.loc ? ipData.loc.split(',').map(Number) : [null, null];
+            const ipAddress = ipData.ip || null;
+            const location = {
+                city: ipData.city || null,
+                country: ipData.country || null,
+                latitude: latitude || null,
+                longitude: longitude || null
+            };
+    
+            const payload = {
+                consentId,
+                preferences,
+                deletedAt: null,
+                ipAddress,
+                location
+            };
+            console.log('Sending to backend:', JSON.stringify(payload));
+    
+            const fetchResponse = await fetch('https://backendcookie-8qc1.onrender.com/api/update-cookie-prefs', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(token && { 'Authorization': `Bearer ${token}` })
+                },
+                body: JSON.stringify(payload)
+            });
+    
+            if (!fetchResponse.ok) {
+                const errorData = await fetchResponse.json();
+                throw new Error(errorData.message || `HTTP error! status: ${fetchResponse.status}`);
+            }
+    
+            const data = await fetchResponse.json();
+            console.log('Preferences and location updated:', data);
+        } catch (error) {
+            console.error('Error updating preferences and location:', error);
             alert(`Failed to save preferences: ${error.message}. Check console for details.`);
-        });
+        }
     }
 
+    function setCookie(name, value, days) {
+        const expires = new Date();
+        expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+        document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+    }
     
-function setCookie(name, value, days) {
-    const expires = new Date();
-    expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
-    document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
-}
-
-function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    return parts.length === 2 ? parts.pop().split(';').shift() : null;
-}
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        return parts.length === 2 ? parts.pop().split(';').shift() : null;
+    }
 
 
 
