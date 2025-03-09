@@ -66,13 +66,18 @@ function applyFontSize(size) {
 // Theme Application Function
 function applyTheme(theme) {
     const body = document.body;
-    body.classList.remove("dark-mode");
-    if (theme === "dark") {
-        body.classList.add("dark-mode");
-    } else if (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches) {
-        body.classList.add("dark-mode");
+    if (theme === 'dark') {
+        body.classList.add('dark-mode');
+    } else {
+        body.classList.remove('dark-mode');
     }
+    localStorage.setItem('theme', theme);
 }
+
+// Theme switcher
+document.getElementById('themeSelect')?.addEventListener('change', (e) => {
+    applyTheme(e.target.value);
+});
 
 // Debounce Function to limit search frequency
 function debounce(func, wait) {
