@@ -10,8 +10,8 @@ document.addEventListener("DOMContentLoaded", () => {
             event.preventDefault();
 
             // Get input values
-            const emailField = document.getElementById("email");
-            const passwordField = document.getElementById("password");
+            const emailField = document.getElementById("loginEmail");
+            const passwordField = document.getElementById("loginPassword");
 
             // Validate inputs
             if (!emailField || !passwordField) {
