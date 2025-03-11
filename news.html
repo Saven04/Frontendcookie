@@ -418,7 +418,31 @@ h2 {
             </div>
         </div>
     </nav>
-  <!-- Authentication Modal -->
+
+
+    <div class="container mt-3">
+        <h2>Latest News</h2>
+        <div class="btn-group" role="group">
+            <button class="btn btn-primary category-btn" data-category="general">General</button>
+            <button class="btn btn-secondary category-btn" data-category="technology">Technology</button>
+            <button class="btn btn-secondary category-btn" data-category="sports">Sports</button>
+            <button class="btn btn-secondary category-btn" data-category="business">Business</button>
+        </div>
+    </div>
+
+    <div class="container mt-3">
+        <input type="text" id="searchInput" class="form-control" placeholder="Search news...">
+    </div>
+
+    <div class="container mt-3">
+        <div id="newsContainer" class="row"></div>
+    </div>
+
+
+
+
+
+      <!-- Authentication Modal -->
 <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -488,8 +512,6 @@ h2 {
         </div>
     </div>
 </div>
-
-  
 
 
 <!-- Settings Modal -->
@@ -710,26 +732,6 @@ h2 {
         </div>
     </div>
 </div>
-
-
-<div class="container mt-3">
-    <h2>Latest News</h2>
-    <div class="btn-group" role="group">
-        <button class="btn btn-primary category-btn" data-category="general">General</button>
-        <button class="btn btn-secondary category-btn" data-category="technology">Technology</button>
-        <button class="btn btn-secondary category-btn" data-category="sports">Sports</button>
-        <button class="btn btn-secondary category-btn" data-category="business">Business</button>
-    </div>
-</div>
-
-<div class="container mt-3">
-    <input type="text" id="searchInput" class="form-control" placeholder="Search news...">
-</div>
-
-<div class="container mt-3">
-    <div id="newsContainer" class="row"></div>
-</div>
-
 
 <div id="cookieConsent" class="cookie-banner">
     <div class="cookie-banner-content">
