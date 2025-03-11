@@ -6,15 +6,16 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     registerButton.textContent = "Registering...";
 
     const username = document.getElementById("username").value.trim();
-    const email = document.getElementById("registerEmail").value.trim(); // Updated to "registerEmail"
-    const password = document.getElementById("registerPassword").value.trim(); // Updated to "registerPassword"
+    const email = document.getElementById("registerEmail").value.trim();
+    const password = document.getElementById("registerPassword").value.trim();
     const confirmPassword = document.getElementById("confirmPassword").value.trim();
 
     // Retrieve the consentId from cookies
     const consentId = getCookie("consentId");
+    const cookiesAccepted = getCookie("cookiesAccepted");
 
     // Ensure the user has chosen a cookie preference
-    if (!consentId) {
+    if (!consentId || cookiesAccepted !== "true") {
         showModal("❌ Please choose a cookie preference before registering.", "error");
         resetButton();
         return;
@@ -48,6 +49,13 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         if (response.ok) {
             // Store the token for immediate login
             localStorage.setItem('token', data.token);
+
+            // Clear old cookies and set new ones
+            clearCookies();
+            setCookie("consentId", consentId, 365);
+            setCookie("cookiesAccepted", "true", 365);
+            setCookie("cookiePreferences", JSON.stringify(getCookiePreferences()), 365);
+
             showModal("✅ Registration successful! You are now logged in.", "success");
             setTimeout(() => {
                 document.getElementById("registerForm").reset();
@@ -75,6 +83,33 @@ function getCookie(name) {
         }
     }
     return null;
+}
+
+// Function to set a cookie
+function setCookie(name, value, days) {
+    const date = new Date();
+    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+    document.cookie = `${name}=${encodeURIComponent(value)};expires=${date.toUTCString()};path=/;secure;samesite=strict`;
+}
+
+// Function to clear all cookies related to consent and preferences
+function clearCookies() {
+    document.cookie.split(";").forEach(cookie => {
+        const [name] = cookie.split("=");
+        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;secure;samesite=strict`;
+    });
+}
+
+// Function to retrieve current cookie preferences
+function getCookiePreferences() {
+    const preferences = {
+        strictlyNecessary: true,
+        performance: document.getElementById("performance")?.checked || false,
+        functional: document.getElementById("functional")?.checked || false,
+        advertising: document.getElementById("advertising")?.checked || false,
+        socialMedia: document.getElementById("socialMedia")?.checked || false,
+    };
+    return preferences;
 }
 
 // Function to reset the register button
