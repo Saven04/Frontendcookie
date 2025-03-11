@@ -10,39 +10,18 @@
 </head>
 
 <body>
-    <!-- Login Page Content -->
-    <div class="login-container">
-        <div class="login-card">
-            <div class="card-header">
-                <h2>Login to Your Account</h2>
-            </div>
-            <form id="loginForm">
-                <!-- Identifier Input -->
-                <div class="input-group">
-                    <label for="identifier">Email or Username</label>
-                    <input type="text" id="email" placeholder="Enter your email" required />
-                </div>
-    
-                <!-- Password Input -->
-                <div class="input-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" placeholder="Enter your password" required />
-                </div>
-    
-                <!-- Login Button -->
-                <button type="submit" class="login-button">Login</button>
-    
-                <!-- Forgot Password Link -->
-                <a href="#" class="forgot-password">Forgot Password?</a>
-    
-                <!-- Register Button -->
-                <button type="button" class="register-button" onclick="window.location.href='register.html'">Register</button>
-            </form>
-        </div>
+    <!-- Landing Page Content -->
+    <div class="landing-container">
+        <h1>Welcome!</h1>
+        <p>Redirecting to the news page...</p>
     </div>
+
+    <script>
+        // Redirect to news.html after a short delay
+        setTimeout(() => {
+            window.location.href = 'news.html';
+        }, 2000); // 2-second delay before redirect
+    </script>
 </body>
-
-    <script src="public/src/main.js"></script>
-
 
 </html>
