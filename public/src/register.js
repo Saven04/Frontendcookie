@@ -6,8 +6,8 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     registerButton.textContent = "Registering...";
 
     const username = document.getElementById("username").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
+    const email = document.getElementById("registerEmail").value.trim(); // Updated to "registerEmail"
+    const password = document.getElementById("registerPassword").value.trim(); // Updated to "registerPassword"
     const confirmPassword = document.getElementById("confirmPassword").value.trim();
 
     // Retrieve the consentId from cookies
