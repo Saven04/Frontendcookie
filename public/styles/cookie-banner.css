@@ -1,25 +1,27 @@
-/* Cookie Consent Banner */
-.cookie-banner {
+/* ===========================
+   COOKIE BANNER STYLING
+   =========================== */
+
+   .cookie-banner {
     position: fixed;
     bottom: -100px; /* Starts off-screen at the bottom */
     left: 50%;
     transform: translateX(-50%);
-    width: 80%;
+    width: 90%; /* Adjusted for smaller screens */
     max-width: 700px;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.8); /* Slightly darker for better contrast */
     color: #fff;
-    padding: 15px 20px;
+    padding: 20px; /* Increased padding for better spacing */
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     font-size: 0.9rem;
     z-index: 1000; /* Ensure it's on top */
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-    flex-direction: column;
-    text-align: center;
+    border-radius: 12px; /* Rounded corners for a modern look */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Softer shadow for depth */
     opacity: 0;
-    transition: opacity 0.5s ease, bottom 0.5s ease;
+    transition: opacity 0.5s ease, bottom 0.5s ease; /* Smooth transitions */
 }
 
 /* When the banner is shown */
@@ -31,57 +33,70 @@
 /* Cookie banner content styles */
 .cookie-banner-content p {
     margin: 0;
-    line-height: 1.5;
+    line-height: 1.6; /* Improved readability */
     font-size: 1rem;
+    text-align: center;
 }
 
-/* Cookie link style */
+/* Links inside the cookie banner */
 .cookie-banner a {
-    color: #6a11cb;
+    color: #6a11cb; /* Vibrant link color */
     text-decoration: underline;
+    font-weight: bold; /* Make links stand out */
+    transition: color 0.3s ease; /* Smooth hover effect */
 }
 
-/* Cookie button container */
+.cookie-banner a:hover {
+    color: #ff6f61; /* Change to a warm color on hover */
+}
+
+/* Button container */
 .cookie-buttons {
     display: flex;
     justify-content: center;
-    gap: 15px;
-    margin-top: 10px;
+    gap: 15px; /* Consistent spacing between buttons */
+    margin-top: 15px; /* Added spacing from content */
 }
 
-/* Styling the cookie buttons */
+/* Base button styling */
 .cookie-buttons button {
-    padding: 8px 15px;
+    padding: 10px 20px; /* Larger buttons for better usability */
     font-size: 0.9rem;
     cursor: pointer;
-    border-radius: 5px;
+    border-radius: 8px; /* Rounded corners for a softer look */
     border: none;
     transition: background-color 0.3s ease, transform 0.3s ease;
+    font-weight: 600; /* Bold text for emphasis */
 }
 
-/* Button styles */
+/* Accept button */
 .accept-button {
-    background-color: #4CAF50;
+    background-color: #4caf50; /* Green for acceptance */
     color: white;
 }
 
+/* Reject button */
 .reject-button {
-    background-color: #f44336;
+    background-color: #f44336; /* Red for rejection */
     color: white;
 }
 
+/* Customize button */
 .customize-button {
-    background-color: #2196F3;
+    background-color: #2196f3; /* Blue for customization */
     color: white;
 }
 
 /* Hover effect for buttons */
 .cookie-buttons button:hover {
-    opacity: 0.8;
-    transform: scale(1.05);
+    opacity: 0.9; /* Slight fade for hover */
+    transform: scale(1.05); /* Subtle zoom effect */
 }
 
-/* Cookie Preferences Modal */
+/* ===========================
+   COOKIE PREFERENCES MODAL
+   =========================== */
+
 .cookie-preferences-modal {
     display: none;
     position: fixed;
@@ -92,7 +107,7 @@
     background: rgba(0, 0, 0, 0.7); /* Dimmed background */
     justify-content: center;
     align-items: center;
-    z-index: 2000; /* Ensure it's on top of the page content */
+    z-index: 2000; /* Ensure it's on top of everything */
 }
 
 /* Show the modal */
@@ -102,69 +117,96 @@
 
 /* Modal content styling */
 .modal-content {
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.9); /* Darker background for contrast */
     color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    max-width: 500px;
-    width: 100%;
+    padding: 30px; /* Increased padding for better spacing */
+    border-radius: 15px; /* Rounded corners for a modern look */
+    max-width: 600px; /* Slightly wider for better readability */
+    width: 90%; /* Responsive width */
     text-align: left;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4); /* Enhanced shadow */
 }
 
 /* Cookie category styling */
 .cookie-category {
-    margin-bottom: 10px;
+    margin-bottom: 15px; /* Increased spacing */
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Space between checkbox and label */
+}
+
+.cookie-category input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: #2196f3; /* Custom checkbox color */
+}
+
+.cookie-category label {
+    font-size: 1rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.cookie-category label:hover {
+    color: #6a11cb; /* Highlight on hover */
 }
 
 /* Modal buttons (Save/Cancel) */
 .modal-buttons {
     display: flex;
     justify-content: space-between;
-    margin-top: 20px;
+    margin-top: 25px; /* Increased spacing */
 }
 
 /* Save/Cancel button styling */
-.save-button, .cancel-button {
-    padding: 8px 15px;
-    font-size: 0.9rem;
+.save-button,
+.cancel-button {
+    padding: 10px 25px; /* Larger buttons for better usability */
+    font-size: 1rem;
     cursor: pointer;
-    border-radius: 5px;
+    border-radius: 8px; /* Rounded corners */
     border: none;
     transition: background-color 0.3s ease, transform 0.3s ease;
+    font-weight: 600; /* Bold text for emphasis */
 }
 
 /* Save button style */
 .save-button {
-    background-color: #4CAF50;
+    background-color: #4caf50; /* Green for save action */
     color: white;
 }
 
 /* Cancel button style */
 .cancel-button {
-    background-color: #f44336;
+    background-color: #f44336; /* Red for cancel action */
     color: white;
 }
 
 /* Hover effect for modal buttons */
-.save-button:hover, .cancel-button:hover {
-    opacity: 0.8;
-    transform: scale(1.05);
+.save-button:hover,
+.cancel-button:hover {
+    opacity: 0.9; /* Slight fade for hover */
+    transform: scale(1.05); /* Subtle zoom effect */
 }
 
-/* Optional: Styling for Cookie Info Popup (you can implement later) */
+/* ===========================
+   COOKIE INFO POPUP
+   =========================== */
+
 .cookie-info-popup {
     display: none;
     position: fixed;
     top: 10%;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 20px;
-    border-radius: 8px;
-    max-width: 600px;
-    width: 80%;
-    z-index: 3000;
+    background: rgba(0, 0, 0, 0.9); /* Darker background for contrast */
+    color: #fff;
+    padding: 25px; /* Increased padding for better spacing */
+    border-radius: 12px; /* Rounded corners */
+    max-width: 600px; /* Responsive width */
+    width: 90%;
+    z-index: 3000; /* Ensure it's on top of everything */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4); /* Enhanced shadow */
 }
 
 .cookie-info-popup.show {
