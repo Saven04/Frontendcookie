@@ -118,7 +118,7 @@
 /* Modal content styling */
 .modal-content {
     background: rgba(0, 0, 0, 0.9); /* Darker background for contrast */
-    color: #fff;
+    color: #000000;
     padding: 30px; /* Increased padding for better spacing */
     border-radius: 15px; /* Rounded corners for a modern look */
     max-width: 600px; /* Slightly wider for better readability */
