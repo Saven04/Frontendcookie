@@ -5,12 +5,13 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     registerButton.disabled = true;
     registerButton.textContent = "Registering...";
 
+    // Retrieve form values
     const username = document.getElementById("username").value.trim();
     const email = document.getElementById("registerEmail").value.trim();
     const password = document.getElementById("registerPassword").value.trim();
     const confirmPassword = document.getElementById("confirmPassword").value.trim();
 
-    // Retrieve the consentId from cookies
+    // Retrieve cookies
     const consentId = getCookie("consentId");
     const cookiesAccepted = getCookie("cookiesAccepted");
 
@@ -39,6 +40,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     }
 
     try {
+        // Send registration request to the backend
         const response = await fetch("https://backendcookie-8qc1.onrender.com/api/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -46,6 +48,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         });
 
         const data = await response.json();
+
         if (response.ok) {
             // Store the token for immediate login
             localStorage.setItem('token', data.token);
@@ -56,13 +59,17 @@ document.getElementById("registerForm").addEventListener("submit", async functio
             setCookie("cookiesAccepted", "true", 365);
             setCookie("cookiePreferences", JSON.stringify(getCookiePreferences()), 365);
 
+            // Show success message
             showModal("✅ Registration successful! You are now logged in.", "success");
+
+            // Reset the form and optionally redirect
             setTimeout(() => {
                 document.getElementById("registerForm").reset();
                 // Optionally redirect or update UI to reflect logged-in state
                 // window.location.href = "profile.html"; // Uncomment if you have a profile page
             }, 1500);
         } else {
+            // Show error message from the backend
             showModal(`❌ ${data.message || "Registration failed."}`, "error");
         }
     } catch (error) {
