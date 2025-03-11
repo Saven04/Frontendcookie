@@ -33,10 +33,24 @@ document.addEventListener("DOMContentLoaded", async () => {
     let consentId = getCookie("consentId");
     let cookiesAccepted = getCookie("cookiesAccepted");
 
-    // Show consent banner if no choice has been made
-    if (!cookiesAccepted) {
-        setTimeout(() => cookieBanner.classList.add("show"), 500);
-    }
+    // Show the cookie banner when the user attempts to register
+    const registerTab = document.getElementById("register-tab");
+    const registerForm = document.getElementById("registerForm");
+
+    registerTab.addEventListener("click", () => {
+        if (!cookiesAccepted) {
+            setTimeout(() => cookieBanner.classList.add("show"), 500); // Show the banner
+        }
+    });
+
+    // Block registration if no cookie choice has been made
+    registerForm.addEventListener("submit", (event) => {
+        if (!cookiesAccepted) {
+            event.preventDefault(); // Prevent form submission
+            alert("Please choose a cookie preference before registering."); // Notify the user
+            setTimeout(() => cookieBanner.classList.add("show"), 500); // Show the banner
+        }
+    });
 
     // Accept Cookies Button
     acceptCookiesButton.addEventListener("click", () => handleCookieConsent(true));
