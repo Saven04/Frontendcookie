@@ -441,7 +441,7 @@ h2 {
 
 
       <!-- Authentication Modal -->
-      <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" >
+      <div class="modal fade" id="authModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -449,28 +449,28 @@ h2 {
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <ul class="nav nav-tabs" id="authTab" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button" role="tab" aria-controls="login" aria-selected="true">Login</button>
+                    <ul class="nav nav-tabs" id="authTab">
+                        <li class="nav-item">
+                            <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button">Login</button>
                         </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="register-tab" data-bs-toggle="tab" data-bs-target="#register" type="button" role="tab" aria-controls="register" aria-selected="false">Register</button>
+                        <li class="nav-item">
+                            <button class="nav-link" id="register-tab" data-bs-toggle="tab" data-bs-target="#register" type="button">Register</button>
                         </li>
                     </ul>
     
                     <div class="tab-content mt-3" id="authTabContent">
                         <!-- Login Card -->
-                        <div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
+                        <div class="tab-pane fade show active" id="login">
                             <div class="card">
                                 <div class="card-body">
                                     <form id="loginForm">
                                         <div class="mb-3">
-                                            <label for="email" class="form-label">Email Address</label>
-                                            <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+                                            <label for="loginEmail" class="form-label">Email Address</label>
+                                            <input type="email" class="form-control" id="loginEmail" name="email" placeholder="Enter your email" required>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="password" class="form-label">Password</label>
-                                            <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+                                            <label for="loginPassword" class="form-label">Password</label>
+                                            <input type="password" class="form-control" id="loginPassword" name="password" placeholder="Enter your password" required>
                                         </div>
                                         <button type="submit" class="btn btn-primary w-100">Login</button>
                                     </form>
@@ -478,32 +478,40 @@ h2 {
                             </div>
                         </div>
     
-                        <!-- Register Card (unchanged from your previous version, but included for completeness) -->
-                        <div class="tab-pane fade" id="register" role="tabpanel" aria-labelledby="register-tab">
+                        <!-- Register Card -->
+                        <div class="tab-pane fade" id="register">
                             <div class="card">
                                 <div class="card-body">
                                     <form id="registerForm">
                                         <div class="mb-3">
                                             <label for="username" class="form-label">Username</label>
-                                            <input type="text" class="form-control" id="username" placeholder="Enter your username" required>
+                                            <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username" required>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="email" class="form-label">Email Address</label>
-                                            <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+                                            <label for="registerEmail" class="form-label">Email Address</label>
+                                            <input type="email" class="form-control" id="registerEmail" name="email" placeholder="Enter your email" required>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="password" class="form-label">Password</label>
-                                            <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+                                            <label for="registerPassword" class="form-label">Password</label>
+                                            <input type="password" class="form-control" id="registerPassword" name="password" placeholder="Enter your password" required>
                                         </div>
                                         <div class="mb-3">
                                             <label for="confirmPassword" class="form-label">Confirm Password</label>
-                                            <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm your password" required>
+                                            <input type="password" class="form-control" id="confirmPassword" name="confirm-password" placeholder="Confirm your password" required>
                                         </div>
                                         <button type="submit" class="btn btn-primary w-100 login-button">Register</button>
                                     </form>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
