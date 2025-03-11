@@ -5,10 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Latest News</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        /* Root variables for consistent theming */
-       /* Root variables for consistent theming */
 :root {
     --primary-color: #007bff;
     --secondary-color: #e4e8ea;
@@ -409,11 +406,6 @@ h2 {
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item d-flex align-items-center">
-                        <img src="profile.jpg" alt="Profile" class="rounded-circle me-2" width="40" height="40"
-                            data-bs-toggle="modal" data-bs-target="#profileModal">
-                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#profileModal">Profile</a>
-                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#settingsModal">Settings</a>
                     </li>
@@ -548,6 +540,11 @@ h2 {
                             <a href="privacy-policy.html" id="privacy">Privacy Policy</a>
                         </li>
                     </ul>
+                    <li class="list-group-item list-group-item-action">
+                        <a href="index.html" id="logout">Log Out</a>
+                    </li>
+                </ul>
+            </div>
                 </div>
             </div>
         </div>
@@ -658,7 +655,6 @@ h2 {
     </div>
 </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="./public/src/news.js"></script>
   
