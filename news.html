@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Latest News</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         /* Root variables for consistent theming */
        /* Root variables for consistent theming */
@@ -454,54 +455,7 @@ h2 {
             <div class="modal-body">
                 <!-- Account Section -->
                 <div class="settings-section">
-                    <h6 class="text-muted mb-3">Account</h6>
-                    <ul class="list-group mb-4">
-                        <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                            <span id="profileSettings">Profile Settings</span>
-                            <span class="badge bg-primary rounded-pill" data-bs-toggle="collapse" data-bs-target="#profileSettingsCollapse" aria-expanded="false" aria-controls="profileSettingsCollapse">Edit</span>
-                        </li>
-                        <!-- Profile Settings Collapse -->
-                        <div class="collapse" id="profileSettingsCollapse">
-                            <div class="card card-body mt-2">
-                                <form id="profileSettingsForm">
-                                    <div class="mb-3">
-                                        <label for="settingsUsername" class="form-label">Username</label>
-                                        <input type="text" class="form-control" id="settingsUsername" placeholder="Your Username" readonly>
-                                        <small class="form-text text-muted">Click Edit to change.</small>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="settingsEmail" class="form-label">Email</label>
-                                        <input type="email" class="form-control" id="settingsEmail" placeholder="****@*****.***" readonly>
-                                        <small class="form-text text-muted">Requires MFA to update.</small>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="settingsPassword" class="form-label">New Password</label>
-                                        <input type="password" class="form-control" id="settingsPassword" placeholder="Enter new password" readonly>
-                                        <small class="form-text text-muted">Requires MFA to update.</small>
-                                    </div>
-                                    <div class="mb-3 d-none" id="settingsMfaCodeSection">
-                                        <label for="settingsMfaCode" class="form-label">MFA Code</label>
-                                        <input type="text" class="form-control" id="settingsMfaCode" placeholder="Enter code sent to your email">
-                                        <small class="form-text text-muted">Check your email for the code.</small>
-                                    </div>
-                                    <button type="button" class="btn btn-outline-secondary" id="editProfileBtn">Edit</button>
-                                    <button type="submit" class="btn btn-primary d-none" id="saveProfileBtn">Save</button>
-                                    <button type="button" class="btn btn-primary d-none" id="sendMfaCodeBtn">Send MFA Code</button>
-                                </form>
-                            </div>
-                        </div>
-                        <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                            <span id="notifications">Notifications</span>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="notificationSwitch">
-                            </div>
-                        </li>
-                        <li class="list-group-item list-group-item-action text-danger">
-                            <a href="#" id="logout">Logout</a>
-                        </li>
-                    </ul>
-                </div>
-
+                    
                 <!-- Appearance Section -->
                 <div class="settings-section">
                     <h6 class="text-muted mb-3">Appearance</h6>
@@ -704,6 +658,7 @@ h2 {
     </div>
 </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="./public/src/news.js"></script>
   
