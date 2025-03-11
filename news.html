@@ -634,6 +634,7 @@
             </div>
         </div>
     </div>
+
     <div id="cookieConsent" class="cookie-banner">
         <div class="cookie-banner-content">
             <p><strong>We value your privacy!</strong><br>
@@ -746,6 +747,7 @@
                     document.getElementById('cookieInfoModal').classList.add('show'); // Show the modal
                 });
             });
+    
             // Close the cookie info modal (check if the element exists)
             const closeModalButton = document.getElementById('closeModalButton');
             if (closeModalButton) {
@@ -753,7 +755,8 @@
                     document.getElementById('cookieInfoModal').classList.remove('show'); // Hide the modal
                 });
             }
-            // Open the cookie policy modal when the "Cookie Policy" link is clicked (fixing undefined ID)
+    
+            // Open the cookie policy modal when the "Cookie Policy" link is clicked
             const cookiePolicyLink = document.getElementById('cookiePolicyLink');
             if (cookiePolicyLink) {
                 cookiePolicyLink.addEventListener('click', function (e) {
@@ -761,6 +764,7 @@
                     document.getElementById('cookiePolicyModal').classList.add('show'); // Show the modal
                 });
             }
+    
             // Close the cookie policy modal
             const closeCookiePolicyModal = document.getElementById('closeCookiePolicyModal');
             if (closeCookiePolicyModal) {
