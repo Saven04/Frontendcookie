@@ -158,6 +158,23 @@
     margin-top: 25px; /* Increased spacing */
 }
 
+.cookie-description {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #f1eaea; /* Light text color for dark mode */
+    margin-left: 10px; /* Space between checkbox and description */
+}
+
+.cookie-description a {
+    color: #6a11cb; /* Vibrant link color */
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+.cookie-description a:hover {
+    color: #ffcc00; /* Highlight effect on hover */
+}
+
 /* Save/Cancel button styling */
 .save-button,
 .cancel-button {
