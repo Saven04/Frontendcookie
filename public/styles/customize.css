@@ -1,159 +1,101 @@
-/* ===========================
-   COOKIE PREFERENCES MODAL
-   =========================== */
 
-   .cookie-preferences-modal {
+.cookie-info-modal,
+.cookie-policy-modal {
     display: none; /* Hidden by default */
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.8); /* Dimmed background */
-    justify-content: center;
-    align-items: center;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%; /* Improved for better mobile responsiveness */
+    max-width: 750px; /* Slightly reduced max width for better readability */
+    background-color: rgba(15, 15, 15, 0.95); /* Darker background for contrast */
+    color: rgb(0, 0, 0);
+    padding: 35px; /* Adjusted for balanced spacing */
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6); /* Stronger shadow for depth */
     z-index: 1100; /* Ensure it's above other modals */
+    transition: all 0.3s ease-in-out;
 }
 
-.cookie-preferences-modal.show {
+.cookie-info-modal.show,
+.cookie-policy-modal.show {
     display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
-/* Modal Content Styling */
+/* Modal Content */
 .modal-content {
-    background: rgba(20, 20, 20, 0.95); /* Darker background for contrast */
+    background: rgba(20, 20, 20, 0.9);
     color: #fff;
-    padding: 35px;
+    padding: 40px;
     border-radius: 12px;
     max-width: 700px;
-    width: 90%; /* Responsive width */
+    width: 100%;
     text-align: left;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6); /* Strong shadow for depth */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+    position: relative;
+    z-index: 1200; /* Ensure modal content is in front */
     transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
 
-.modal-content h1 {
-    font-size: 1.8rem; /* Larger heading for emphasis */
-    font-weight: 700;
-    margin-bottom: 20px;
-    text-align: center; /* Centered title */
-    color: #ffcc00; /* Highlighted title color */
-}
-
-/* Cookie Category Styling */
-.cookie-category {
-    margin-bottom: 20px; /* Increased spacing between categories */
-    display: flex;
-    align-items: flex-start; /* Align checkbox with label */
-    gap: 15px; /* Space between checkbox and label */
-}
-
-.cookie-category input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    accent-color: #ffcc00; /* Custom checkbox color */
-    cursor: pointer;
-}
-
-.cookie-category label {
-    font-size: 1.1rem;
-    line-height: 1.4;
-    cursor: pointer;
-    color: #f1eaea; /* Light text color */
-    transition: color 0.3s ease-in-out;
-}
-
-.cookie-category label:hover {
-    color: #ffcc00; /* Highlight effect on hover */
-}
-
-/* Info Link in Labels */
-.cookie-category label a {
-    color: #6a11cb; /* Vibrant link color */
-    text-decoration: underline;
-    font-weight: bold;
-    transition: color 0.3s ease-in-out;
-}
-
-.cookie-category label a:hover {
-    color: #ff6f61; /* Warm color on hover */
-}
-
-/* Modal Buttons (Save/Cancel) */
-.modal-buttons {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 30px; /* Increased spacing */
-}
-
-.save-button,
-.cancel-button {
-    padding: 12px 25px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    border-radius: 8px;
-    border: none;
-    transition: background-color 0.3s ease-in-out, transform 0.2s ease;
-}
-
-.save-button {
-    background-color: #4caf50; /* Green for save action */
-    color: white;
-}
-
-.cancel-button {
-    background-color: #f44336; /* Red for cancel action */
-    color: white;
-}
-
-.save-button:hover,
-.cancel-button:hover {
-    opacity: 0.9; /* Slight fade for hover */
-    transform: scale(1.05); /* Subtle zoom effect */
+.modal-content p {
+    font-size: 1rem; /* Base font size */
+    line-height: 1.6; /* Improved readability */
 }
 
 /* Close Button */
 .close-modal-button {
     background-color: #f44336; /* Red background for close button */
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    cursor: pointer;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: bold;
-    margin-top: 20px;
-    transition: background-color 0.3s ease-in-out, transform 0.2s ease;
-    align-self: flex-end; /* Align to the right */
+    color: white; /* Text color */
+    border: none; /* No border */
+    padding: 12px 18px; /* Padding for button */
+    cursor: pointer; /* Pointer cursor on hover */
+    border-radius: 8px; /* Rounded corners */
+    font-size: 1rem; /* Font size */
+    font-weight: bold; /* Bold text */
+    margin-top: 15px; /* Space above button */
+    transition: background-color 0.3s ease-in-out, transform 0.2s ease; /* Transition effects */
+    align-self: flex-end; /* Align to the right in flex container */
 }
 
 .close-modal-button:hover {
     background-color: #d32f2f; /* Darker red on hover */
-    transform: scale(1.05); /* Slightly enlarge on hover */
+    transform: scale(1.05); /* Slightly enlarge on hover for feedback */
 }
 
-/* ===========================
-   RESPONSIVE DESIGN
-   =========================== */
+/* Cookie Label Styling */
+.cookie-label {
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 1.1rem; /* Slightly increased for readability */
+    color: #f1eaea; /* Light text color for labels */
+    text-decoration: underline; /* Underline effect for links */
+    transition: color 0.3s ease-in-out; /* Smooth transition for hover effect */
+}
 
-@media (max-width: 768px) {
-    .modal-content {
-        padding: 25px; /* Reduced padding for smaller screens */
-        width: 95%; /* Full-width modal on small devices */
-    }
+.cookie-label:hover {
+   color :#ffcc00; /* Highlight effect on hover */
+}
 
-    .cookie-category label {
-        font-size: 1rem; /* Smaller font size for labels */
-    }
+/* Ensure info modal appears in front of preferences modal */
+.cookie-preferences-modal {
+   z-index :1000; 
+}
 
-    .modal-buttons {
-        flex-direction: column; /* Stack buttons vertically */
-        gap: 15px; /* Space between buttons */
-    }
+/* Responsive Design */
+@media (max-width :768px) {   
+      .modal-content {   
+          padding :30px;   
+          width :95%;   
+      }   
 
-    .save-button,
-    .cancel-button {
-        width: 100%; /* Full-width buttons */
-    }
+      .cookie-info-modal,
+      .cookie-policy-modal {   
+          width :95%;   
+      }   
+
+      .close-modal-button {   
+          width :100%;   
+      }   
 }
