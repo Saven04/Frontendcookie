@@ -154,7 +154,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     async function sendLocationDataToDB(locationData) {
         try {
-            const response = await fetch("https://backendcookie-8qc1.onrender.com/location", {
+            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/location", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
