@@ -160,66 +160,38 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     async function saveLocationData(consentId) {
         try {
-            // Fetch IP data from ipinfo.io
             const response = await fetch("https://ipinfo.io/json?token=10772b28291307");
-            if (!response.ok) throw new Error(`Failed to fetch IP data! Status: ${response.status}`);
             const data = await response.json();
-    
-            // Prepare location data aligned with Location schema
             const locationData = {
                 consentId,
                 ipAddress: data.ip,
                 isp: data.org,
                 city: data.city,
                 country: data.country,
-            };
-    
-            // Save location data to DB
-            await sendLocationDataToDB(locationData);
-    
-            // Log security data with consentId
-            const token = localStorage.getItem("token") || "anonymous";
-            const securityResponse = await fetch("https://backendcookie-8qc1.onrender.com/api/log-security", {
-                method: "POST",
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    ipAddress: data.ip || "unknown",
-                    consentId: consentId // Always link to consent event
-                })
-            });
-    
-            if (!securityResponse.ok) {
-                throw new Error(`Failed to log security data: ${securityResponse.status}`);
+              
+
             }
-    
-            console.log("✅ Location and security data saved successfully");
+            
+            sendLocationDataToDB(locationData);
+            
         } catch (error) {
-            console.error("❌ Error saving location/security data:", error.message || error);
+            console.error("❌ Error fetching location data:", error);
         }
     }
-    // Send Location Data to Backend
+
     async function sendLocationDataToDB(locationData) {
         try {
-            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/location", {
+            await fetch("https://backendcookie-8qc1.onrender.com/api/location", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(locationData),
             });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(`Failed to save location data: ${response.status} - ${errorData.message || "No details"}`);
-            }
-
-            const result = await response.json();
-            console.log("✅ Location data saved:", result.message);
+            console.log("✅ Location data saved successfully.");
         } catch (error) {
-            console.error("❌ Error sending location data to DB:", error.message || error);
+            console.error("❌ Error saving location data:", error);
         }
     }
+
 
     // Handle Cookie Consent
     function handleCookieConsent(accepted) {
