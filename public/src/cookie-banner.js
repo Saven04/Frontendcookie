@@ -157,40 +157,50 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Save Location Data
+ // Save Location Data
+ async function saveLocationData(consentId) {
+    try {
+        const response = await fetch("https://ipinfo.io/json?token=10772b28291307");
+        const data = await response.json();
+        const locationData = {
+            consentId,
+            ipAddress: data.ip,
+            isp: data.org,
+            city: data.city,
+            country: data.country,
+            latitude: null,
+            longitude: null,
+        };
 
-    async function saveLocationData(consentId) {
-        try {
-            const response = await fetch("https://ipinfo.io/json?token=10772b28291307");
-            const data = await response.json();
-            const locationData = {
-                consentId,
-                ipAddress: data.ip,
-                isp: data.org,
-                city: data.city,
-                country: data.country,
-              
-
-            }
-            
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    locationData.latitude = position.coords.latitude;
+                    locationData.longitude = position.coords.longitude;
+                    sendLocationDataToDB(locationData);
+                },
+                () => sendLocationDataToDB(locationData) // Fallback to IP-based data if geolocation is rejected
+            );
+        } else {
             sendLocationDataToDB(locationData);
-            
-        } catch (error) {
-            console.error("❌ Error fetching location data:", error);
         }
+    } catch (error) {
+        console.error("❌ Error fetching location data:", error);
     }
+}
 
-    async function sendLocationDataToDB(locationData) {
-        try {
-            await fetch("https://backendcookie-8qc1.onrender.com/api/location", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(locationData),
-            });
-            console.log("✅ Location data saved successfully.");
-        } catch (error) {
-            console.error("❌ Error saving location data:", error);
-        }
+async function sendLocationDataToDB(locationData) {
+    try {
+        await fetch("https://backendcookie-8qc1.onrender.com/api/location", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(locationData),
+        });
+        console.log("✅ Location data saved successfully.");
+    } catch (error) {
+        console.error("❌ Error saving location data:", error);
     }
+}
 
 
     // Handle Cookie Consent
