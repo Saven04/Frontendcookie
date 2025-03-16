@@ -28,6 +28,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.log(`Retrieved cookie: ${name}=${decodeURIComponent(cookieValue)}`);
             return decodeURIComponent(cookieValue);
         }
+        console.log(`Cookie not found: ${name}`);
         return null;
     }
 
@@ -41,7 +42,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // DOM elements for tabs and form
     const registerTab = document.getElementById("register-tab");
-    const loginTab = document.getElementById("login-tab"); // Assuming this ID for login tab
+    const loginTab = document.getElementById("login-tab");
     const registerForm = document.getElementById("registerForm");
 
     // Show banner only when register tab is clicked and no preference is set
@@ -91,6 +92,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (strictlyNecessary) {
             strictlyNecessary.checked = true;
             strictlyNecessary.disabled = true;
+        } else {
+            console.warn("Element with ID 'strictlyNecessary' not found in DOM");
         }
     });
 
@@ -111,7 +114,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             socialMedia: document.getElementById("socialMedia")?.checked || false,
         };
 
-        setCookie("cookiesAccepted", "true", 365); // Custom preferences imply acceptance
+        setCookie("cookiesAccepted", "true", 365);
         setCookie("cookiePreferences", JSON.stringify(preferences), 365);
 
         sendPreferencesToDB(consentId, preferences);
