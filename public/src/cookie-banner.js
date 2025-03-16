@@ -28,7 +28,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.log(`Retrieved cookie: ${name}=${decodeURIComponent(cookieValue)}`);
             return decodeURIComponent(cookieValue);
         }
-        console.log(`Cookie not found: ${name}`);
         return null;
     }
 
