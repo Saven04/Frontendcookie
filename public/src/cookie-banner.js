@@ -171,6 +171,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 ipAddress: data.ip || "unknown",
                 country: data.country || "unknown",
                 region: data.region || null,
+                ipProvider: "ipinfo", // Set provider as ipinfo
                 purpose: "consent-logging",
                 consentStatus: consentStatus || "not-applicable"
             };
