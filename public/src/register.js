@@ -20,7 +20,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     console.log("Cookies Accepted:", cookiesAccepted);
 
     // Ensure the user has chosen a cookie preference
-    if (!consentId || cookiesAccepted !== "true") {
+    if (!consentId || (cookiesAccepted !== "true" && cookiesAccepted !== "false")) {
         showModal(
             "❌ Please choose a cookie preference before registering. If you've already chosen, try refreshing the page.",
             "error"
@@ -32,6 +32,11 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     // Validate inputs
     if (!username || !email || !password || !confirmPassword) {
         showModal("All fields are required!", "error");
+        resetButton();
+        return;
+    }
+    if (!validateEmail(email)) {
+        showModal("Invalid email address.", "error");
         resetButton();
         return;
     }
@@ -63,7 +68,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
             // Clear old cookies and set new ones
             clearCookies();
             setCookie("consentId", consentId, 365);
-            setCookie("cookiesAccepted", "true", 365);
+            setCookie("cookiesAccepted", cookiesAccepted, 365); // Preserve the user's choice
             setCookie("cookiePreferences", JSON.stringify(getCookiePreferences()), 365);
 
             // Show success message
@@ -77,7 +82,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
             }, 1500);
         } else {
             // Show error message from the backend
-            showModal(`❌ ${data.message || "Registration failed."}`, "error");
+            showModal(`❌ ${data.message || "Registration failed. Please try again."}`, "error");
         }
     } catch (error) {
         console.error("❌ Error:", error);
@@ -86,6 +91,12 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         resetButton();
     }
 });
+
+// Function to validate email
+function validateEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
 
 // Function to get cookie value
 function getCookie(name) {
