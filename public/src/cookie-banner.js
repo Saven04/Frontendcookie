@@ -175,23 +175,26 @@ document.addEventListener("DOMContentLoaded", async () => {
                 consentStatus: consentStatus || "not-applicable"
             };
     
-            // Save location data
             await sendLocationDataToDB(locationData);
     
-            // Log IP for security (anonymized)
+            // Log security data with consentId
+            const token = localStorage.getItem("token") || "anonymous";
             await fetch("https://backendcookie-8qc1.onrender.com/api/log-security", {
                 method: "POST",
                 headers: {
-                    "Authorization": `Bearer ${localStorage.getItem("token") || "anonymous"}`,
+                    "Authorization": `Bearer ${token}`,
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ ipAddress: data.ip || "unknown" })
+                body: JSON.stringify({
+                    ipAddress: data.ip || "unknown",
+                    consentId: consentId // Link to consent event
+                })
             });
         } catch (error) {
             console.error("Error saving location/security data:", error);
         }
     }
-
+    
     // Send Location Data to Backend
     async function sendLocationDataToDB(locationData) {
         try {
