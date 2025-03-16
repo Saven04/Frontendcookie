@@ -393,8 +393,61 @@
             </div>
         </div>
     </div>
-    <!-- Cookie Info Modal (For showing explanations about cookies) -->
-
+    <!-- Cookie Preferences Modal -->
+    <div class="modal fade" id="cookieModal" tabindex="-1" role="dialog" aria-labelledby="cookieModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cookieModalLabel">Cookie Preferences</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="strictlyNecessaryCookies" checked disabled>
+                            <label class="form-check-label" for="strictlyNecessaryCookies">Strictly Necessary Cookies (Required)</label>
+                        </div>
+                        <small class="form-text text-muted">These cookies are necessary for the website to function and cannot be disabled.</small>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="performanceCookies">
+                            <label class="form-check-label" for="performanceCookies">Performance Cookies</label>
+                        </div>
+                        <small class="form-text text-muted">These cookies help us measure and improve site performance by collecting analytics data, including your IP address and approximate location (e.g., city, country).</small>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="functionalCookies">
+                            <label class="form-check-label" for="functionalCookies">Functional Cookies</label>
+                        </div>
+                        <small class="form-text text-muted">These cookies enhance functionality, such as remembering preferences, and may use your IP address and location to personalize content.</small>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="advertisingCookies">
+                            <label class="form-check-label" for="advertisingCookies">Advertising Cookies</label>
+                        </div>
+                        <small class="form-text text-muted">These cookies deliver personalized advertisements based on your interests.</small>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="socialMediaCookies">
+                            <label class="form-check-label" for="socialMediaCookies">Social Media Cookies</label>
+                        </div>
+                        <small class="form-text text-muted">These cookies allow integration with social media platforms for sharing content.</small>
+                    </div>
+                    <p class="mt-3 text-muted">
+                        <small>By enabling Performance or Functional cookies, you consent to us updating your IP address and location data for the purposes described. See our <a href="/privacy-policy" target="_blank">Privacy Policy</a> for details.</small>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveCookiePrefs">Save Preferences</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Same HTML structure as before -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -610,61 +663,7 @@
             </div>
         </div>
     </div>
-    <!-- Cookie Preferences Modal -->
-    <div class="modal fade" id="cookieModal" tabindex="-1" role="dialog" aria-labelledby="cookieModalLabel">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="cookieModalLabel">Cookie Preferences</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="strictlyNecessaryCookies" checked disabled>
-                            <label class="form-check-label" for="strictlyNecessaryCookies">Strictly Necessary Cookies (Required)</label>
-                        </div>
-                        <small class="form-text text-muted">These cookies are necessary for the website to function and cannot be disabled.</small>
-                    </div>
-                    <div class="mb-3">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="performanceCookies">
-                            <label class="form-check-label" for="performanceCookies">Performance Cookies</label>
-                        </div>
-                        <small class="form-text text-muted">These cookies help us measure and improve site performance by collecting analytics data, including your IP address and approximate location (e.g., city, country).</small>
-                    </div>
-                    <div class="mb-3">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="functionalCookies">
-                            <label class="form-check-label" for="functionalCookies">Functional Cookies</label>
-                        </div>
-                        <small class="form-text text-muted">These cookies enhance functionality, such as remembering preferences, and may use your IP address and location to personalize content.</small>
-                    </div>
-                    <div class="mb-3">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="advertisingCookies">
-                            <label class="form-check-label" for="advertisingCookies">Advertising Cookies</label>
-                        </div>
-                        <small class="form-text text-muted">These cookies deliver personalized advertisements based on your interests.</small>
-                    </div>
-                    <div class="mb-3">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="socialMediaCookies">
-                            <label class="form-check-label" for="socialMediaCookies">Social Media Cookies</label>
-                        </div>
-                        <small class="form-text text-muted">These cookies allow integration with social media platforms for sharing content.</small>
-                    </div>
-                    <p class="mt-3 text-muted">
-                        <small>By enabling Performance or Functional cookies, you consent to us updating your IP address and location data for the purposes described. See our <a href="/privacy-policy" target="_blank">Privacy Policy</a> for details.</small>
-                    </p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="saveCookiePrefs">Save Preferences</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    
     <!-- MFA Confirmation Modal -->
     <div class="modal fade" id="deleteCookieConfirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteCookieConfirmLabel">
         <div class="modal-dialog modal-dialog-centered">
