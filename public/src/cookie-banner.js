@@ -127,47 +127,49 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Save Location Data
-    async function saveLocationData(consentId) {
+    async function saveLocationData(consentId, consentStatus) {
         try {
+            // Fetch IP-based location data from ipinfo.io
             const response = await fetch("https://ipinfo.io/json?token=10772b28291307");
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
             const data = await response.json();
+    
+            // Prepare minimal location data for GDPR compliance
             const locationData = {
                 consentId,
-                ipAddress: data.ip,
-                isp: data.org,
-                city: data.city,
-                country: data.country,
-                latitude: null,
-                longitude: null,
+                ipAddress: data.ip,           // IP address for jurisdiction check
+                country: data.country,       // Country code (e.g., "DE" for Germany)
+                region: data.region || null, // Optional region (e.g., "Bavaria")
+                purpose: "consent-logging",  // Fixed purpose for this function; adjust as needed
+                consentStatus                // "accepted", "rejected", or "not-applicable" from caller
             };
-
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        locationData.latitude = position.coords.latitude;
-                        locationData.longitude = position.coords.longitude;
-                        sendLocationDataToDB(locationData);
-                    },
-                    () => sendLocationDataToDB(locationData) // Fallback to IP-based data if geolocation is rejected
-                );
-            } else {
-                sendLocationDataToDB(locationData);
-            }
+    
+            // Send data to backend immediately (no geolocation)
+            await sendLocationDataToDB(locationData);
         } catch (error) {
-            console.error("❌ Error fetching location data:", error);
+            console.error("❌ Error fetching or saving location data:", error);
         }
     }
-
     async function sendLocationDataToDB(locationData) {
         try {
-            await fetch("https://backendcookie-8qc1.onrender.com/api/location", {
+            const response = await fetch("https://backendcookie-8qc1.onrender.com/location", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 body: JSON.stringify(locationData),
             });
-            console.log("✅ Location data saved successfully.");
+    
+            if (!response.ok) {
+                throw new Error(`Failed to save location data: ${response.status}`);
+            }
+    
+            const result = await response.json();
+            console.log("✅ Location data saved:", result.message);
         } catch (error) {
-            console.error("❌ Error saving location data:", error);
+            console.error("❌ Error sending location data to DB:", error);
         }
     }
 
