@@ -78,7 +78,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
 
             setTimeout(() => {
                 document.getElementById("registerForm").reset();
-                // window.location.href = "profile.html"; // Uncomment if redirect needed
+                 window.location.href = "news.html"; 
             }, 1500);
         } else {
             console.error("Registration failed:", { status: response.status, data });
