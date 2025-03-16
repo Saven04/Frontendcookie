@@ -85,9 +85,6 @@ document.getElementById("registerForm").addEventListener("submit", async functio
             const errorMessage = data.message || "Registration failed. Please try again.";
             showModal(`❌ ${errorMessage}`, "error");
         }
-    } catch (error) {
-        console.error("❌ Registration error:", error.message || error);
-        showModal("An unexpected error occurred. Please try again later.", "error");
     } finally {
         resetButton();
     }
