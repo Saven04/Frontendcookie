@@ -36,37 +36,39 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;secure;samesite=strict`;
     }
 
-    // Check authentication state
-    const isLoggedIn = !!localStorage.getItem("token");
+    // Cookie Consent State
     let consentId = getCookie("consentId");
     let cookiesAccepted = getCookie("cookiesAccepted");
 
-    // Show cookie banner only if user is not logged in and no preference has been set
-    if (!isLoggedIn && !cookiesAccepted && !cookieBanner.classList.contains("show")) {
-        setTimeout(() => cookieBanner.classList.add("show"), 500);
-    }
-
-    // DOM elements for registration
+    // DOM elements for tabs and form
     const registerTab = document.getElementById("register-tab");
+    const loginTab = document.getElementById("login-tab"); // Assuming this ID for login tab
     const registerForm = document.getElementById("registerForm");
 
-    // Show banner on register tab click only if not logged in and no preference is set
+    // Show banner only when register tab is clicked and no preference is set
     if (registerTab) {
         registerTab.addEventListener("click", () => {
             const currentCookiesAccepted = getCookie("cookiesAccepted");
-            const currentIsLoggedIn = !!localStorage.getItem("token");
-            if (!currentIsLoggedIn && !currentCookiesAccepted && !cookieBanner.classList.contains("show")) {
+            if (!currentCookiesAccepted && !cookieBanner.classList.contains("show")) {
                 setTimeout(() => cookieBanner.classList.add("show"), 500);
             }
         });
     }
 
-    // Block form submission if not logged in and no preference is set
+    // Hide banner when login tab is clicked
+    if (loginTab) {
+        loginTab.addEventListener("click", () => {
+            if (cookieBanner.classList.contains("show")) {
+                hideBanner();
+            }
+        });
+    }
+
+    // Block form submission if no preference is set
     if (registerForm) {
         registerForm.addEventListener("submit", (event) => {
             const currentCookiesAccepted = getCookie("cookiesAccepted");
-            const currentIsLoggedIn = !!localStorage.getItem("token");
-            if (!currentIsLoggedIn && !currentCookiesAccepted) {
+            if (!currentCookiesAccepted) {
                 event.preventDefault();
                 alert("Please choose a cookie preference before registering.");
                 if (!cookieBanner.classList.contains("show")) {
