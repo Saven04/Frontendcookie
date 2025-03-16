@@ -415,10 +415,15 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         confirmDeleteCookieBtn.disabled = true;
-        if (mfaStatus) mfaStatus.classList.add("d-none");
+        if (mfaStatus) {
+            mfaStatus.classList.remove("d-none");
+            mfaStatus.classList.add("alert-info");
+            mfaStatus.textContent = "Verifying MFA code...";
+        }
 
         try {
-            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/verify-mfa", {
+            // Verify MFA
+            const mfaResponse = await fetch("https://backendcookie-8qc1.onrender.com/api/verify-mfa", {
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -427,11 +432,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify({ code: deleteCookieMfaCode })
             });
 
-            if (!response.ok) {
-                const errorData = await response.json();
+            if (!mfaResponse.ok) {
+                const errorData = await mfaResponse.json();
                 throw new Error(errorData.message || "Invalid code");
             }
 
+            // Delete cookie preferences
             const consentId = getCookie("consentId");
             document.cookie.split(";").forEach(cookie => {
                 const [name] = cookie.trim().split("=");
@@ -440,12 +446,28 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
 
+            // Delete location data from backend
+            const deleteLocationResponse = await fetch("https://backendcookie-8qc1.onrender.com/api/delete-location", {
+                method: "DELETE",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ consentId })
+            });
+
+            if (!deleteLocationResponse.ok) {
+                const errorData = await deleteLocationResponse.json();
+                throw new Error(errorData.message || "Failed to delete location data");
+            }
+
+            // Reset local storage, keeping token and consentId
             const savedToken = localStorage.getItem("token");
             localStorage.clear();
             if (consentId) localStorage.setItem("consentId", consentId);
             if (savedToken) localStorage.setItem("token", savedToken);
 
-            // Apply default settings with null checks
+            // Apply default settings
             applyTheme("system");
             applyFontSize("medium");
 
@@ -456,21 +478,22 @@ document.addEventListener("DOMContentLoaded", () => {
             if (fontSizeSelect) fontSizeSelect.value = "medium";
 
             const notificationSwitch = document.getElementById("notificationSwitch");
-            if (notificationSwitch) {
-                notificationSwitch.checked = true;
-            } else {
-                console.warn("Element with ID 'notificationSwitch' not found in DOM");
-            }
+            if (notificationSwitch) notificationSwitch.checked = true;
 
             deleteModal.hide();
             alert("Cookie preferences and location data deleted successfully.");
-            if (typeof mfaEmail !== "undefined") mfaEmail = null; // Safely reset if defined
-        } catch (error) {
-            console.error("MFA verification error:", error);
             if (mfaStatus) {
-                mfaStatus.classList.remove("d-none");
+                mfaStatus.classList.remove("alert-info");
+                mfaStatus.classList.add("alert-success");
+                mfaStatus.textContent = "Preferences and location data deleted!";
+            }
+            if (typeof mfaEmail !== "undefined") mfaEmail = null;
+        } catch (error) {
+            console.error("Deletion error:", error);
+            if (mfaStatus) {
+                mfaStatus.classList.remove("d-none", "alert-info");
                 mfaStatus.classList.add("alert-danger");
-                mfaStatus.textContent = error.message || "Invalid verification code.";
+                mfaStatus.textContent = error.message || "Failed to delete data.";
             }
             const mfaCodeInput = document.getElementById("deleteCookieMfaCode");
             if (mfaCodeInput) mfaCodeInput.value = "";
@@ -489,15 +512,13 @@ document.addEventListener("DOMContentLoaded", () => {
         return null;
     }
 
-    // Placeholder Functions (implement as needed)
+    // Placeholder Functions
     function applyTheme(theme) {
         console.log(`Applying theme: ${theme}`);
-        // Example: document.body.className = theme;
     }
 
     function applyFontSize(size) {
         console.log(`Applying font size: ${size}`);
-        // Example: document.body.style.fontSize = size === "medium" ? "16px" : "14px";
     }
 });
 
