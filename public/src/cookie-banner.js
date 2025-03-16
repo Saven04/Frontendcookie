@@ -36,12 +36,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;secure;samesite=strict`;
     }
 
-    // Handle Cookie Consent Logic
+    // Check authentication state
+    const isLoggedIn = !!localStorage.getItem("token");
     let consentId = getCookie("consentId");
     let cookiesAccepted = getCookie("cookiesAccepted");
 
-    // Show cookie banner only if no preference has been set initially
-    if (!cookiesAccepted && !cookieBanner.classList.contains("show")) {
+    // Show cookie banner only if user is not logged in and no preference has been set
+    if (!isLoggedIn && !cookiesAccepted && !cookieBanner.classList.contains("show")) {
         setTimeout(() => cookieBanner.classList.add("show"), 500);
     }
 
@@ -49,21 +50,23 @@ document.addEventListener("DOMContentLoaded", async () => {
     const registerTab = document.getElementById("register-tab");
     const registerForm = document.getElementById("registerForm");
 
-    // Show banner on register tab click only if no preference is set
+    // Show banner on register tab click only if not logged in and no preference is set
     if (registerTab) {
         registerTab.addEventListener("click", () => {
-            const currentCookiesAccepted = getCookie("cookiesAccepted"); // Re-check cookie
-            if (!currentCookiesAccepted && !cookieBanner.classList.contains("show")) {
+            const currentCookiesAccepted = getCookie("cookiesAccepted");
+            const currentIsLoggedIn = !!localStorage.getItem("token");
+            if (!currentIsLoggedIn && !currentCookiesAccepted && !cookieBanner.classList.contains("show")) {
                 setTimeout(() => cookieBanner.classList.add("show"), 500);
             }
         });
     }
 
-    // Block form submission if no preference is set
+    // Block form submission if not logged in and no preference is set
     if (registerForm) {
         registerForm.addEventListener("submit", (event) => {
-            const currentCookiesAccepted = getCookie("cookiesAccepted"); // Re-check cookie
-            if (!currentCookiesAccepted) {
+            const currentCookiesAccepted = getCookie("cookiesAccepted");
+            const currentIsLoggedIn = !!localStorage.getItem("token");
+            if (!currentIsLoggedIn && !currentCookiesAccepted) {
                 event.preventDefault();
                 alert("Please choose a cookie preference before registering.");
                 if (!cookieBanner.classList.contains("show")) {
@@ -83,8 +86,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     customizeCookiesButton.addEventListener("click", (event) => {
         event.preventDefault();
         cookiePreferencesModal.classList.add("show");
-        document.getElementById("strictlyNecessary").checked = true;
-        document.getElementById("strictlyNecessary").disabled = true;
+        const strictlyNecessary = document.getElementById("strictlyNecessary");
+        if (strictlyNecessary) {
+            strictlyNecessary.checked = true;
+            strictlyNecessary.disabled = true;
+        }
     });
 
     // Save Preferences Button
@@ -98,10 +104,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const preferences = {
             strictlyNecessary: true,
-            performance: document.getElementById("performance").checked,
-            functional: document.getElementById("functional").checked,
-            advertising: document.getElementById("advertising").checked,
-            socialMedia: document.getElementById("socialMedia").checked,
+            performance: document.getElementById("performance")?.checked || false,
+            functional: document.getElementById("functional")?.checked || false,
+            advertising: document.getElementById("advertising")?.checked || false,
+            socialMedia: document.getElementById("socialMedia")?.checked || false,
         };
 
         setCookie("cookiesAccepted", "true", 365); // Custom preferences imply acceptance
