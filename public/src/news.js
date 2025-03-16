@@ -400,20 +400,22 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const deleteCookieMfaCode = document.getElementById("deleteCookieMfaCode").value.trim();
+        const deleteCookieMfaCode = document.getElementById("deleteCookieMfaCode")?.value.trim();
         const deleteModal = bootstrap.Modal.getInstance(document.getElementById("deleteCookieConfirmModal"));
         const mfaStatus = document.getElementById("mfaStatus");
         const confirmDeleteCookieBtn = document.getElementById("confirmDeleteCookie");
 
         if (!deleteCookieMfaCode || deleteCookieMfaCode.length !== 6 || !/^\d+$/.test(deleteCookieMfaCode)) {
-            mfaStatus.classList.remove("d-none");
-            mfaStatus.classList.add("alert-warning");
-            mfaStatus.textContent = "Please enter a valid 6-digit code.";
+            if (mfaStatus) {
+                mfaStatus.classList.remove("d-none");
+                mfaStatus.classList.add("alert-warning");
+                mfaStatus.textContent = "Please enter a valid 6-digit code.";
+            }
             return;
         }
 
         confirmDeleteCookieBtn.disabled = true;
-        mfaStatus?.classList.add("d-none");
+        if (mfaStatus) mfaStatus.classList.add("d-none");
 
         try {
             const response = await fetch("https://backendcookie-8qc1.onrender.com/api/verify-mfa", {
@@ -443,25 +445,60 @@ document.addEventListener("DOMContentLoaded", () => {
             if (consentId) localStorage.setItem("consentId", consentId);
             if (savedToken) localStorage.setItem("token", savedToken);
 
+            // Apply default settings with null checks
             applyTheme("system");
             applyFontSize("medium");
-            document.getElementById("themeSelect").value = "system";
-            document.getElementById("fontSizeSelect").value = "medium";
-            document.getElementById("notificationSwitch").checked = true;
+
+            const themeSelect = document.getElementById("themeSelect");
+            if (themeSelect) themeSelect.value = "system";
+
+            const fontSizeSelect = document.getElementById("fontSizeSelect");
+            if (fontSizeSelect) fontSizeSelect.value = "medium";
+
+            const notificationSwitch = document.getElementById("notificationSwitch");
+            if (notificationSwitch) {
+                notificationSwitch.checked = true;
+            } else {
+                console.warn("Element with ID 'notificationSwitch' not found in DOM");
+            }
 
             deleteModal.hide();
             alert("Cookie preferences and location data deleted successfully.");
-            mfaEmail = null;
+            if (typeof mfaEmail !== "undefined") mfaEmail = null; // Safely reset if defined
         } catch (error) {
             console.error("MFA verification error:", error);
-            mfaStatus.classList.remove("d-none");
-            mfaStatus.classList.add("alert-danger");
-            mfaStatus.textContent = error.message || "Invalid verification code.";
-            document.getElementById("deleteCookieMfaCode").value = "";
+            if (mfaStatus) {
+                mfaStatus.classList.remove("d-none");
+                mfaStatus.classList.add("alert-danger");
+                mfaStatus.textContent = error.message || "Invalid verification code.";
+            }
+            const mfaCodeInput = document.getElementById("deleteCookieMfaCode");
+            if (mfaCodeInput) mfaCodeInput.value = "";
         } finally {
             confirmDeleteCookieBtn.disabled = false;
         }
     });
+
+    // Cookie Utility Function
+    function getCookie(name) {
+        const cookies = document.cookie.split("; ");
+        for (let cookie of cookies) {
+            const [cookieName, cookieValue] = cookie.split("=");
+            if (cookieName === name) return decodeURIComponent(cookieValue);
+        }
+        return null;
+    }
+
+    // Placeholder Functions (implement as needed)
+    function applyTheme(theme) {
+        console.log(`Applying theme: ${theme}`);
+        // Example: document.body.className = theme;
+    }
+
+    function applyFontSize(size) {
+        console.log(`Applying font size: ${size}`);
+        // Example: document.body.style.fontSize = size === "medium" ? "16px" : "14px";
+    }
 });
 
 
