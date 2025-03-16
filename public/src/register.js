@@ -55,7 +55,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         const consentStatus = cookiesAccepted === "true" ? "accepted" : "rejected";
         await saveLocationData(consentId, consentStatus);
 
-        console.log("Sending registration request with payload:", { username, email, password, consentId });
+        console.log("Sending registration request with payload:", { username, email, consentId });
 
         const response = await fetch("https://backendcookie-8qc1.onrender.com/api/register", {
             method: "POST",
