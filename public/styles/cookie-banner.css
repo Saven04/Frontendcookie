@@ -7,21 +7,21 @@
     bottom: -100px; /* Starts off-screen at the bottom */
     left: 50%;
     transform: translateX(-50%);
-    width: 90%; /* Adjusted for smaller screens */
+    width: 90%; /* Responsive width */
     max-width: 700px;
-    background: rgba(0, 0, 0, 0.8); /* Slightly darker for better contrast */
+    background: rgba(0, 0, 0, 0.8); /* Dark background for contrast */
     color: #fff;
-    padding: 20px; /* Increased padding for better spacing */
+    padding: 20px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     font-size: 0.9rem;
-    z-index: 1000; /* Ensure it's on top */
-    border-radius: 12px; /* Rounded corners for a modern look */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Softer shadow for depth */
+    z-index: 2000; /* Ensure it's on top of everything */
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
     opacity: 0;
-    transition: opacity 0.5s ease, bottom 0.5s ease; /* Smooth transitions */
+    transition: opacity 0.5s ease, bottom 0.5s ease;
 }
 
 /* When the banner is shown */
@@ -29,7 +29,6 @@
     opacity: 1;
     bottom: 20px; /* Moves the banner into view */
 }
-
 /* Cookie banner content styles */
 .cookie-banner-content p {
     margin: 0;
