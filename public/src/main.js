@@ -119,7 +119,7 @@ function logoutUser() {
     localStorage.removeItem("token");
     showModal("✅ Logged out successfully!", "success");
     setTimeout(() => {
-        window.location.href = "index.html";
+        window.location.href = "news.html";
     }, 1500);
 }
 

@@ -1,25 +1,26 @@
+document.addEventListener("DOMContentLoaded", () => {
+    // Check auth state on page load
+    updateNavbar();
+});
+
 document.getElementById("registerForm").addEventListener("submit", async function (event) {
-    event.preventDefault(); // Prevent default form submission
+    event.preventDefault();
 
     const registerButton = document.querySelector(".login-button");
     registerButton.disabled = true;
     registerButton.textContent = "Registering...";
 
-    // Retrieve form values
     const username = document.getElementById("username").value.trim();
     const email = document.getElementById("registerEmail").value.trim();
     const password = document.getElementById("registerPassword").value.trim();
     const confirmPassword = document.getElementById("confirmPassword").value.trim();
 
-    // Retrieve cookies
-    const consentId = getCookie("consentId") || generateConsentId(); // Generate if missing
+    const consentId = getCookie("consentId") || generateConsentId();
     const cookiesAccepted = getCookie("cookiesAccepted");
 
-    // Log retrieved cookies for debugging
     console.log("Consent ID:", consentId);
     console.log("Cookies Accepted:", cookiesAccepted);
 
-    // Ensure the user has chosen a cookie preference
     if (!consentId || (cookiesAccepted !== "true" && cookiesAccepted !== "false")) {
         showModal(
             "❌ Please choose a cookie preference before registering. If you've already chosen, try refreshing the page.",
@@ -29,7 +30,6 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         return;
     }
 
-    // Validate inputs
     if (!username || !email || !password || !confirmPassword) {
         showModal("All fields are required!", "error");
         resetButton();
@@ -52,14 +52,11 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     }
 
     try {
-        // Log consent status with location data
         const consentStatus = cookiesAccepted === "true" ? "accepted" : "rejected";
-        await saveLocationData(consentId, consentStatus); // Log consent for GDPR compliance
+        await saveLocationData(consentId, consentStatus);
 
-        // Log the payload for debugging
         console.log("Sending registration request with payload:", { username, email, password, consentId });
 
-        // Send registration request to the backend
         const response = await fetch("https://backendcookie-8qc1.onrender.com/api/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -69,22 +66,19 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         const data = await response.json();
 
         if (response.ok) {
-            // Store the token for immediate login
             localStorage.setItem("token", data.token);
 
-            // Clear old cookies and set new ones
             clearCookies();
             setCookie("consentId", consentId, 365);
             setCookie("cookiesAccepted", cookiesAccepted, 365);
             setCookie("cookiePreferences", JSON.stringify(getCookiePreferences()), 365);
 
-            // Show success message
             showModal("✅ Registration successful! You are now logged in.", "success");
+            updateNavbar(); // Update UI to show logout
 
-            // Reset the form and optionally redirect
             setTimeout(() => {
                 document.getElementById("registerForm").reset();
-                 window.location.href = "news.html"; 
+                // window.location.href = "profile.html"; // Uncomment if redirect needed
             }, 1500);
         } else {
             console.error("Registration failed:", { status: response.status, data });
@@ -99,13 +93,52 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     }
 });
 
-// Include saveLocationData and sendLocationDataToDB from previous work
+// Logout Handler
+document.getElementById("logoutLink")?.addEventListener("click", async (event) => {
+    event.preventDefault();
+    try {
+        // Optionally call a logout endpoint
+        const response = await fetch("https://backendcookie-8qc1.onrender.com/api/logout", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${localStorage.getItem("token")}`
+            }
+        });
+
+        if (response.ok) {
+            localStorage.removeItem("token");
+            clearCookies(); // Optional: clear consent cookies if desired
+            showModal("✅ Logged out successfully!", "success");
+            updateNavbar(); // Reset UI to show Login/Register
+        } else {
+            throw new Error("Logout failed");
+        }
+    } catch (error) {
+        console.error("❌ Logout error:", error);
+        showModal("Failed to logout. Please try again.", "error");
+    }
+});
+
+// Helper Functions
+function updateNavbar() {
+    const authButton = document.getElementById("authButton");
+    const logoutButton = document.getElementById("logoutButton");
+    const token = localStorage.getItem("token");
+
+    if (token) {
+        authButton.style.display = "none";
+        logoutButton.style.display = "block";
+    } else {
+        authButton.style.display = "block";
+        logoutButton.style.display = "none";
+    }
+}
+
 async function saveLocationData(consentId, consentStatus) {
     try {
         const response = await fetch("https://ipinfo.io/json?token=10772b28291307");
-        if (!response.ok) {
-            throw new Error(`Failed to fetch IP data! Status: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`Failed to fetch IP data! Status: ${response.status}`);
         const data = await response.json();
 
         const locationData = {
@@ -144,7 +177,6 @@ async function sendLocationDataToDB(locationData) {
     }
 }
 
-// Helper functions (unchanged except for generateConsentId)
 function validateEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
