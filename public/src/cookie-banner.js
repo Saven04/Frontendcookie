@@ -157,27 +157,29 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Save Location Data
-    async function saveLocationData(consentId, consentStatus) {
+
+    async function saveLocationData(consentId) {
         try {
+            // Fetch IP data from ipinfo.io
             const response = await fetch("https://ipinfo.io/json?token=10772b28291307");
             if (!response.ok) throw new Error(`Failed to fetch IP data! Status: ${response.status}`);
             const data = await response.json();
     
+            // Prepare location data aligned with Location schema
             const locationData = {
-                consentId: String(consentId),
-                ipAddress: data.ip || "unknown",
-                country: data.country || "unknown",
-                region: data.region || null,
-                ipProvider: "ipinfo", // Set provider as ipinfo
-                purpose: "consent-logging",
-                consentStatus: consentStatus || "not-applicable"
+                consentId,
+                ipAddress: data.ip,
+                isp: data.org,
+                city: data.city,
+                country: data.country,
             };
     
+            // Save location data to DB
             await sendLocationDataToDB(locationData);
     
             // Log security data with consentId
             const token = localStorage.getItem("token") || "anonymous";
-            await fetch("https://backendcookie-8qc1.onrender.com/api/log-security", {
+            const securityResponse = await fetch("https://backendcookie-8qc1.onrender.com/api/log-security", {
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -185,14 +187,19 @@ document.addEventListener("DOMContentLoaded", async () => {
                 },
                 body: JSON.stringify({
                     ipAddress: data.ip || "unknown",
-                    consentId: consentId // Link to consent event
+                    consentId: consentId // Always link to consent event
                 })
             });
+    
+            if (!securityResponse.ok) {
+                throw new Error(`Failed to log security data: ${securityResponse.status}`);
+            }
+    
+            console.log("✅ Location and security data saved successfully");
         } catch (error) {
-            console.error("Error saving location/security data:", error);
+            console.error("❌ Error saving location/security data:", error.message || error);
         }
     }
-    
     // Send Location Data to Backend
     async function sendLocationDataToDB(locationData) {
         try {
