@@ -52,6 +52,9 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     }
 
     try {
+        // Log the payload for debugging
+        console.log("Sending registration request with payload:", { username, email, password, consentId });
+
         // Send registration request to the backend
         const response = await fetch("https://backendcookie-8qc1.onrender.com/api/register", {
             method: "POST",
@@ -81,12 +84,14 @@ document.getElementById("registerForm").addEventListener("submit", async functio
                 // window.location.href = "profile.html"; // Uncomment if you have a profile page
             }, 1500);
         } else {
-            // Show error message from the backend
-            showModal(`❌ ${data.message || "Registration failed. Please try again."}`, "error");
+            // Show detailed error message from the backend
+            const errorMessage = data.message || "Registration failed. Please try again.";
+            console.error("Backend error:", errorMessage);
+            showModal(`❌ ${errorMessage}`, "error");
         }
     } catch (error) {
         console.error("❌ Error:", error);
-        showModal("Registration failed. Please check your internet connection and try again.", "error");
+        showModal("An unexpected error occurred. Please try again later.", "error");
     } finally {
         resetButton();
     }

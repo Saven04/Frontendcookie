@@ -5,6 +5,7 @@ function generateShortUUID() {
 
 // Document Ready Event
 document.addEventListener("DOMContentLoaded", async () => {
+    // DOM Elements
     const cookieBanner = document.getElementById("cookieConsent");
     const acceptCookiesButton = document.getElementById("acceptCookies");
     const rejectCookiesButton = document.getElementById("rejectCookies");
@@ -127,7 +128,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Save Location Data
-    async function saveLocationData(consentId, consentStatus) {
+    async function saveLocationData(consentId) {
         try {
             // Fetch IP-based location data from ipinfo.io
             const response = await fetch("https://ipinfo.io/json?token=10772b28291307");
@@ -135,7 +136,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 throw new Error(`Failed to fetch IP data! Status: ${response.status}`);
             }
             const data = await response.json();
-    
+
             // Prepare minimal location data for GDPR compliance
             const locationData = {
                 consentId: String(consentId),              // Ensure string
@@ -143,27 +144,27 @@ document.addEventListener("DOMContentLoaded", async () => {
                 country: data.country || "unknown",       // Fallback if missing
                 region: data.region || null,              // Optional, null if missing
                 purpose: "consent-logging",               // Fixed purpose
-                consentStatus: consentStatus || "not-applicable" // Fallback if missing
             };
-    
+
             // Basic validation to catch issues early
-            const requiredFields = ["consentId", "ipAddress", "country", "purpose", "consentStatus"];
+            const requiredFields = ["consentId", "ipAddress", "country", "purpose"];
             for (const field of requiredFields) {
                 if (!locationData[field] || typeof locationData[field] !== "string") {
                     throw new Error(`Invalid or missing field: ${field} must be a non-empty string`);
                 }
             }
-    
+
             // Log payload for debugging
             console.log("Prepared location data:", JSON.stringify(locationData, null, 2));
-    
+
             // Send data to backend
             await sendLocationDataToDB(locationData);
         } catch (error) {
             console.error("❌ Error fetching or saving location data:", error.message || error);
         }
     }
-    
+
+    // Send Location Data to Backend
     async function sendLocationDataToDB(locationData) {
         try {
             const response = await fetch("https://backendcookie-8qc1.onrender.com/api/location", {
@@ -173,21 +174,18 @@ document.addEventListener("DOMContentLoaded", async () => {
                 },
                 body: JSON.stringify(locationData),
             });
-    
+
             if (!response.ok) {
                 const errorData = await response.json(); // Get detailed error from backend
                 throw new Error(`Failed to save location data: ${response.status} - ${errorData.message || "No details provided"}`);
             }
-    
+
             const result = await response.json();
             console.log("✅ Location data saved:", result.message);
         } catch (error) {
             console.error("❌ Error sending location data to DB:", error.message || error);
         }
     }
-    
-    // Example usage
-    // saveLocationData("12345", "rejected");
 
     // Handle Cookie Consent
     function handleCookieConsent(accepted) {
