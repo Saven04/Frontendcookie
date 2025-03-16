@@ -40,29 +40,35 @@ document.addEventListener("DOMContentLoaded", async () => {
     let consentId = getCookie("consentId");
     let cookiesAccepted = getCookie("cookiesAccepted");
 
-    // Show cookie banner if no preference has been set
-    if (!cookiesAccepted) {
+    // Show cookie banner only if no preference has been set initially
+    if (!cookiesAccepted && !cookieBanner.classList.contains("show")) {
         setTimeout(() => cookieBanner.classList.add("show"), 500);
     }
 
-    // Show the cookie banner when the user attempts to register
+    // DOM elements for registration
     const registerTab = document.getElementById("register-tab");
     const registerForm = document.getElementById("registerForm");
 
+    // Show banner on register tab click only if no preference is set
     if (registerTab) {
         registerTab.addEventListener("click", () => {
-            if (!cookiesAccepted) {
+            const currentCookiesAccepted = getCookie("cookiesAccepted"); // Re-check cookie
+            if (!currentCookiesAccepted && !cookieBanner.classList.contains("show")) {
                 setTimeout(() => cookieBanner.classList.add("show"), 500);
             }
         });
     }
 
+    // Block form submission if no preference is set
     if (registerForm) {
         registerForm.addEventListener("submit", (event) => {
-            if (!cookiesAccepted) {
+            const currentCookiesAccepted = getCookie("cookiesAccepted"); // Re-check cookie
+            if (!currentCookiesAccepted) {
                 event.preventDefault();
                 alert("Please choose a cookie preference before registering.");
-                setTimeout(() => cookieBanner.classList.add("show"), 500);
+                if (!cookieBanner.classList.contains("show")) {
+                    setTimeout(() => cookieBanner.classList.add("show"), 500);
+                }
             }
         });
     }
@@ -103,7 +109,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         sendPreferencesToDB(consentId, preferences);
 
-        // Log consent status with location data
         const consentStatus = preferences.performance || preferences.functional ? "accepted" : "rejected";
         saveLocationData(consentId, consentStatus);
 
@@ -219,7 +224,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         sendPreferencesToDB(consentId, preferences);
 
-        // Log consent status with location data
         const consentStatus = accepted ? "accepted" : "rejected";
         saveLocationData(consentId, consentStatus);
 
