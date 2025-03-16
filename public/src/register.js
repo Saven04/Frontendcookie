@@ -15,9 +15,16 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     const consentId = getCookie("consentId");
     const cookiesAccepted = getCookie("cookiesAccepted");
 
+    // Log retrieved cookies for debugging
+    console.log("Consent ID:", consentId);
+    console.log("Cookies Accepted:", cookiesAccepted);
+
     // Ensure the user has chosen a cookie preference
     if (!consentId || cookiesAccepted !== "true") {
-        showModal("❌ Please choose a cookie preference before registering.", "error");
+        showModal(
+            "❌ Please choose a cookie preference before registering. If you've already chosen, try refreshing the page.",
+            "error"
+        );
         resetButton();
         return;
     }
@@ -86,9 +93,11 @@ function getCookie(name) {
     for (let cookie of cookies) {
         const [cookieName, cookieValue] = cookie.split("=");
         if (cookieName === name) {
+            console.log(`Retrieved cookie: ${cookieName}=${decodeURIComponent(cookieValue)}`);
             return decodeURIComponent(cookieValue);
         }
     }
+    console.log(`Cookie not found: ${name}`);
     return null;
 }
 
