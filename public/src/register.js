@@ -52,39 +52,41 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     }
 
     try {
-        const consentStatus = cookiesAccepted === "true" ? "accepted" : "rejected";
-        await saveLocationData(consentId, consentStatus);
-
-        console.log("Sending registration request with payload:", { username, email, consentId });
-
+        // Send registration request to the backend
         const response = await fetch("https://backendcookie-8qc1.onrender.com/api/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, email, password, consentId })
+            body: JSON.stringify({ username, email, password, consentId }) // Include consentId
         });
 
         const data = await response.json();
 
         if (response.ok) {
-            localStorage.setItem("token", data.token);
+            // Store the token for immediate login
+            localStorage.setItem('token', data.token);
 
+            // Clear old cookies and set new ones
             clearCookies();
             setCookie("consentId", consentId, 365);
-            setCookie("cookiesAccepted", cookiesAccepted, 365);
+            setCookie("cookiesAccepted", "true", 365);
             setCookie("cookiePreferences", JSON.stringify(getCookiePreferences()), 365);
 
+            // Show success message
             showModal("✅ Registration successful! You are now logged in.", "success");
-            updateNavbar(); // Update UI to show logout
 
+            // Reset the form and optionally redirect
             setTimeout(() => {
                 document.getElementById("registerForm").reset();
-                 window.location.href = "news.html"; 
+                // Optionally redirect or update UI to reflect logged-in state
+                // window.location.href = "profile.html"; // Uncomment if you have a profile page
             }, 1500);
         } else {
-            console.error("Registration failed:", { status: response.status, data });
-            const errorMessage = data.message || "Registration failed. Please try again.";
-            showModal(`❌ ${errorMessage}`, "error");
+            // Show error message from the backend
+            showModal(`❌ ${data.message || "Registration failed."}`, "error");
         }
+    } catch (error) {
+        console.error("❌ Error:", error);
+        showModal("Registration failed. Please check your internet connection and try again.", "error");
     } finally {
         resetButton();
     }
