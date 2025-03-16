@@ -393,73 +393,118 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Confirm deletion
-    document.getElementById("confirmDeleteCookie")?.addEventListener("click", async () => {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            alert("Please log in first.");
-            return;
-        }
-
-        const deleteCookieMfaCode = document.getElementById("deleteCookieMfaCode").value.trim();
-        const deleteModal = bootstrap.Modal.getInstance(document.getElementById("deleteCookieConfirmModal"));
-        const mfaStatus = document.getElementById("mfaStatus");
+    document.addEventListener("DOMContentLoaded", () => {
+        // Confirm deletion
         const confirmDeleteCookieBtn = document.getElementById("confirmDeleteCookie");
-
-        if (!deleteCookieMfaCode || deleteCookieMfaCode.length !== 6 || !/^\d+$/.test(deleteCookieMfaCode)) {
-            mfaStatus.classList.remove("d-none");
-            mfaStatus.classList.add("alert-warning");
-            mfaStatus.textContent = "Please enter a valid 6-digit code.";
-            return;
-        }
-
-        confirmDeleteCookieBtn.disabled = true;
-        mfaStatus?.classList.add("d-none");
-
-        try {
-            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/verify-mfa", {
-                method: "POST",
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ code: deleteCookieMfaCode })
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || "Invalid code");
-            }
-
-            const consentId = getCookie("consentId");
-            document.cookie.split(";").forEach(cookie => {
-                const [name] = cookie.trim().split("=");
-                if (name !== "consentId") {
-                    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+        if (confirmDeleteCookieBtn) {
+            confirmDeleteCookieBtn.addEventListener("click", async () => {
+                const token = localStorage.getItem("token");
+                if (!token) {
+                    alert("Please log in first.");
+                    return;
+                }
+    
+                const deleteCookieMfaCode = document.getElementById("deleteCookieMfaCode")?.value.trim();
+                const deleteModal = bootstrap.Modal.getInstance(document.getElementById("deleteCookieConfirmModal"));
+                const mfaStatus = document.getElementById("mfaStatus");
+    
+                if (!deleteCookieMfaCode || deleteCookieMfaCode.length !== 6 || !/^\d+$/.test(deleteCookieMfaCode)) {
+                    if (mfaStatus) {
+                        mfaStatus.classList.remove("d-none");
+                        mfaStatus.classList.add("alert-warning");
+                        mfaStatus.textContent = "Please enter a valid 6-digit code.";
+                    }
+                    return;
+                }
+    
+                confirmDeleteCookieBtn.disabled = true;
+                if (mfaStatus) mfaStatus.classList.add("d-none");
+    
+                try {
+                    const response = await fetch("https://backendcookie-8qc1.onrender.com/api/verify-mfa", {
+                        method: "POST",
+                        headers: {
+                            "Authorization": `Bearer ${token}`,
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ code: deleteCookieMfaCode })
+                    });
+    
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || "Invalid code");
+                    }
+    
+                    const consentId = getCookie("consentId");
+                    document.cookie.split(";").forEach(cookie => {
+                        const [name] = cookie.trim().split("=");
+                        if (name !== "consentId") {
+                            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+                        }
+                    });
+    
+                    const savedToken = localStorage.getItem("token");
+                    localStorage.clear();
+                    if (consentId) localStorage.setItem("consentId", consentId);
+                    if (savedToken) localStorage.setItem("token", savedToken);
+    
+                    // Apply default settings with null checks
+                    applyTheme("system");
+                    applyFontSize("medium");
+    
+                    const themeSelect = document.getElementById("themeSelect");
+                    if (themeSelect) themeSelect.value = "system";
+    
+                    const fontSizeSelect = document.getElementById("fontSizeSelect");
+                    if (fontSizeSelect) fontSizeSelect.value = "medium";
+    
+                    const notificationSwitch = document.getElementById("notificationSwitch");
+                    if (notificationSwitch) {
+                        notificationSwitch.checked = true;
+                    } else {
+                        console.warn("Element with ID 'notificationSwitch' not found in DOM");
+                    }
+    
+                    deleteModal.hide();
+                    alert("Cookie preferences and location data deleted successfully.");
+                    mfaEmail = null; // Assuming mfaEmail is defined elsewhere
+                } catch (error) {
+                    console.error("MFA verification error:", error);
+                    if (mfaStatus) {
+                        mfaStatus.classList.remove("d-none");
+                        mfaStatus.classList.add("alert-danger");
+                        mfaStatus.textContent = error.message || "Invalid verification code.";
+                    }
+                    if (document.getElementById("deleteCookieMfaCode")) {
+                        document.getElementById("deleteCookieMfaCode").value = "";
+                    }
+                } finally {
+                    confirmDeleteCookieBtn.disabled = false;
                 }
             });
-
-            const savedToken = localStorage.getItem("token");
-            localStorage.clear();
-            if (consentId) localStorage.setItem("consentId", consentId);
-            if (savedToken) localStorage.setItem("token", savedToken);
-
-            applyTheme("system");
-            applyFontSize("medium");
-            document.getElementById("themeSelect").value = "system";
-            document.getElementById("fontSizeSelect").value = "medium";
-            document.getElementById("notificationSwitch").checked = true;
-
-            deleteModal.hide();
-            alert("Cookie preferences and location data deleted successfully.");
-            mfaEmail = null;
-        } catch (error) {
-            console.error("MFA verification error:", error);
-            mfaStatus.classList.remove("d-none");
-            mfaStatus.classList.add("alert-danger");
-            mfaStatus.textContent = error.message || "Invalid verification code.";
-            document.getElementById("deleteCookieMfaCode").value = "";
-        } finally {
-            confirmDeleteCookieBtn.disabled = false;
+        } else {
+            console.warn("Confirm delete button not found in DOM");
         }
     });
+    
+    // Cookie Utility Function (assuming reused from elsewhere)
+    function getCookie(name) {
+        const cookies = document.cookie.split("; ");
+        for (let cookie of cookies) {
+            const [cookieName, cookieValue] = cookie.split("=");
+            if (cookieName === name) return decodeURIComponent(cookieValue);
+        }
+        return null;
+    }
+    
+    // Placeholder Functions (implement as needed)
+    function applyTheme(theme) {
+        // Example: document.body.className = theme;
+        console.log(`Applying theme: ${theme}`);
+    }
+    
+    function applyFontSize(size) {
+        // Example: document.body.style.fontSize = size === "medium" ? "16px" : "14px";
+        console.log(`Applying font size: ${size}`);
+    }
 });
