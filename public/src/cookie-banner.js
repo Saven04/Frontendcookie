@@ -18,12 +18,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     function setCookie(name, value, days) {
         const date = new Date();
         date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-        document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/;secure;samesite=strict`;
+        document.cookie = `${name}=${encodeURIComponent(value)};expires=${date.toUTCString()};path=/;secure;samesite=strict`;
     }
 
     function getCookie(name) {
         const nameEq = `${name}=`;
-        return document.cookie.split("; ").find((c) => c.startsWith(nameEq))?.split("=")[1] || null;
+        const cookieValue = document.cookie.split("; ").find((c) => c.startsWith(nameEq))?.split("=")[1];
+        if (cookieValue) {
+            console.log(`Retrieved cookie: ${name}=${decodeURIComponent(cookieValue)}`);
+            return decodeURIComponent(cookieValue);
+        }
+        console.log(`Cookie not found: ${name}`);
+        return null;
     }
 
     function deleteCookie(name) {
@@ -34,24 +40,32 @@ document.addEventListener("DOMContentLoaded", async () => {
     let consentId = getCookie("consentId");
     let cookiesAccepted = getCookie("cookiesAccepted");
 
+    // Show cookie banner if no preference has been set
+    if (!cookiesAccepted) {
+        setTimeout(() => cookieBanner.classList.add("show"), 500);
+    }
+
     // Show the cookie banner when the user attempts to register
     const registerTab = document.getElementById("register-tab");
     const registerForm = document.getElementById("registerForm");
 
-    registerTab.addEventListener("click", () => {
-        if (!cookiesAccepted) {
-            setTimeout(() => cookieBanner.classList.add("show"), 500); // Show the banner
-        }
-    });
+    if (registerTab) {
+        registerTab.addEventListener("click", () => {
+            if (!cookiesAccepted) {
+                setTimeout(() => cookieBanner.classList.add("show"), 500);
+            }
+        });
+    }
 
-    // Block registration if no cookie choice has been made
-    registerForm.addEventListener("submit", (event) => {
-        if (!cookiesAccepted) {
-            event.preventDefault(); // Prevent form submission
-            alert("Please choose a cookie preference before registering."); // Notify the user
-            setTimeout(() => cookieBanner.classList.add("show"), 500); // Show the banner
-        }
-    });
+    if (registerForm) {
+        registerForm.addEventListener("submit", (event) => {
+            if (!cookiesAccepted) {
+                event.preventDefault();
+                alert("Please choose a cookie preference before registering.");
+                setTimeout(() => cookieBanner.classList.add("show"), 500);
+            }
+        });
+    }
 
     // Accept Cookies Button
     acceptCookiesButton.addEventListener("click", () => handleCookieConsent(true));
@@ -84,17 +98,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             socialMedia: document.getElementById("socialMedia").checked,
         };
 
-        setCookie("cookiesAccepted", "true", 365);
+        setCookie("cookiesAccepted", "true", 365); // Custom preferences imply acceptance
         setCookie("cookiePreferences", JSON.stringify(preferences), 365);
 
         sendPreferencesToDB(consentId, preferences);
 
-        // Only collect location data if performance or functional cookies are accepted
-        if (preferences.performance || preferences.functional) {
-            saveLocationData(consentId);
-        } else {
-            console.log("🚫 Location data collection skipped: User did not consent to performance or functional cookies.");
-        }
+        // Log consent status with location data
+        const consentStatus = preferences.performance || preferences.functional ? "accepted" : "rejected";
+        saveLocationData(consentId, consentStatus);
 
         hideBanner();
         cookiePreferencesModal.classList.remove("show");
@@ -121,43 +132,44 @@ document.addEventListener("DOMContentLoaded", async () => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ consentId, preferences }),
             });
-            console.log("✅ Preferences saved:", await response.json());
+
+            if (!response.ok) {
+                throw new Error(`Failed to save preferences: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log("✅ Preferences saved:", result);
         } catch (error) {
-            console.error("❌ Error saving preferences:", error);
+            console.error("❌ Error saving preferences:", error.message || error);
         }
     }
 
     // Save Location Data
-    async function saveLocationData(consentId) {
+    async function saveLocationData(consentId, consentStatus) {
         try {
-            // Fetch IP-based location data from ipinfo.io
             const response = await fetch("https://ipinfo.io/json?token=10772b28291307");
             if (!response.ok) {
                 throw new Error(`Failed to fetch IP data! Status: ${response.status}`);
             }
             const data = await response.json();
 
-            // Prepare minimal location data for GDPR compliance
             const locationData = {
-                consentId: String(consentId),              // Ensure string
-                ipAddress: data.ip || "unknown",          // Fallback if missing
-                country: data.country || "unknown",       // Fallback if missing
-                region: data.region || null,              // Optional, null if missing
-                purpose: "consent-logging",               // Fixed purpose
+                consentId: String(consentId),
+                ipAddress: data.ip || "unknown",
+                country: data.country || "unknown",
+                region: data.region || null,
+                purpose: "consent-logging",
+                consentStatus: consentStatus || "not-applicable"
             };
 
-            // Basic validation to catch issues early
-            const requiredFields = ["consentId", "ipAddress", "country", "purpose"];
+            const requiredFields = ["consentId", "ipAddress", "country", "purpose", "consentStatus"];
             for (const field of requiredFields) {
                 if (!locationData[field] || typeof locationData[field] !== "string") {
                     throw new Error(`Invalid or missing field: ${field} must be a non-empty string`);
                 }
             }
 
-            // Log payload for debugging
             console.log("Prepared location data:", JSON.stringify(locationData, null, 2));
-
-            // Send data to backend
             await sendLocationDataToDB(locationData);
         } catch (error) {
             console.error("❌ Error fetching or saving location data:", error.message || error);
@@ -169,15 +181,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         try {
             const response = await fetch("https://backendcookie-8qc1.onrender.com/api/location", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(locationData),
             });
 
             if (!response.ok) {
-                const errorData = await response.json(); // Get detailed error from backend
-                throw new Error(`Failed to save location data: ${response.status} - ${errorData.message || "No details provided"}`);
+                const errorData = await response.json();
+                throw new Error(`Failed to save location data: ${response.status} - ${errorData.message || "No details"}`);
             }
 
             const result = await response.json();
@@ -209,12 +219,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         sendPreferencesToDB(consentId, preferences);
 
-        // Only collect location data if accepted (implies consent to performance/functional)
-        if (accepted) {
-            saveLocationData(consentId);
-        } else {
-            console.log("🚫 Location data collection skipped: User rejected cookies.");
-        }
+        // Log consent status with location data
+        const consentStatus = accepted ? "accepted" : "rejected";
+        saveLocationData(consentId, consentStatus);
 
         hideBanner();
     }
