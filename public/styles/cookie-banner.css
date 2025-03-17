@@ -160,7 +160,7 @@
 .cookie-description {
     font-size: 0.9rem;
     line-height: 1.6;
-    color: #f1eaea; /* Light text color for dark mode */
+    color: #000000; /* Light text color for dark mode */
     margin-left: 10px; /* Space between checkbox and description */
 }
 
