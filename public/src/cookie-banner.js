@@ -3,8 +3,26 @@ function generateShortUUID() {
     return Math.random().toString(36).substring(2, 10);
 }
 
+// Cookie Utility Functions
+function setCookie(name, value, days) {
+    const date = new Date();
+    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+    document.cookie = `${name}=${encodeURIComponent(value)};expires=${date.toUTCString()};path=/;secure;samesite=strict`;
+}
+
+function getCookie(name) {
+    const nameEq = `${name}=`;
+    const cookieValue = document.cookie.split("; ").find((c) => c.startsWith(nameEq))?.split("=")[1];
+    if (cookieValue) {
+        console.log(`Retrieved cookie: ${name}=${decodeURIComponent(cookieValue)}`);
+        return decodeURIComponent(cookieValue);
+    }
+    console.log(`Cookie not found: ${name}`);
+    return null;
+}
+
 // Document Ready Event
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", () => {
     // DOM Elements
     const cookieBanner = document.getElementById("cookieConsent");
     const acceptCookiesButton = document.getElementById("acceptCookies");
@@ -14,33 +32,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     const cancelPreferencesButton = document.getElementById("cancelPreferences");
     const cookiePreferencesModal = document.getElementById("cookiePreferencesModal");
 
-    // Cookie Utility Functions
-    function setCookie(name, value, days) {
-        const date = new Date();
-        date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-        document.cookie = `${name}=${encodeURIComponent(value)};expires=${date.toUTCString()};path=/;secure;samesite=strict`;
-    }
-
-    function getCookie(name) {
-        const nameEq = `${name}=`;
-        const cookieValue = document.cookie.split("; ").find((c) => c.startsWith(nameEq))?.split("=")[1];
-        if (cookieValue) {
-            console.log(`Retrieved cookie: ${name}=${decodeURIComponent(cookieValue)}`);
-            return decodeURIComponent(cookieValue);
-        }
-        console.log(`Cookie not found: ${name}`);
-        return null;
-    }
-
- 
-    // Cookie Consent State
-    let consentId = getCookie("consentId");
-    let cookiesAccepted = getCookie("cookiesAccepted");
-
-    // DOM elements for tabs and form
     const registerTab = document.getElementById("register-tab");
     const loginTab = document.getElementById("login-tab");
     const registerForm = document.getElementById("registerForm");
+
+    // Cookie Consent State
+    let consentId = getCookie("consentId");
+    let cookiesAccepted = getCookie("cookiesAccepted");
 
     // Show banner only when register tab is clicked and no preference is set
     if (registerTab) {
@@ -95,7 +93,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     // Save Preferences Button
-    savePreferencesButton.addEventListener("click", () => {
+    savePreferencesButton.addEventListener("click", async () => {
         if (!consentId) {
             consentId = generateShortUUID();
             setCookie("consentId", consentId, 365);
@@ -114,10 +112,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         setCookie("cookiesAccepted", "true", 365);
         setCookie("cookiePreferences", JSON.stringify(preferences), 365);
 
-        sendPreferencesToDB(consentId, preferences);
+        await sendPreferencesToDB(consentId, preferences);
 
         const consentStatus = preferences.performance || preferences.functional ? "accepted" : "rejected";
-        saveLocationData(consentId, consentStatus);
+        await saveLocationData(consentId, consentStatus);
 
         hideBanner();
         cookiePreferencesModal.classList.remove("show");
@@ -155,54 +153,67 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.error("❌ Error saving preferences:", error.message || error);
         }
     }
+
     // Save Location Data
-    async function saveLocationData(consentId) {
+    async function saveLocationData(consentId, consentStatus) {
         try {
             const response = await fetch("https://ipinfo.io/json?token=10772b28291307");
+            if (!response.ok) throw new Error(`Failed to fetch IP data: ${response.status}`);
+
             const data = await response.json();
+
             const locationData = {
-                consentId,
-                ipAddress: data.ip,
-                isp: data.org,
-                city: data.city,
-                country: data.country,
+                consentId: String(consentId),
+                ipAddress: data.ip || "unknown",
+                isp: data.org || "unknown", // e.g., "Reliance Jio Infocomm Limited"
+                city: data.city || "unknown",
+                country: data.country || "unknown",
                 latitude: null,
                 longitude: null,
+                purpose: "consent-logging",
+                consentStatus
             };
 
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        locationData.latitude = position.coords.latitude;
-                        locationData.longitude = position.coords.longitude;
-                        sendLocationDataToDB(locationData);
-                    },
-                    () => sendLocationDataToDB(locationData) // Fallback to IP-based data if geolocation is rejected
-                );
-            } else {
-                sendLocationDataToDB(locationData);
+            if (navigator.geolocation && consentStatus === "accepted") {
+                try {
+                    const position = await new Promise((resolve, reject) => {
+                        navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 });
+                    });
+                    locationData.latitude = position.coords.latitude;
+                    locationData.longitude = position.coords.longitude;
+                } catch (geoError) {
+                    console.warn("⚠️ Geolocation unavailable or rejected:", geoError.message);
+                }
             }
+
+            await sendLocationDataToDB(locationData);
         } catch (error) {
-            console.error("❌ Error fetching location data:", error);
+            console.error("❌ Error fetching location data:", error.message || error);
         }
     }
 
+    // Send Location Data to Backend
     async function sendLocationDataToDB(locationData) {
         try {
-            await fetch("https://backendcookie-8qc1.onrender.com/api/location", {
+            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/location", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(locationData),
             });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Failed to save location data: ${response.status} - ${errorText}`);
+            }
+
             console.log("✅ Location data saved successfully.");
         } catch (error) {
-            console.error("❌ Error saving location data:", error);
+            console.error("❌ Error saving location data:", error.message || error);
         }
     }
 
-
     // Handle Cookie Consent
-    function handleCookieConsent(accepted) {
+    async function handleCookieConsent(accepted) {
         if (!consentId) {
             consentId = generateShortUUID();
             setCookie("consentId", consentId, 365);
@@ -221,10 +232,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         setCookie("cookiesAccepted", accepted.toString(), 365);
         setCookie("cookiePreferences", JSON.stringify(preferences), 365);
 
-        sendPreferencesToDB(consentId, preferences);
+        await sendPreferencesToDB(consentId, preferences);
 
         const consentStatus = accepted ? "accepted" : "rejected";
-        saveLocationData(consentId, consentStatus);
+        await saveLocationData(consentId, consentStatus);
 
         hideBanner();
     }
