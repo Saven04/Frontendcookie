@@ -165,7 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const locationData = {
                 consentId: String(consentId),
                 ipAddress: data.ip || "unknown",
-                isp: data.org || "unknown", // e.g., "Reliance Jio Infocomm Limited"
+                isp: data.org || "unknown",
                 city: data.city || "unknown",
                 country: data.country || "unknown",
                 latitude: null,
@@ -174,18 +174,24 @@ document.addEventListener("DOMContentLoaded", () => {
                 consentStatus
             };
 
+            console.log("🔍 Location data before geolocation:", locationData);
+
             if (navigator.geolocation && consentStatus === "accepted") {
                 try {
                     const position = await new Promise((resolve, reject) => {
                         navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 });
                     });
-                    locationData.latitude = position.coords.latitude;
-                    locationData.longitude = position.coords.longitude;
+                    locationData.latitude = Number(position.coords.latitude) || null;
+                    locationData.longitude = Number(position.coords.longitude) || null;
+                    console.log("🌍 Geolocation data added:", { latitude: locationData.latitude, longitude: locationData.longitude });
                 } catch (geoError) {
                     console.warn("⚠️ Geolocation unavailable or rejected:", geoError.message);
+                    locationData.latitude = null;
+                    locationData.longitude = null;
                 }
             }
 
+            console.log("📤 Sending location data:", locationData);
             await sendLocationDataToDB(locationData);
         } catch (error) {
             console.error("❌ Error fetching location data:", error.message || error);
