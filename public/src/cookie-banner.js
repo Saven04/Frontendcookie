@@ -168,28 +168,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 isp: data.org || "unknown",
                 city: data.city || "unknown",
                 country: data.country || "unknown",
-                latitude: null,
-                longitude: null,
                 purpose: "consent-logging",
                 consentStatus
             };
-
-            console.log("🔍 Location data before geolocation:", locationData);
-
-            if (navigator.geolocation && consentStatus === "accepted") {
-                try {
-                    const position = await new Promise((resolve, reject) => {
-                        navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 });
-                    });
-                    locationData.latitude = Number(position.coords.latitude) || null;
-                    locationData.longitude = Number(position.coords.longitude) || null;
-                    console.log("🌍 Geolocation data added:", { latitude: locationData.latitude, longitude: locationData.longitude });
-                } catch (geoError) {
-                    console.warn("⚠️ Geolocation unavailable or rejected:", geoError.message);
-                    locationData.latitude = null;
-                    locationData.longitude = null;
-                }
-            }
 
             console.log("📤 Sending location data:", locationData);
             await sendLocationDataToDB(locationData);
