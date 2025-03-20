@@ -466,11 +466,11 @@ document.addEventListener("DOMContentLoaded", () => {
             if (notificationSwitch) notificationSwitch.checked = true;
 
             deleteModal.hide();
-            alert("Cookie preferences and location data have been soft-deleted successfully.");
+            alert("Cookie preferences and location data have been deleted successfully.");
             if (mfaStatus) {
                 mfaStatus.classList.remove("alert-info");
                 mfaStatus.classList.add("alert-success");
-                mfaStatus.textContent = "Preferences and location data soft-deleted!";
+                mfaStatus.textContent = "Preferences and location data deleted!";
             }
             mfaEmail = null;
         } catch (error) {
@@ -478,7 +478,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (mfaStatus) {
                 mfaStatus.classList.remove("d-none", "alert-info");
                 mfaStatus.classList.add("alert-danger");
-                mfaStatus.textContent = error.message || "Failed to soft-delete data.";
+                mfaStatus.textContent = error.message || "Failed to delete data.";
             }
             const mfaCodeInput = document.getElementById("deleteCookieMfaCode");
             if (mfaCodeInput) mfaCodeInput.value = "";
