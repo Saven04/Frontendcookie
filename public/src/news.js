@@ -10,22 +10,42 @@ async function fetchNews(category = "general") {
         console.error("newsContainer not found in the DOM");
         return;
     }
+
     try {
-        const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/news?category=${category}`);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        // Retrieve token from localStorage
+        const token = localStorage.getItem("token");
+        if (!token) {
+            console.warn("No token found in localStorage. User may not be authenticated.");
+            throw new Error("Authentication required");
+        }
+
+        // Fetch news with Authorization header
+        const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/news?category=${category}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`, // Include the token
+            },
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`HTTP error! Status: ${response.status} - ${errorData.message || "Unknown error"}`);
+        }
+
         const articles = await response.json();
         displayNews(articles);
     } catch (error) {
-        console.error("Error fetching news:", error);
+        console.error("Error fetching news:", error.message || error);
         newsContainer.innerHTML = `
             <div class="col-12 text-center py-4">
-                <p class="text-danger">Failed to load news. Please try again later.</p>
+                <p class="text-danger">Failed to load news: ${error.message}. Please try again later.</p>
             </div>
         `;
     }
 }
 
-// Display news articles
+// Display news articles (unchanged, but included for completeness)
 function displayNews(articles) {
     if (!newsContainer) return;
     newsContainer.innerHTML = "";
