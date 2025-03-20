@@ -110,12 +110,11 @@ function getCookie(name) {
     const parts = value.split(`; ${name}=`);
     return parts.length === 2 ? parts.pop().split(';').shift() : null;
 }
+fetchNews();
 
 // DOM Content Loaded
 document.addEventListener("DOMContentLoaded", () => {
-    // Load initial news
-    fetchNews();
-
+  
     // Category buttons
     document.querySelectorAll(".category-btn").forEach(button => {
         button.addEventListener("click", () => {
