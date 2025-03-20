@@ -12,19 +12,18 @@ async function fetchNews(category = "general") {
     }
 
     try {
-        // Retrieve token from localStorage
         const token = localStorage.getItem("token");
         if (!token) {
             console.warn("No token found in localStorage. User may not be authenticated.");
             throw new Error("Please log in to view news");
         }
 
-        // Fetch news with Authorization header
+        console.log("Fetching news with token:", token); // Debug log
         const response = await fetch(`https://backendcookie-8qc1.onrender.com/api/news?category=${category}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`, // Include the token
+                "Authorization": `Bearer ${token}`, // Send token
             },
         });
 
@@ -44,7 +43,6 @@ async function fetchNews(category = "general") {
         `;
     }
 }
-
 // Display news articles
 function displayNews(articles) {
     if (!newsContainer) return;
