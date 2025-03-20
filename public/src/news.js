@@ -25,6 +25,7 @@ async function fetchNews(category = "general") {
     }
 }
 
+
 // Display news articles
 function displayNews(articles) {
     if (!newsContainer) return;
