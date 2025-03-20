@@ -57,18 +57,19 @@ function displayNews(articles) {
 
 // Apply font size
 function applyFontSize(size) {
-    document.body.style.fontSize = size === 'small' ? '14px' : size === 'large' ? '18px' : '16px';
+    document.body.style.fontSize = size === "small" ? "14px" : size === "large" ? "18px" : "16px";
+    localStorage.setItem("fontSize", size);
 }
 
 // Apply theme
 function applyTheme(theme) {
     const body = document.body;
-    if (theme === 'dark') {
-        body.classList.add('dark-mode');
+    if (theme === "dark") {
+        body.classList.add("dark-mode");
     } else {
-        body.classList.remove('dark-mode');
+        body.classList.remove("dark-mode");
     }
-    localStorage.setItem('theme', theme);
+    localStorage.setItem("theme", theme);
 }
 
 // Debounce utility
@@ -84,13 +85,13 @@ function debounce(func, wait) {
 function setCookie(name, value, days) {
     const expires = new Date();
     expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
-    document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+    document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;secure;samesite=strict`;
 }
 
 function getCookie(name) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
-    return parts.length === 2 ? parts.pop().split(';').shift() : null;
+    return parts.length === 2 ? parts.pop().split(";").shift() : null;
 }
 
 // DOM Content Loaded
@@ -146,100 +147,99 @@ document.addEventListener("DOMContentLoaded", () => {
             notificationSwitch.checked = localStorage.getItem("notifications") !== "false";
             notificationSwitch.addEventListener("change", () => localStorage.setItem("notifications", notificationSwitch.checked));
         }
-
-       
     }
 
     // Cookie preferences
-    const cookieSettingsBtn = document.getElementById('cookieSettings');
+    const cookieSettingsBtn = document.getElementById("cookieSettings");
     if (cookieSettingsBtn) {
-        cookieSettingsBtn.addEventListener('click', (e) => {
+        cookieSettingsBtn.addEventListener("click", (e) => {
             e.preventDefault();
             loadCookiePreferences();
-            const cookieModal = new bootstrap.Modal(document.getElementById('cookieModal'));
+            const cookieModal = new bootstrap.Modal(document.getElementById("cookieModal"));
             cookieModal.show();
-            setTimeout(() => document.getElementById('performanceCookies')?.focus(), 100);
+            setTimeout(() => document.getElementById("performanceCookies")?.focus(), 100);
         });
     }
 
-    document.getElementById('saveCookiePrefs')?.addEventListener('click', saveCookiePreferences);
+    document.getElementById("saveCookiePrefs")?.addEventListener("click", saveCookiePreferences);
 
     function loadCookiePreferences() {
-        const cookiePrefs = getCookie('cookiePreferences');
+        const cookiePrefs = getCookie("cookiePreferences");
         if (!cookiePrefs) return;
         try {
             const { preferences } = JSON.parse(cookiePrefs);
-            document.getElementById('performanceCookies').checked = preferences.performance || false;
-            document.getElementById('functionalCookies').checked = preferences.functional || false;
-            document.getElementById('advertisingCookies').checked = preferences.advertising || false;
-            document.getElementById('socialMediaCookies').checked = preferences.socialMedia || false;
+            document.getElementById("performanceCookies").checked = preferences.performance || false;
+            document.getElementById("functionalCookies").checked = preferences.functional || false;
+            document.getElementById("advertisingCookies").checked = preferences.advertising || false;
+            document.getElementById("socialMediaCookies").checked = preferences.socialMedia || false;
         } catch (error) {
-            console.error('Error parsing cookie preferences:', error);
+            console.error("Error parsing cookie preferences:", error);
         }
     }
 
     function saveCookiePreferences() {
         const preferences = {
             strictlyNecessary: true,
-            performance: document.getElementById('performanceCookies')?.checked || false,
-            functional: document.getElementById('functionalCookies')?.checked || false,
-            advertising: document.getElementById('advertisingCookies')?.checked || false,
-            socialMedia: document.getElementById('socialMediaCookies')?.checked || false
+            performance: document.getElementById("performanceCookies")?.checked || false,
+            functional: document.getElementById("functionalCookies")?.checked || false,
+            advertising: document.getElementById("advertisingCookies")?.checked || false,
+            socialMedia: document.getElementById("socialMediaCookies")?.checked || false
         };
 
-        console.log('Saving cookie preferences:', preferences);
-        setCookie('cookiePreferences', JSON.stringify({ preferences }), 365);
+        console.log("Saving cookie preferences:", preferences);
+        setCookie("cookiePreferences", JSON.stringify({ preferences }), 365);
         updateDatabasePreferences(preferences);
 
-        const cookieModal = bootstrap.Modal.getInstance(document.getElementById('cookieModal'));
+        const cookieModal = bootstrap.Modal.getInstance(document.getElementById("cookieModal"));
         if (cookieModal) {
             cookieModal.hide();
-            document.body.classList.remove('modal-open');
-            document.querySelector('.modal-backdrop')?.remove();
+            document.body.classList.remove("modal-open");
+            document.querySelector(".modal-backdrop")?.remove();
         }
     }
 
     async function updateDatabasePreferences(preferences) {
-        const token = localStorage.getItem('token');
-        const consentId = getCookie('consentId');
+        const token = localStorage.getItem("token");
+        const consentId = getCookie("consentId");
         if (!consentId) {
-            console.warn('Consent ID not found');
-            alert('Error: Consent ID not found.');
+            console.warn("Consent ID not found");
+            alert("Error: Consent ID not found.");
             return;
         }
 
-        const payload = { consentId, preferences, deletedAt: null };
+        const payload = { consentId, preferences };
         const requiresLocation = preferences.performance || preferences.functional;
 
         if (requiresLocation) {
             try {
-                const ipInfoToken = '10772b28291307';
+                // Client-side IP fetch is limited; rely on server to capture client IP
+                // This is a placeholder; actual IP/location should come from the server
+                const ipInfoToken = "10772b28291307";
                 const response = await fetch(`https://ipinfo.io/json?token=${ipInfoToken}`);
                 if (!response.ok) throw new Error(`Failed to fetch IP info: ${response.status}`);
                 const ipData = await response.json();
 
-                const [latitude, longitude] = ipData.loc ? ipData.loc.split(',').map(Number) : [null, null];
-                payload.ipAddress = ipData.ip || null;
-                payload.location = {
-                    city: ipData.city || null,
-                    country: ipData.country || null,
-                    latitude: latitude || null,
-                    longitude: longitude || null
-                };
-                console.log('User consented to IP/location update');
+                payload.ipAddress = ipData.ip || "unknown";
+                payload.city = ipData.city || "unknown";
+                payload.country = ipData.country || "unknown";
+                payload.isp = ipData.org || "unknown";
+                console.log("User consented to IP/location update (client-side fetch, may be server IP)");
             } catch (error) {
-                console.error('Error fetching IP/location:', error);
-                alert('Failed to fetch location data, but preferences will still be saved.');
+                console.error("Error fetching IP/location:", error);
+                payload.ipAddress = "unknown"; // Fallback
+                payload.city = "unknown";
+                payload.country = "unknown";
+                payload.isp = "unknown";
             }
         }
 
-        console.log('Sending to backend:', JSON.stringify(payload));
+        console.log("Sending to backend:", JSON.stringify(payload));
         try {
-            const response = await fetch('https://backendcookie-8qc1.onrender.com/api/update-cookie-prefs', {
-                method: 'POST',
+            const response = await fetch("https://backendcookie-8qc1.onrender.com/api/update-cookie-prefs", {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
-                    ...(token && { 'Authorization': `Bearer ${token}` })
+                    "Content-Type": "application/json",
+                    ...(token && { "Authorization": `Bearer ${token}` })
                 },
                 body: JSON.stringify(payload)
             });
@@ -248,14 +248,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
             }
             const data = await response.json();
-            console.log('Preferences and location updated:', data);
+            console.log("Preferences and location updated:", data);
         } catch (error) {
-            console.error('Error updating preferences:', error);
+            console.error("Error updating preferences:", error);
             alert(`Failed to save preferences: ${error.message}.`);
         }
     }
 
-    // Delete cookie data
+    // Delete cookie data with MFA
     const deleteCookieDataBtn = document.getElementById("deleteCookieData");
     if (deleteCookieDataBtn) {
         deleteCookieDataBtn.addEventListener("click", (e) => {
@@ -392,7 +392,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Confirm deletion
+    // Confirm soft deletion with MFA
     document.getElementById("confirmDeleteCookie")?.addEventListener("click", async () => {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -422,7 +422,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
-            // Verify MFA
+            // Verify MFA and soft-delete data via existing endpoint
             const mfaResponse = await fetch("https://backendcookie-8qc1.onrender.com/api/verify-mfa", {
                 method: "POST",
                 headers: {
@@ -434,11 +434,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (!mfaResponse.ok) {
                 const errorData = await mfaResponse.json();
-                throw new Error(errorData.message || "Invalid code");
+                throw new Error(errorData.message || "Invalid MFA code");
             }
 
-            // Delete cookie preferences
-            const consentId = getCookie("consentId");
+            // Clear client-side cookie preferences (except consentId)
             document.cookie.split(";").forEach(cookie => {
                 const [name] = cookie.trim().split("=");
                 if (name !== "consentId") {
@@ -446,25 +445,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
 
-            // Delete location data from backend
-            const deleteLocationResponse = await fetch("https://backendcookie-8qc1.onrender.com/api/delete-location", {
-                method: "DELETE",
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ consentId })
-            });
-
-            if (!deleteLocationResponse.ok) {
-                const errorData = await deleteLocationResponse.json();
-                throw new Error(errorData.message || "Failed to delete location data");
-            }
-
             // Reset local storage, keeping token and consentId
             const savedToken = localStorage.getItem("token");
+            const savedConsentId = getCookie("consentId");
             localStorage.clear();
-            if (consentId) localStorage.setItem("consentId", consentId);
+            if (savedConsentId) setCookie("consentId", savedConsentId, 365);
             if (savedToken) localStorage.setItem("token", savedToken);
 
             // Apply default settings
@@ -481,19 +466,19 @@ document.addEventListener("DOMContentLoaded", () => {
             if (notificationSwitch) notificationSwitch.checked = true;
 
             deleteModal.hide();
-            alert("Cookie preferences and location data deleted successfully.");
+            alert("Cookie preferences and location data have been soft-deleted successfully.");
             if (mfaStatus) {
                 mfaStatus.classList.remove("alert-info");
                 mfaStatus.classList.add("alert-success");
-                mfaStatus.textContent = "Preferences and location data deleted!";
+                mfaStatus.textContent = "Preferences and location data soft-deleted!";
             }
-            if (typeof mfaEmail !== "undefined") mfaEmail = null;
+            mfaEmail = null;
         } catch (error) {
-            console.error("Deletion error:", error);
+            console.error("Soft-deletion error:", error);
             if (mfaStatus) {
                 mfaStatus.classList.remove("d-none", "alert-info");
                 mfaStatus.classList.add("alert-danger");
-                mfaStatus.textContent = error.message || "Failed to delete data.";
+                mfaStatus.textContent = error.message || "Failed to soft-delete data.";
             }
             const mfaCodeInput = document.getElementById("deleteCookieMfaCode");
             if (mfaCodeInput) mfaCodeInput.value = "";
@@ -501,27 +486,4 @@ document.addEventListener("DOMContentLoaded", () => {
             confirmDeleteCookieBtn.disabled = false;
         }
     });
-
-    // Cookie Utility Function
-    function getCookie(name) {
-        const cookies = document.cookie.split("; ");
-        for (let cookie of cookies) {
-            const [cookieName, cookieValue] = cookie.split("=");
-            if (cookieName === name) return decodeURIComponent(cookieValue);
-        }
-        return null;
-    }
-
-    // Placeholder Functions
-    function applyTheme(theme) {
-        console.log(`Applying theme: ${theme}`);
-    }
-
-    function applyFontSize(size) {
-        console.log(`Applying font size: ${size}`);
-    }
 });
-
-
-
-
